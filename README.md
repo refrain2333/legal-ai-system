@@ -35,29 +35,47 @@ cd "C:\Users\lenovo\Desktop\法律"
 # 项目已经准备就绪
 ```
 
-2. **创建虚拟环境**
+2. **环境检查 (重要!)**
 ```bash
+# 检查当前环境状态
+python scripts/env_check.py
+```
+
+3. **创建虚拟环境 (强烈推荐)**
+
+**方案一：Conda环境 (推荐，您已有Miniconda)**
+```bash
+# 创建专用环境
+conda create -n legal-ai python=3.9 -y
+
+# 激活环境
+conda activate legal-ai
+```
+
+**方案二：Python venv环境**
+```bash
+# 创建虚拟环境
 python -m venv venv
 
-# Windows
+# 激活环境 (Windows)
 venv\Scripts\activate
 
-# Linux/Mac
+# 激活环境 (Linux/Mac)
 source venv/bin/activate
 ```
 
-3. **安装依赖**
+4. **安装依赖 (在虚拟环境中)**
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **配置环境**
+5. **配置环境**
 ```bash
 cp .env.example .env
 # 编辑 .env 文件设置必要的环境变量
 ```
 
-5. **数据已准备就绪**
+6. **数据已准备就绪**
 ```bash
 # 数据文件已在 data/raw/ 目录中：
 # ✓ raw_laws(1).csv        - 法律条文数据 (1.3MB)
@@ -66,16 +84,16 @@ cp .env.example .env
 # ✓ 精确+模糊匹配映射表.csv  - 扩展映射关系 (116KB)
 ```
 
-6. **项目初始化检查**
+7. **环境验证**
 ```bash
-# 运行初始化检查脚本
-python scripts/init_project.py
+# 验证虚拟环境和依赖
+python scripts/env_check.py
 
-# 验证数据文件
-python scripts/validate_data.py
+# 项目初始化检查
+python scripts/simple_init.py
 ```
 
-7. **启动服务**
+8. **启动服务**
 ```bash
 python src/main.py
 ```
