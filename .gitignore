@@ -1,0 +1,202 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# 项目特定文件
+# =================
+
+# 数据文件 - 敏感的法律数据不提交
+data/raw/*.csv
+data/raw/*.json
+data/raw/*.xlsx
+data/processed/*.csv
+data/processed/*.pkl
+data/processed/*.json
+
+# 模型文件 - 大文件不提交到Git
+models/pretrained/
+models/finetuned/
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+
+# 向量索引文件
+*.index
+*.faiss
+
+# 日志文件
+logs/*.log
+logs/*.txt
+
+# 缓存文件
+cache/
+.cache/
+*.cache
+
+# 临时文件
+temp/
+tmp/
+*.tmp
+*.temp
+
+# 配置文件中的敏感信息
+config/secrets.yaml
+config/local_config.yaml
+.env.local
+.env.production
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Windows
+*.lnk
+
+# 测试输出
+test_output/
+test_results/
+
+# 文档生成
+docs/_build/
+docs/build/
+
+# 部署文件
+docker-compose.override.yml
+.dockerignore
+
+# 性能分析文件
+*.prof
+*.pstats
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 备份文件
+*.bak
+*.backup
+*~
+
+# 用户上传文件
+uploads/
+user_data/
+
+# API密钥和配置
+api_keys.txt
+secrets.json

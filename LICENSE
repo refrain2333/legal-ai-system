@@ -1,0 +1,38 @@
+MIT License
+
+Copyright (c) 2024 Legal Navigation AI Project
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## 免责声明
+
+本软件提供的法律信息仅供参考，不构成正式的法律建议。使用者应当：
+
+1. 了解本软件仅为技术演示和研究目的而开发
+2. 在做出法律决策前咨询合格的法律专业人士
+3. 对使用本软件所产生的任何结果承担全部责任
+
+开发者和贡献者不对以下情况承担责任：
+- 软件提供的法律信息的准确性、完整性或时效性
+- 因使用本软件而导致的任何直接或间接损失
+- 软件中可能存在的错误、遗漏或技术缺陷
+
+使用本软件即表示您同意上述条款和条件。

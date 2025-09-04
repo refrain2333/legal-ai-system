@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  legal-ai:
+    build: .
+    container_name: legal-navigation-ai
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+      - ./config:/app/config
+    environment:
+      - APP_ENV=production
+      - LOG_LEVEL=INFO
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - legal-ai-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: legal-ai-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - legal-ai
+    restart: unless-stopped
+    networks:
+      - legal-ai-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: legal-ai-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - legal-ai-network
+
+networks:
+  legal-ai-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+    driver: local
