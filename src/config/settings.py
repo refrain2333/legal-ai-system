@@ -4,7 +4,8 @@
 
 import os
 from typing import List, Optional
-from pydantic import BaseSettings, validator
+from pydantic import BaseModel, validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):

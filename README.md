@@ -29,10 +29,10 @@
 
 ### 安装步骤
 
-1. **克隆项目**
+1. **进入项目目录**
 ```bash
-git clone <repository-url>
-cd legal-navigation-ai
+cd "C:\Users\lenovo\Desktop\法律"
+# 项目已经准备就绪
 ```
 
 2. **创建虚拟环境**
@@ -57,12 +57,13 @@ cp .env.example .env
 # 编辑 .env 文件设置必要的环境变量
 ```
 
-5. **准备数据**
+5. **数据已准备就绪**
 ```bash
-# 将数据文件放入 data/raw/ 目录
-# - raw_laws(1).csv
-# - raw_cases(1).csv  
-# - 精确映射表.csv
+# 数据文件已在 data/raw/ 目录中：
+# ✓ raw_laws(1).csv        - 法律条文数据 (1.3MB)
+# ✓ raw_cases(1).csv       - 案例数据 (16.5MB)  
+# ✓ 精确映射表.csv          - 精确映射关系 (73KB)
+# ✓ 精确+模糊匹配映射表.csv  - 扩展映射关系 (116KB)
 ```
 
 6. **启动服务**
@@ -75,15 +76,17 @@ python src/main.py
 ## 🏗️ 项目架构
 
 ```
-legal-navigation-ai/
+法律/ (项目根目录)
 ├── src/                    # 核心源代码
 │   ├── api/               # API接口层
 │   ├── models/            # AI模型层
 │   ├── services/          # 业务逻辑层
-│   └── utils/             # 工具函数
+│   ├── utils/             # 工具函数
+│   └── config/            # 配置管理
 ├── data/                  # 数据存储
+│   └── raw/               # ✓ 原始数据已就绪
 ├── models/                # AI模型文件
-├── config/                # 配置管理
+├── config/                # 配置文件
 ├── docs/                  # 项目文档
 ├── tests/                 # 测试代码
 └── scripts/               # 工具脚本
