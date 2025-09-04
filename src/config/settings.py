@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     
     # 服务器配置
     HOST: str = "127.0.0.1"
-    PORT: int = 8000
+    PORT: int = 5005
     WORKERS: int = 1
     
     # 日志配置
@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     # API配置
     API_RATE_LIMIT: str = "100/minute"
     API_KEY: Optional[str] = None
-    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    CORS_ORIGINS: List[str] = ["http://localhost:5005", "http://127.0.0.1:5005"]
     
     # 文件路径配置
     DATA_RAW_PATH: str = "./data/raw"

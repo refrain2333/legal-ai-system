@@ -12,7 +12,8 @@
       "Bash(timeout 15s godot --headless \"res://cs/tests/ArcaneIntuitionUIShowcaseTest.tscn\" -q)",
       "Bash(timeout:*)",
       "Read(\\/**)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(ss:*)"
     ],
     "deny": [],
     "ask": []

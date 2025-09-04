@@ -66,12 +66,21 @@ cp .env.example .env
 # ✓ 精确+模糊匹配映射表.csv  - 扩展映射关系 (116KB)
 ```
 
-6. **启动服务**
+6. **项目初始化检查**
+```bash
+# 运行初始化检查脚本
+python scripts/init_project.py
+
+# 验证数据文件
+python scripts/validate_data.py
+```
+
+7. **启动服务**
 ```bash
 python src/main.py
 ```
 
-服务启动后访问: http://localhost:8000
+服务启动后访问: http://localhost:5005
 
 ## 🏗️ 项目架构
 
@@ -83,13 +92,12 @@ python src/main.py
 │   ├── services/          # 业务逻辑层
 │   ├── utils/             # 工具函数
 │   └── config/            # 配置管理
-├── data/                  # 数据存储
+├── data/                  # 数据存储  
 │   └── raw/               # ✓ 原始数据已就绪
 ├── models/                # AI模型文件
-├── config/                # 配置文件
 ├── docs/                  # 项目文档
 ├── tests/                 # 测试代码
-└── scripts/               # 工具脚本
+└── scripts/               # ✓ 工具脚本 (初始化/验证)
 ```
 
 ## 🔧 开发指南
