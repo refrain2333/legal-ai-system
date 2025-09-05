@@ -105,8 +105,12 @@ def create_app() -> FastAPI:
             "docs": "/docs" if settings.DEBUG else "文档已禁用"
         }
     
-    # 这里将添加其他路由
-    # from src.api.routes import api_router
-    # app.include_router(api_router, prefix="/api/v1")
+    # 添加检索API路由
+    try:
+        from src.api.search_routes import router as search_router
+        app.include_router(search_router)
+        logger.info("✅ 检索API路由已加载")
+    except Exception as e:
+        logger.error(f"❌ 检索API路由加载失败: {e}")
     
     return app

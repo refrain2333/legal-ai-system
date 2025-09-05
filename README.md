@@ -35,13 +35,15 @@ cd "C:\Users\lenovo\Desktop\法律"
 # 项目已经准备就绪
 ```
 
-2. **环境检查 (重要!)**
+2. **项目初始化 (首次使用，重要!)**
 ```bash
-# 检查当前环境状态
-python scripts/env_check.py
+# 按步骤执行完整初始化
+python scripts/init/step1_env_check.py       # 步骤1: 环境检查
+python scripts/init/step2_project_setup.py   # 步骤2: 项目设置
+python scripts/init/step3_final_check.py     # 步骤3: 最终验证
 ```
 
-3. **创建虚拟环境 (强烈推荐)**
+3. **创建虚拟环境 (如果步骤1检查未通过)**
 
 **方案一：Conda环境 (推荐，您已有Miniconda)**
 ```bash
@@ -64,18 +66,18 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-4. **安装依赖 (在虚拟环境中)**
+4. **安装依赖 (如果步骤1检查未通过)**
 ```bash
 pip install -r requirements.txt
 ```
 
-5. **配置环境**
+6. **配置环境**
 ```bash
 cp .env.example .env
 # 编辑 .env 文件设置必要的环境变量
 ```
 
-6. **数据已准备就绪**
+7. **数据已准备就绪**
 ```bash
 # 数据文件已在 data/raw/ 目录中：
 # ✓ raw_laws(1).csv        - 法律条文数据 (1.3MB)
@@ -84,13 +86,27 @@ cp .env.example .env
 # ✓ 精确+模糊匹配映射表.csv  - 扩展映射关系 (116KB)
 ```
 
-7. **环境验证**
+5. **环境验证**
 ```bash
-# 验证虚拟环境和依赖
-python scripts/env_check.py
+# 重新运行最终检查确认一切正常
+python scripts/init/step3_final_check.py
+```
 
-# 项目初始化检查
-python scripts/simple_init.py
+**注意**: 初始化脚本会自动处理以下内容，通常不需要手动操作：
+
+6. **配置环境** (自动处理)
+```bash
+cp .env.example .env
+# 编辑 .env 文件设置必要的环境变量
+```
+
+7. **数据已准备就绪** (自动检查)
+```bash
+# 数据文件已在 data/raw/ 目录中：
+# ✓ raw_laws(1).csv        - 法律条文数据 (1.3MB)
+# ✓ raw_cases(1).csv       - 案例数据 (16.5MB)  
+# ✓ 精确映射表.csv          - 精确映射关系 (73KB)
+# ✓ 精确+模糊匹配映射表.csv  - 扩展映射关系 (116KB)
 ```
 
 8. **启动服务**
@@ -141,10 +157,23 @@ git commit -m "docs: 更新API文档"
 
 ## 📊 开发路线图
 
-- [x] **阶段1**: 项目初始化和基础架构
-- [ ] **阶段2**: 核心检索功能实现  
-- [ ] **阶段3**: 模型精调和优化
-- [ ] **阶段4**: 系统集成和部署
+- [x] **阶段1**: 项目初始化和基础架构 ✅ **完成95%**
+- [ ] **阶段2**: 核心检索功能实现 🔥 **进行中** 
+  - [ ] 文本向量化模型 (shibing624/text2vec-base-chinese)
+  - [ ] 向量索引系统 (Faiss IndexFlatIP)
+  - [ ] 语义检索服务 (混合排序算法)
+  - [ ] API检索接口 (FastAPI异步接口)
+- [ ] **阶段3**: 模型精调与精度跃升 🔬 **计划中**
+  - [ ] 构建领域训练数据集 (利用映射关系)
+  - [ ] Fine-tuning模型 (MultipleNegativesRankingLoss)
+  - [ ] 性能评估与对比分析
+- [ ] **阶段4**: 功能融合与创新实现 ✨ **规划中**
+  - [ ] 知识图谱关联分析
+  - [ ] 混合排序引擎优化  
+  - [ ] 智能解释生成 (可选)
+- [ ] **阶段5**: 系统部署与成果展示 🚀 **最终阶段**
+
+> 📋 **详细任务指导**: [PROJECT_ROADMAP.md](docs/tasks/PROJECT_ROADMAP.md)
 
 ## 📚 文档
 

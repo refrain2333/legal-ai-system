@@ -9,14 +9,31 @@ import sys
 import os
 from pathlib import Path
 
+# 设置环境编码，避免Windows控制台编码问题
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
+
+def safe_print(text):
+    """安全打印，避免Unicode编码问题"""
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        # 替换特殊字符为ASCII
+        safe_text = text.replace('🔍', '[CHECK]').replace('✅', '[OK]').replace('❌', '[ERROR]')
+        safe_text = safe_text.replace('📁', '[DIR]').replace('📄', '[FILE]').replace('🚀', '[START]')
+        safe_text = safe_text.replace('⚠️', '[WARN]').replace('💡', '[INFO]')
+        print(safe_text)
+
 def final_env_check():
     """最终环境检查"""
-    print("🔍 环境状态...")
+    safe_print("[CHECK] 环境状态...")
     
     # Python版本
     py_version = f"{sys.version_info.major}.{sys.version_info.minor}"
     python_ok = sys.version_info >= (3, 9)
-    print(f"   Python {py_version}: {'✅' if python_ok else '❌'}")
+    safe_print(f"   Python {py_version}: {'[OK]' if python_ok else '[ERROR]'}")
     
     # 虚拟环境
     conda_env = os.environ.get('CONDA_DEFAULT_ENV')
@@ -24,17 +41,17 @@ def final_env_check():
     env_ok = conda_env or venv_active
     
     if conda_env:
-        print(f"   Conda环境 ({conda_env}): ✅")
+        safe_print(f"   Conda环境 ({conda_env}): [OK]")
     elif venv_active:
-        print(f"   Python虚拟环境: ✅")
+        safe_print(f"   Python虚拟环境: [OK]")
     else:
-        print(f"   虚拟环境: ❌ 未使用")
+        safe_print(f"   虚拟环境: [ERROR] 未使用")
     
     return python_ok and env_ok
 
 def final_structure_check():
     """最终结构检查"""
-    print("🔍 项目结构...")
+    safe_print("[CHECK] 项目结构...")
     
     required_dirs = [
         "src/api", "src/config", "data/raw", "logs/app", 
@@ -47,15 +64,15 @@ def final_structure_check():
             missing_dirs.append(d)
     
     if missing_dirs:
-        print(f"   目录结构: ❌ 缺失{len(missing_dirs)}个")
+        safe_print(f"   目录结构: [ERROR] 缺失{len(missing_dirs)}个")
         return False
     else:
-        print(f"   目录结构: ✅")
+        safe_print(f"   目录结构: [OK]")
         return True
 
 def final_data_check():
     """最终数据检查"""
-    print("🔍 数据文件...")
+    safe_print("[CHECK] 数据文件...")
     
     data_files = [
         "data/raw/raw_laws(1).csv",
@@ -73,15 +90,15 @@ def final_data_check():
             missing += 1
     
     if missing == 0:
-        print(f"   数据文件: ✅ (总计{total_size:.1f}MB)")
+        safe_print(f"   数据文件: [OK] (总计{total_size:.1f}MB)")
         return True
     else:
-        print(f"   数据文件: ❌ 缺失{missing}个")
+        safe_print(f"   数据文件: [ERROR] 缺失{missing}个")
         return False
 
 def final_config_check():
     """最终配置检查"""
-    print("🔍 配置文件...")
+    safe_print("[CHECK] 配置文件...")
     
     config_files = [".env", "requirements_fixed.txt"]
     missing = []
@@ -91,15 +108,15 @@ def final_config_check():
             missing.append(f)
     
     if missing:
-        print(f"   配置文件: ❌ 缺失{len(missing)}个")
+        safe_print(f"   配置文件: [ERROR] 缺失{len(missing)}个")
         return False
     else:
-        print(f"   配置文件: ✅")
+        safe_print(f"   配置文件: [OK]")
         return True
 
 def final_deps_check():
     """最终依赖检查"""
-    print("🔍 核心依赖...")
+    safe_print("[CHECK] 核心依赖...")
     
     core_deps = ['torch', 'transformers', 'fastapi', 'pydantic', 'loguru']
     installed = 0
@@ -112,32 +129,32 @@ def final_deps_check():
             pass
     
     if installed == len(core_deps):
-        print(f"   核心依赖: ✅ ({installed}/{len(core_deps)})")
+        safe_print(f"   核心依赖: [OK] ({installed}/{len(core_deps)})")
         return True
     else:
-        print(f"   核心依赖: ❌ ({installed}/{len(core_deps)})")
+        safe_print(f"   核心依赖: [ERROR] ({installed}/{len(core_deps)})")
         return False
 
 def print_startup_guide():
     """打印启动指南"""
-    print("\n🚀 项目启动指南:")
-    print("   1. 启动开发服务器:")
-    print("      python src/main.py")
-    print("")
-    print("   2. 访问API文档:")
-    print("      http://localhost:5005/docs")
-    print("")
-    print("   3. 常用开发命令:")
-    print("      pytest                    # 运行测试")
-    print("      black src/ tests/        # 代码格式化") 
-    print("      python scripts/validate_data.py  # 数据验证")
+    safe_print("\n[START] 项目启动指南:")
+    safe_print("   1. 启动开发服务器:")
+    safe_print("      python src/main.py")
+    safe_print("")
+    safe_print("   2. 访问API文档:")
+    safe_print("      http://localhost:5005/docs")
+    safe_print("")
+    safe_print("   3. 常用开发命令:")
+    safe_print("      pytest                    # 运行测试")
+    safe_print("      black src/ tests/        # 代码格式化") 
+    safe_print("      python scripts/validate_data.py  # 数据验证")
 
 def print_troubleshooting():
     """打印问题解决指南"""
-    print("\n🔧 问题解决:")
-    print("   环境问题: python scripts/init/step1_env_check.py")
-    print("   配置问题: python scripts/init/step2_project_setup.py")
-    print("   数据问题: 确保data/raw/目录有完整数据文件")
+    safe_print("\n[WARN] 问题解决:")
+    safe_print("   环境问题: python scripts/init/step1_env_check.py")
+    safe_print("   配置问题: python scripts/init/step2_project_setup.py")
+    safe_print("   数据问题: 确保data/raw/目录有完整数据文件")
 
 def main():
     print("="*50)
@@ -156,14 +173,14 @@ def main():
     passed = sum(checks)
     total = len(checks)
     
-    print(f"\n📊 检查结果: {passed}/{total} 通过")
+    safe_print(f"\n[INFO] 检查结果: {passed}/{total} 通过")
     
     if passed == total:
-        print("🎉 恭喜! 项目已完全ready!")
+        safe_print("[OK] 恭喜! 项目已完全ready!")
         print_startup_guide()
         return_code = 0
     else:
-        print("⚠️  还有问题需要解决")
+        safe_print("[WARN] 还有问题需要解决")
         print_troubleshooting()
         return_code = 1
     

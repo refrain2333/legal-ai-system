@@ -14,7 +14,12 @@
       "Read(\\/**)",
       "Bash(mkdir:*)",
       "Bash(ss:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(conda activate:*)",
+      "Bash(pip install:*)",
+      "Bash(conda env update:*)",
+      "Bash(conda run:*)",
+      "Bash(head:*)"
     ],
     "deny": [],
     "ask": []
