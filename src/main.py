@@ -10,9 +10,12 @@ import sys
 import uvicorn
 from pathlib import Path
 
-from .config.settings import settings
-from .api.app import create_app
-from .utils.logger import setup_logger
+# 添加项目根目录到Python路径
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.config.settings import settings
+from src.api.app import create_app
+from src.utils.logger import setup_logger
 
 # 设置日志
 logger = setup_logger(__name__)

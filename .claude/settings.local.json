@@ -19,7 +19,12 @@
       "Bash(pip install:*)",
       "Bash(conda env update:*)",
       "Bash(conda run:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(conda info:*)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" temp_2025-01-27_st_test_en.py)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" src/main.py)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" final_performance_test.py)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" app.py)"
     ],
     "deny": [],
     "ask": []
