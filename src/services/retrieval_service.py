@@ -25,12 +25,15 @@ class RetrievalService:
         self.is_initialized = False
         self.init_lock = threading.Lock()
         
+        # 新增：智能混合排序服务
+        self.hybrid_ranking_service = None
+        
         self.stats = {
             'total_documents': 0,
             'vector_dimension': 0,
             'total_searches': 0,
             'average_search_time': 0.0,
-            'service_version': '0.3.0_semantic'
+            'service_version': '0.4.0_intelligent_hybrid'
         }
     
     async def initialize(self) -> bool:
@@ -66,6 +69,15 @@ class RetrievalService:
                 
                 self.is_initialized = True
                 
+                # 新增：初始化智能混合排序服务
+                try:
+                    from .intelligent_hybrid_ranking import get_intelligent_hybrid_service
+                    self.hybrid_ranking_service = await get_intelligent_hybrid_service()
+                    print("  - Intelligent Hybrid Ranking: Enabled")
+                except Exception as e:
+                    print(f"  - Intelligent Hybrid Ranking: Failed ({e})")
+                    self.hybrid_ranking_service = None
+                
                 print(f"Service upgraded successfully!")
                 print(f"  - Documents: {self.stats['total_documents']} (was 150)")
                 print(f"  - Model: sentence-transformers (was TF-IDF)")
@@ -80,7 +92,9 @@ class RetrievalService:
     async def search(self, query: str, top_k: int = 10, 
                     min_similarity: float = 0.0,
                     doc_types: Optional[List[str]] = None,
-                    include_metadata: bool = True) -> Dict[str, Any]:
+                    include_metadata: bool = True,
+                    enable_intelligent_ranking: bool = True,
+                    enable_enhanced_scoring: bool = True) -> Dict[str, Any]:
         """执行语义检索 - 向后兼容API"""
         
         if not self.is_initialized:
@@ -126,24 +140,68 @@ class RetrievalService:
             results = []
             for idx in top_indices:
                 metadata = self.metadata[idx]
-                similarity = float(similarities[idx])
+                raw_similarity = float(similarities[idx])
                 
+                # 基础结果构建
                 result = {
                     'id': metadata['id'],
                     'type': metadata['type'], 
                     'title': metadata['title'],
-                    'score': similarity,
+                    'score': raw_similarity,  # 将在增强评分后更新
                     'content': metadata.get('content_preview', '')[:500],
-                    'similarity': similarity
+                    'similarity': raw_similarity,
+                    'raw_similarity': raw_similarity  # 保留原始分数用于对比
                 }
                 
                 if include_metadata:
                     result['metadata'] = {
                         'source': metadata.get('source', 'unknown'),
-                        'version': '0.3.0_semantic'
+                        'version': '0.4.0_enhanced_scoring'
                     }
                 
                 results.append(result)
+            
+            # 新增：应用增强评分系统
+            if enable_enhanced_scoring:
+                try:
+                    from .enhanced_scoring_service import get_enhanced_scoring_service
+                    scoring_service = get_enhanced_scoring_service()
+                    
+                    # 对每个结果应用增强评分
+                    for result in results:
+                        enhanced_result = scoring_service.compute_enhanced_final_score(
+                            query, result, result['raw_similarity']
+                        )
+                        
+                        # 更新分数
+                        result['score'] = enhanced_result['final_score']
+                        result['similarity'] = enhanced_result['final_score']
+                        result['scoring_details'] = enhanced_result
+                    
+                    # 根据新分数重新排序
+                    results.sort(key=lambda x: x['score'], reverse=True)
+                    
+                    print(f"Enhanced scoring applied: score range {min(r['score'] for r in results):.4f}-{max(r['score'] for r in results):.4f}")
+                    
+                except Exception as e:
+                    print(f"Warning: Enhanced scoring failed - {e}")
+                    # 继续使用原始分数
+            
+            # 新增：应用智能混合排序增强
+            if enable_intelligent_ranking and self.hybrid_ranking_service:
+                try:
+                    # 1. 先进行查询扩展
+                    expansion_info = await self.hybrid_ranking_service.expand_user_query(query)
+                    
+                    # 2. 应用多信号融合排序
+                    results = await self.hybrid_ranking_service.enhance_search_results(
+                        query, results, expansion_info
+                    )
+                    
+                    print(f"Intelligent ranking applied: {len(results)} results enhanced")
+                    
+                except Exception as e:
+                    print(f"Warning: Intelligent ranking failed - {e}")
             
             # 更新搜索统计
             search_time = time.time() - search_start
@@ -158,7 +216,9 @@ class RetrievalService:
                 'results': results, 
                 'total': len(results),
                 'search_time': search_time,
-                'message': f'Found {len(results)} results with semantic search'
+                'message': f'Found {len(results)} results with {"enhanced+hybrid" if enable_enhanced_scoring and enable_intelligent_ranking and self.hybrid_ranking_service else "enhanced" if enable_enhanced_scoring else "semantic"} search',
+                'intelligent_ranking_enabled': enable_intelligent_ranking and self.hybrid_ranking_service is not None,
+                'service_version': self.stats['service_version']
             }
             
         except Exception as e:
