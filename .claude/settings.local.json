@@ -1,8 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(conda activate:*)",
+      "Bash(C:UserslenovoMiniconda3envslegal-aipython.exe --version)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" app.py)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" test_content_loading.py)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" test_api_response.py)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" final_test.py)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

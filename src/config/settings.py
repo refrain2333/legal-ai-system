@@ -4,8 +4,9 @@
 
 import os
 from typing import List, Optional
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator, ConfigDict
 from pydantic_settings import BaseSettings
+from pathlib import Path
 
 
 class Settings(BaseSettings):
@@ -56,23 +57,70 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 60
     
-    @validator('CORS_ORIGINS', pre=True)
+    @field_validator('CORS_ORIGINS', mode='before')
+    @classmethod
     def assemble_cors_origins(cls, v):
         if isinstance(v, str):
-            return [i.strip() for i in v.split(",")]
-        return v
+            # 处理逗号分隔的字符串
+            return [i.strip() for i in v.split(",") if i.strip()]
+        elif isinstance(v, list):
+            return v
+        return ["http://localhost:5005", "http://127.0.0.1:5005"]  # 默认值
     
-    @validator('DEBUG', pre=True)
+    @field_validator('DEBUG', mode='before')
+    @classmethod
     def parse_debug(cls, v):
         if isinstance(v, str):
             return v.lower() in ('true', '1', 'yes', 'on')
         return v
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = 'utf-8'
-        case_sensitive = True
+    model_config = ConfigDict(
+        case_sensitive=True,
+        extra='allow'
+    )
 
 
 # 创建全局配置实例
-settings = Settings()
+def _load_settings() -> "Settings":
+    """加载配置，优先使用.env文件"""
+    from dotenv import load_dotenv
+    import os
+    
+    env_path = Path(".env")
+    
+    if env_path.exists():
+        print(f"Loading configuration from: {env_path.absolute()}")
+        try:
+            # 手动加载.env文件到环境变量
+            load_dotenv(env_path, encoding='utf-8')
+            
+            # 特殊处理CORS_ORIGINS字段
+            cors_origins = os.getenv('CORS_ORIGINS', '')
+            if cors_origins:
+                # 删除环境变量，避免Pydantic解析错误
+                os.environ.pop('CORS_ORIGINS', None)
+            
+            # 创建Settings实例
+            settings_instance = Settings()
+            
+            # 手动设置CORS_ORIGINS
+            if cors_origins:
+                settings_instance.CORS_ORIGINS = [url.strip() for url in cors_origins.split(',') if url.strip()]
+            
+            print(f"Configuration loaded successfully:")
+            print(f"  - APP_NAME: {settings_instance.APP_NAME}")
+            print(f"  - DEBUG: {settings_instance.DEBUG}")
+            print(f"  - PORT: {settings_instance.PORT}")
+            print(f"  - CORS_ORIGINS: {settings_instance.CORS_ORIGINS}")
+            
+            return settings_instance
+            
+        except Exception as e:
+            print(f"Warning: Failed to load .env file ({e})")
+            print("Falling back to default settings...")
+            return Settings()
+    else:
+        print("Warning: .env file not found, using default settings")
+        return Settings()
+
+settings = _load_settings()

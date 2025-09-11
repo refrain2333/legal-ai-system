@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
 """
 法智导航系统简化启动脚本 - 无Emoji版本
 Simple startup script for Legal AI system
@@ -26,13 +25,22 @@ def main():
     print("="*60)
     
     try:
-        # 直接导入和创建app
         from src.api.app import create_app
         from src.config.settings import settings
         
+        # 立即显示前端页面访问信息
+        frontend_path = Path(__file__).parent / "frontend" / "index.html"
+        if frontend_path.exists():
+            print("\n" + "="*60)
+            print("前端页面访问方式:")
+            print(f"1. 通过Web服务器: http://{settings.HOST}:{settings.PORT}/ui/")
+            print(f"2. 直接点击打开: {frontend_path.absolute()}")
+            print(f"   (可以直接双击文件或复制路径到浏览器)")
+            print("="*60)
+        
         app = create_app()
         
-        print(f"Starting server on http://{settings.HOST}:{settings.PORT}")
+        print(f"\nStarting server on http://{settings.HOST}:{settings.PORT}")
         print("Press Ctrl+C to stop the server")
         print("="*60)
         

@@ -2,288 +2,147 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 项目核心
+## 项目概述
 
-**法智导航** - 智能法律检索系统 v0.4.0 (增强评分版)
-**核心技术**：FastAPI + sentence-transformers + numpy + asyncio + jieba
-**架构模式**：分层异步架构 (API → Services → AI Models → Data)
-**数据规模**：3,519个法律文档，768维语义向量，~40ms平均响应
-**新增特性**：智能关键词提取 + 分数校准 + 多算法融合
+法智导航是一个基于AI技术的智能法律文档检索系统，采用语义向量化技术，支持自然语言查询，提供法律条文和案例的高精度匹配服务。
 
-## 关键开发命令
+## 核心架构
 
+### 分层架构
+```
+FastAPI应用层 (src/api/)
+├── app.py - FastAPI应用入口和配置
+├── routes.py - API路由定义
+└── models.py - Pydantic数据模型
+
+业务引擎层 (src/engines/)
+└── enhanced_search_engine.py - 增强的语义搜索引擎
+
+核心服务层 (src/core/)
+├── data_loader.py - 统一数据加载器
+└── legacy_compatibility.py - 向后兼容支持
+
+配置层 (src/config/)
+└── settings.py - 应用配置管理
+```
+
+### 数据架构
+- **原始数据**: data/laws/ (分类法律条文), data/cases/ (法律案例)
+- **处理数据**: data/processed/ (向量化数据)
+- **索引文件**: data/indices/ (向量索引和元数据)
+
+## 开发命令
+
+### 启动服务
 ```bash
-# 环境激活 (必需)
-conda activate legal-ai
+# 主启动脚本
+python app.py
 
-# 依赖安装
-pip install -r requirements_fixed.txt  # 推荐使用
-pip install pydantic-settings  # 如果单独缺失
-pip install jieba  # 中文分词和关键词提取 (v0.4.0新增)
-
-# 标准启动 (正确路径)
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" app.py  # http://127.0.0.1:5005
-# 或使用conda环境
-conda activate legal-ai && python app.py
-
-# 结构验证
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" tools/structure_check.py
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" tools/verify_system_structure.py
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" tools/verify_project_structure.py
-
-# 完整向量化 (重建索引)
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" tools/full_vectorization_executor.py
-
-# 动态法律词典生成 (v0.4.0新增)
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" tools/generate_dynamic_legal_dictionary.py
-
-# 测试
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" tests/test_core_functionality.py  # 核心功能测试
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" -m pytest tests/  # 完整测试套件
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" -m pytest tests/unit/  # 单元测试
-"C:\Users\lenovo\Miniconda3\envs\legal-ai\python.exe" -m pytest tests/integration/  # 集成测试
-
-# 代码质量检查
-pylint src/  # 代码质量分析
-black src/  # 代码格式化
-isort src/  # import排序
+# 开发模式启动
+python src/main.py
 ```
 
-## AI模型架构
+### 测试命令
+```bash
+# 运行所有测试
+pytest
 
-### 语义检索流水线 (已实现)
-1. **文本向量化**: sentence-transformers/shibing624/text2vec-base-chinese
-2. **向量存储**: numpy arrays (3519, 768) + pickle序列化
-3. **相似度计算**: dot product similarity (已归一化)
-4. **结果排序**: numpy argsort，支持type/similarity过滤
+# 运行特定测试
+pytest tests/conftest.py
 
-### 增强评分系统 (v0.4.0新增)
-1. **分数校准**: 三段式映射，解决分数过高问题 (0.6-0.8 → 0.1-0.9)
-2. **智能关键词提取**: TF-IDF + TextRank + KeyBERT + 动态法律词典
-3. **多算法融合**: 语义(70%) + 关键词(20%) + 类型相关性(10%)
-4. **动态权重调整**: semantic_focused/keyword_focused/balanced 三种模式
-
-### 关键模型配置
-```python
-# src/config/settings.py
-MODEL_NAME = "shibing624/text2vec-base-chinese"
-EMBEDDING_DIM = 768  # 固定维度
-MAX_SEQUENCE_LENGTH = 512
-DEFAULT_TOP_K = 10
+# 异步测试
+pytest-asyncio
 ```
 
-### 核心数据结构
-```python
-# 索引数据格式 (complete_semantic_index.pkl)
-{
-    'vectors': np.ndarray(3519, 768),  # 语义向量矩阵
-    'metadata': List[Dict]  # 文档元数据
-}
+### 代码质量
+```bash
+# 代码格式化
+black src/ tests/
 
-# 文档元数据结构
-{
-    'id': 'law_0001',
-    'type': 'law',  # 'law' | 'case'
-    'title': str,
-    'content_preview': str,
-    'source': str
-}
+# 代码检查
+pylint src/
+
+# 导入排序
+isort src/ tests/
 ```
-
-## 代码架构 (标准化后)
-
-### 核心模块职责
-- `src/models/semantic_embedding.py`: sentence-transformers语义向量化
-- `src/services/retrieval_service.py`: 检索服务单例，向后兼容API
-- `src/services/enhanced_scoring_service.py`: 增强评分服务 (v0.4.0新增)
-- `src/services/smart_keyword_extractor.py`: 智能关键词提取器 (v0.4.0新增)
-- `src/api/search_routes.py`: 7个RESTful端点
-- `src/data/full_dataset_processor.py`: 3,519文档处理流水线
-
-### 关键导入模式
-```python
-# 正确的相对导入 (已修复)
-from ..models.semantic_embedding import SemanticTextEmbedding
-from ..services.retrieval_service import get_retrieval_service
-from ..services.enhanced_scoring_service import get_enhanced_scoring_service  # v0.4.0新增
-from ..services.smart_keyword_extractor import get_smart_keyword_extractor  # v0.4.0新增
-
-# 避免sys.path.append() - 已全部清理
-```
-
-### API端点架构
-```python
-# 7个生产级端点
-POST /api/v1/search/          # 完整语义检索
-GET  /api/v1/search/quick     # 快速检索 
-GET  /api/v1/search/document/{id}  # 文档详情
-GET  /api/v1/search/statistics     # 系统统计
-GET  /api/v1/search/health         # 健康检查
-POST /api/v1/search/batch          # 批量检索
-POST /api/v1/search/rebuild        # 索引重建
-```
-
-## 启动和部署
-
-### 标准启动流程
-```python
-# app.py - 唯一启动脚本
-def main():
-    # 路径设置
-    project_root = Path(__file__).parent
-    sys.path.insert(0, str(project_root))
-    
-    # 应用创建
-    from src.api.app import create_app
-    app = create_app()
-    
-    # 服务器启动
-    uvicorn.run(app, host="127.0.0.1", port=5005, reload=False)
-```
-
-### 性能特征
-- **首次启动**: ~15秒 (模型加载)
-- **内存使用**: ~2GB (合理范围)
-- **查询性能**: 47ms平均响应
-- **相似度质量**: 0.6-0.8 (vs 原0.1-0.2)
-
-## 开发约定
-
-### 代码风格
-- **异步优先**: 所有IO使用async/await + ThreadPoolExecutor
-- **类型安全**: 完整type hints + Pydantic
-- **相对导入**: from ..module import (已标准化)
-- **单例模式**: get_retrieval_service()全局实例
-
-### 文件组织规则
-- **启动脚本**: 仅`app.py` (其他已清理)
-- **工具脚本**: 统一放置`tools/`目录
-- **测试文件**: 统一`tests/`目录 (不在src/tests/)
-- **临时文件**: `temp_YYYY-MM-DD_*` 命名规范
 
 ### 依赖管理
 ```bash
-# requirements_fixed.txt (生产依赖)
-sentence-transformers>=2.2.2  # 语义模型核心
-pydantic-settings>=2.0.0      # 配置管理 (必需)
-numpy>=1.21.0                 # 向量计算
-fastapi>=0.100.0              # API框架
-uvicorn[standard]>=0.18.0     # ASGI服务器
-torch>=1.13.0                 # 深度学习框架
-transformers>=4.21.0          # Transformer模型
+# 安装依赖
+pip install -r requirements.txt
 
-# 开发工具依赖
-pytest>=7.1.0                 # 测试框架
-pytest-asyncio>=0.19.0        # 异步测试
-pylint>=2.15.0               # 代码质量
-black>=22.8.0                # 代码格式化
-isort>=5.10.0                # import排序
+# 创建conda环境
+conda activate legal-ai
 ```
 
-## 数据和索引
+## 技术栈要点
 
-### 数据位置
-```
-data/
-├── raw/                      # 原始CSV文件
-│   ├── 法律条文.csv         # 2,729个法条
-│   └── 案例.csv             # 790个案例
-├── processed/               # 处理后数据
-│   ├── full_dataset.pkl    # 结构化数据 1.9MB
-│   └── dynamic_legal_dictionary.pkl  # 动态法律词典 (v0.4.0新增)
-└── indices/                # 向量索引
-    └── complete_semantic_index.pkl  # 语义索引 11.2MB
-```
+### AI/ML 组件
+- **向量化模型**: sentence-transformers (shibing624/text2vec-base-chinese)
+- **向量检索**: cosine similarity + numpy
+- **维度**: 768维语义向量
+- **数据处理**: pandas + faiss-cpu
 
-### 索引重建
-```bash
-# 完整重建流程 (3-5分钟)
-python tools/full_vectorization_executor.py
-# 输出: 处理3,519文档 -> 11.2MB索引
+### Web 框架
+- **FastAPI**: 异步API框架
+- **Uvicorn**: ASGI服务器
+- **CORS**: 跨域中间件配置
+- **静态文件**: 前端页面服务
 
-# 动态法律词典重建 (v0.4.0新增)
-python tools/generate_dynamic_legal_dictionary.py
-# 输出: 从3,519文档提取127个专业法律词汇
-```
+### 配置管理
+- **环境配置**: .env文件 + pydantic-settings
+- **默认端口**: 5005
+- **调试模式**: settings.DEBUG控制
 
-## 测试和验证
+## 项目特定规则
 
-### 测试架构
-```bash
-# 测试结构
-tests/
-├── conftest.py              # pytest配置和fixtures
-├── fixtures/                # 测试数据fixtures
-├── unit/                    # 单元测试
-├── integration/             # 集成测试
-└── test_core_functionality.py  # 核心功能测试套件
+### 数据处理
+1. 所有文本处理必须支持UTF-8编码
+2. 向量数据延迟加载以节省内存
+3. 内容数据按需加载(include_content参数)
 
-# 运行测试
-python tests/test_core_functionality.py  # 快速核心测试
-pytest tests/unit/                       # 单元测试
-pytest tests/integration/               # 集成测试
-pytest tests/ -v                        # 详细输出全部测试
-pytest tests/ --asyncio-mode=auto       # 异步测试模式
-```
+### API设计
+1. 所有搜索接口返回SearchResponse格式
+2. 支持articles和cases两种数据类型
+3. 相似度阈值过滤低质量结果
 
-### 验证工具
-```bash
-# 结构检查 (建议每次开发前运行)
-python tools/structure_check.py           # 验证标准化结构
-python tools/verify_system_structure.py   # 导入+功能测试
-python tools/verify_project_structure.py  # 项目结构验证
+### 路径约定
+- 项目根目录自动加入Python路径
+- 相对路径基于项目根目录
+- 配置文件优先级: .env > 默认设置
 
-# 工具脚本说明
-tools/
-├── structure_check.py                     # 项目结构标准化检查
-├── verify_system_structure.py            # 系统结构和导入验证
-├── verify_project_structure.py           # 项目整体结构验证
-├── full_vectorization_executor.py        # 完整向量化重建工具
-└── generate_dynamic_legal_dictionary.py  # 动态法律词典生成器 (v0.4.0新增)
-```
+### 性能要求
+- 平均检索响应时间: <50ms
+- 支持3000+文档检索
+- 内存使用控制在2GB以内
 
-## 常见问题解决
+## 重要文件
 
-### 启动问题
-```bash
-# ImportError: attempted relative import
-python app.py  # ✅ 正确 (标准启动脚本)
-python src/main.py  # ❌ 错误 (相对导入失败)
+### 核心入口文件
+- `app.py` - 主启动脚本(简化版)
+- `src/api/app.py` - FastAPI应用定义
+- `src/engines/enhanced_search_engine.py` - 搜索引擎核心
 
-# ModuleNotFoundError: pydantic_settings  
-pip install pydantic-settings  # ✅ 解决方案
-```
+### 配置文件  
+- `src/config/settings.py` - 应用配置类
+- `requirements.txt` - Python依赖
+- `pytest.ini` - 测试配置
 
-### 性能问题
-```python
-# 首次启动慢 (~15秒): 正常现象，模型加载
-# 后续查询快 (~40ms): 模型已缓存 + 增强评分优化
-# 内存使用高 (~2GB): 3,519文档向量 + 模型权重
-# 关键词匹配0分: 需要先运行动态词典生成工具 (v0.4.0)
-```
+### 数据相关
+- `src/core/data_loader.py` - 数据加载器
+- `tests/conftest.py` - 测试fixtures
 
-## 架构升级记录
+## 开发注意事项
 
-### v0.4.0 (增强评分版) - 2025-01-27
-- ✅ **分数校准系统**: 解决分数过高问题，0.6-0.8 → 0.1-0.9区间重分布
-- ✅ **智能关键词提取**: TF-IDF + TextRank + KeyBERT多算法融合
-- ✅ **动态法律词典**: 从3,519文档自动提取127个专业词汇
-- ✅ **多信号评分**: 语义+关键词+类型相关性融合，动态权重调整
-- ✅ **噪声检测**: 无关查询分数从0.8→0.1，显著提升准确性
-- ✅ **向后兼容**: 可选启用`enable_enhanced_scoring=True`
-- ✅ **缓存优化**: 关键词提取结果缓存，提升响应速度
+1. **编码问题**: Windows环境需设置PYTHONIOENCODING=utf-8
+2. **异步模式**: 所有IO操作使用async/await模式
+3. **错误处理**: API层统一异常处理和HTTP状态码
+4. **日志管理**: 使用loguru进行结构化日志记录
+5. **测试覆盖**: 所有新功能需编写对应pytest测试
 
-### v0.3.1 (语义检索版)
-- ✅ 语义检索: TF-IDF → sentence-transformers
-- ✅ 数据规模: 150 → 3,519文档 (+2,346%)  
-- ✅ 检索质量: 0.1-0.2 → 0.6-0.8相似度 (+400%)
-- ✅ 项目结构: 标准化，清理9个重复文件
-- ✅ 向后兼容: 100%保持原有API
+## 前端集成
 
-### 关键技术决策
-- **模型选择**: shibing624/text2vec-base-chinese (中文优化)
-- **存储格式**: pickle (性能) vs JSON (可读性)
-- **异步架构**: asyncio + ThreadPoolExecutor (CPU密集计算)
-- **单例服务**: 内存共享，避免重复加载
-- **关键词算法**: jieba分词 + TF-IDF/TextRank双重提取 (v0.4.0)
-- **评分策略**: 校准+融合+动态权重，解决分数虚高 (v0.4.0)
+- 前端文件位置: `frontend/`
+- Web访问: http://localhost:5005/ui/
+- API文档: http://localhost:5005/docs
+- 健康检查: http://localhost:5005/health
