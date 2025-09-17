@@ -1,155 +1,258 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-简化的API路由 - 只提供基本搜索功能
+增强的API路由 - 包含启动状态监控
+遵循分层架构原则，仅调用服务层
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from .models import SearchRequest, SearchResponse, StatusResponse, SearchResult
-from ..engines.enhanced_search_engine import get_enhanced_search_engine as get_search_engine
+from ..services.search_service import SearchService
+from ..infrastructure.repositories import get_legal_document_repository
+from ..infrastructure.startup import get_startup_manager
 
 # 创建路由器
 router = APIRouter()
 
+def get_search_service() -> SearchService:
+    """依赖注入：获取搜索服务实例"""
+    repository = get_legal_document_repository()
+    return SearchService(repository)
+
 @router.post("/search", response_model=SearchResponse)
-async def search(request: SearchRequest):
-    """搜索接口"""
+async def search(request: SearchRequest, search_service: SearchService = Depends(get_search_service)):
+    """搜索接口 - 轻量化实现"""
     try:
-        engine = get_search_engine()
-        raw_results = engine.search(request.query, request.top_k, include_content=True)
+        # 检查系统是否准备就绪
+        startup_manager = get_startup_manager()
+        if not startup_manager.is_ready():
+            raise HTTPException(
+                status_code=503,
+                detail={
+                    "error": "系统正在加载中，请稍后再试",
+                    "loading_info": startup_manager.get_summary()
+                }
+            )
         
-        # 获取数据加载器以便在API层直接加载内容
-        from ..core.data_loader import get_data_loader
-        loader = get_data_loader()
+        # 调用服务层执行业务逻辑
+        service_result = await search_service.search_documents(
+            query_text=request.query,
+            max_results=request.top_k
+        )
         
-        # 转换为响应格式并强制加载完整内容
-        results = []
-        for item in raw_results:
-            # 先尝试获取完整内容
-            full_content = ''
-            
-            if item.get('type') == 'cases':
-                # 尝试多种ID格式来获取案例内容
-                case_id = item.get('case_id') or item.get('id', '')
-                full_content = loader.get_case_content(case_id)
-                
-                # 如果失败，尝试去掉重复前缀
-                if not full_content and case_id.startswith('case_case_'):
-                    alt_case_id = case_id.replace('case_case_', 'case_')
-                    full_content = loader.get_case_content(alt_case_id)
-                
-                # 获取案例的详细元数据
-                case_details = {}
-                
-                # 尝试从原始数据获取完整的详细信息
-                loader._load_original_data_type('cases')
-                if 'cases' in loader.original_data:
-                    for case in loader.original_data['cases']:
-                        case_actual_id = getattr(case, 'case_id', None)
-                        if loader._ids_match(case_actual_id, case_id):
-                            # 直接从case对象获取信息（不在meta子对象中）
-                            if hasattr(case, 'criminals'):
-                                case_details['criminals'] = case.criminals
-                            if hasattr(case, 'accusations'):
-                                case_details['accusations'] = case.accusations
-                            if hasattr(case, 'relevant_articles'):
-                                case_details['relevant_articles'] = case.relevant_articles
-                            
-                            # 从sentence_info字典获取刑期信息
-                            if hasattr(case, 'sentence_info') and case.sentence_info:
-                                sentence_info = case.sentence_info
-                                case_details['punish_of_money'] = sentence_info.get('fine_amount')
-                                case_details['imprisonment_months'] = sentence_info.get('imprisonment_months')
-                                case_details['death_penalty'] = sentence_info.get('death_penalty')
-                                case_details['life_imprisonment'] = sentence_info.get('life_imprisonment')
-                            
-                            break
-                    
-            elif item.get('type') == 'articles':
-                article_id = item.get('id', '')
-                full_content = loader.get_article_content(article_id)
-                
-                # 如果法条内容加载失败，尝试其他方法
-                if not full_content:
-                    # 尝试直接从原始数据加载，使用不同的字段
-                    if article_id:
-                        # 尝试加载原始法条数据
-                        loader._load_original_data_type('articles')
-                        if 'articles' in loader.original_data:
-                            for article in loader.original_data['articles']:
-                                # 尝试不同的ID匹配和字段
-                                article_actual_id = getattr(article, 'id', None) or getattr(article, 'article_id', None)
-                                if (article_actual_id == article_id or 
-                                    str(getattr(article, 'article_number', '')) == article_id.replace('article_', '')):
-                                    # 尝试不同的内容字段
-                                    for field in ['content', 'text', 'article_content', 'law_content']:
-                                        if hasattr(article, field):
-                                            content = getattr(article, field)
-                                            if content:
-                                                full_content = content
-                                                break
-                                    if full_content:
-                                        break
-            
-            # 确保内容字段有有意义的值
-            content = full_content or item.get('content', '') or item.get('content_preview', '') or '内容加载中...'
-            
-            # 构建结果对象
-            result_data = {
-                'id': item.get('id', ''),
-                'title': item.get('title', ''),
-                'content': content,
-                'similarity': item.get('similarity', 0.0),
-                'type': item.get('type', '')
-            }
-            
-            # 添加类型特定的字段
-            if item.get('type') == 'cases':
-                result_data.update({
-                    'case_id': item.get('case_id'),
-                    'criminals': case_details.get('criminals'),
-                    'accusations': case_details.get('accusations'),
-                    'relevant_articles': case_details.get('relevant_articles'),
-                    'punish_of_money': case_details.get('punish_of_money'),
-                    'death_penalty': case_details.get('death_penalty'),
-                    'life_imprisonment': case_details.get('life_imprisonment'),
-                    'imprisonment_months': case_details.get('imprisonment_months')
-                })
-            elif item.get('type') == 'articles':
-                result_data.update({
-                    'article_number': item.get('article_number'),
-                    'chapter': item.get('chapter')
-                })
-            
-            result = SearchResult(**result_data)
-            results.append(result)
+        # 检查服务层返回的结果
+        if not service_result.get('success', False):
+            raise HTTPException(
+                status_code=400, 
+                detail=service_result.get('error', '搜索失败')
+            )
+        
+        # 转换为API响应格式
+        api_results = []
+        for item in service_result.get('results', []):
+            # 创建SearchResult对象，确保所有字段都有值
+            result = SearchResult(
+                id=item.get('id', ''),
+                title=item.get('title', ''),
+                content=item.get('content', ''),
+                similarity=item.get('similarity', 0.0),
+                type=item.get('type', ''),
+                # 案例特有字段
+                case_id=item.get('case_id'),
+                criminals=item.get('criminals'),
+                accusations=item.get('accusations'),
+                relevant_articles=item.get('relevant_articles'),
+                punish_of_money=item.get('punish_of_money'),
+                death_penalty=item.get('death_penalty'),
+                life_imprisonment=item.get('life_imprisonment'),
+                imprisonment_months=item.get('imprisonment_months'),
+                # 法条特有字段
+                article_number=item.get('article_number'),
+                chapter=item.get('chapter')
+            )
+            api_results.append(result)
         
         return SearchResponse(
             success=True,
-            results=results,
-            total=len(results),
+            results=api_results,
+            total=len(api_results),
             query=request.query
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"搜索服务错误: {str(e)}")
 
 @router.get("/status", response_model=StatusResponse)
-async def get_status():
-    """获取系统状态"""
+async def get_status(search_service: SearchService = Depends(get_search_service)):
+    """获取系统状态 - 增强版包含启动信息"""
     try:
-        engine = get_search_engine()
-        stats = engine.get_stats()
+        # 获取启动状态
+        startup_manager = get_startup_manager()
+        startup_summary = startup_manager.get_summary()
+        
+        # 调用服务层获取搜索系统状态信息
+        search_status = search_service.get_system_status()
         
         return StatusResponse(
-            status="ok",
-            ready=stats.get('ready', False),
-            total_documents=stats.get('total_documents', 0)
+            status=search_status.get('status', 'unknown'),
+            ready=startup_manager.is_ready() and search_status.get('ready', False),
+            total_documents=search_status.get('total_documents', 0),
+            startup_info=startup_summary
         )
         
     except Exception as e:
+        # 降级处理：返回错误状态而不抛出异常
         return StatusResponse(
             status="error",
             ready=False,
-            total_documents=0
+            total_documents=0,
+            startup_info={
+                "is_loading": False,
+                "overall_progress": 0.0,
+                "error": str(e)
+            }
         )
+
+# 新增：启动状态专用API
+@router.get("/startup/status")
+async def get_startup_status():
+    """获取详细的启动状态信息"""
+    try:
+        startup_manager = get_startup_manager()
+        current_status = startup_manager.get_current_status()
+        
+        # 构建详细的状态响应
+        steps_info = []
+        for step_id, step in current_status.steps.items():
+            steps_info.append({
+                "id": step.id,
+                "name": step.name,
+                "description": step.description,
+                "status": step.status.value,
+                "progress": step.progress,
+                "duration": step.duration,
+                "error_message": step.error_message,
+                "details": step.details
+            })
+        
+        return {
+            "success": True,
+            "system_status": {
+                "is_loading": current_status.is_loading,
+                "overall_progress": current_status.overall_progress,
+                "current_step": current_status.current_step,
+                "total_duration": current_status.total_duration,
+                "completed_steps": current_status.completed_steps,
+                "success_steps": current_status.success_steps,
+                "failed_steps": current_status.failed_steps,
+                "is_ready": startup_manager.is_ready()
+            },
+            "steps": steps_info,
+            "summary": startup_manager.get_summary()
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": f"获取启动状态失败: {str(e)}",
+            "system_status": {
+                "is_loading": False,
+                "overall_progress": 0.0,
+                "is_ready": False
+            }
+        }
+
+@router.post("/startup/reload")
+async def force_reload():
+    """强制重新加载系统"""
+    try:
+        startup_manager = get_startup_manager()
+        startup_manager.force_reload()
+        
+        return {
+            "success": True,
+            "message": "系统重新加载已启动",
+            "status": startup_manager.get_summary()
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"强制重新加载失败: {str(e)}"
+        )
+
+@router.get("/startup/steps")
+async def get_loading_steps():
+    """获取所有加载步骤的信息"""
+    try:
+        startup_manager = get_startup_manager()
+        current_status = startup_manager.get_current_status()
+        
+        steps = []
+        for step_id, step in current_status.steps.items():
+            steps.append({
+                "id": step.id,
+                "name": step.name,
+                "description": step.description,
+                "status": step.status.value,
+                "progress": step.progress,
+                "start_time": step.start_time.isoformat() if step.start_time else None,
+                "end_time": step.end_time.isoformat() if step.end_time else None,
+                "duration": step.duration,
+                "error_message": step.error_message,
+                "details": step.details
+            })
+        
+        return {
+            "success": True,
+            "total_steps": len(steps),
+            "steps": steps
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"获取加载步骤失败: {str(e)}"
+        )
+
+@router.get("/document/{document_id}")
+async def get_document_by_id(document_id: str, search_service: SearchService = Depends(get_search_service)):
+    """根据ID获取单个文档"""
+    try:
+        # 检查系统是否准备就绪
+        startup_manager = get_startup_manager()
+        if not startup_manager.is_ready():
+            raise HTTPException(
+                status_code=503,
+                detail="系统正在加载中，请稍后再试"
+            )
+        
+        document = await search_service.get_document_by_id(document_id)
+        
+        if document is None:
+            raise HTTPException(status_code=404, detail="文档未找到")
+        
+        return {
+            "success": True,
+            "document": document
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取文档失败: {str(e)}")
+
+@router.get("/health")
+async def health_check():
+    """增强的健康检查接口"""
+    startup_manager = get_startup_manager()
+    
+    return {
+        "status": "healthy" if startup_manager.is_ready() else "loading",
+        "message": "法智导航 API 运行正常",
+        "ready": startup_manager.is_ready(),
+        "loading": startup_manager.is_loading(),
+        "startup_summary": startup_manager.get_summary()
+    }

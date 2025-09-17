@@ -1,13 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(conda activate:*)",
-      "Bash(C:UserslenovoMiniconda3envslegal-aipython.exe --version)",
-      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" app.py)",
-      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" test_content_loading.py)",
-      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" test_api_response.py)",
-      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" final_test.py)",
-      "Bash(git add:*)"
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" test_complete_system.py)",
+      "Bash(del test_complete_system.py)",
+      "Bash(del test_articles_loading.py)",
+      "Bash(del debug_pickle_simple.py)",
+      "Bash(del test_robust_pickle.py)",
+      "Bash(del debug_unpickler.py)",
+      "Bash(del test_direct_pickle.py)",
+      "Bash(python:*)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" debug_content_loading.py)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" Z-测试/test-neirong.py)",
+      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" debug_article_loading.py)"
     ],
     "deny": [],
     "ask": []

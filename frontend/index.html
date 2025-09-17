@@ -3,166 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>法智导航 - 简化版</title>
-    <style>
-        body {
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .header h1 {
-            color: #2c3e50;
-            margin: 0;
-        }
-        
-        .search-box {
-            margin-bottom: 30px;
-            display: flex;
-            gap: 10px;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        
-        .search-button {
-            padding: 15px 30px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        
-        .search-button:hover {
-            background: #2980b9;
-        }
-        
-        .status {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            display: none;
-        }
-        
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            display: none;
-        }
-        
-        .results {
-            margin-top: 20px;
-        }
-        
-        .result-item {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            padding: 15px;
-            background: #fafafa;
-        }
-        
-        .result-title {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-        
-        .result-content {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-        
-        .result-meta {
-            font-size: 12px;
-            color: #888;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        /* 详细信息样式 */
-        .case-details, .article-details {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 4px;
-            border-left: 3px solid #007bff;
-        }
-        
-        .detail-item {
-            margin: 4px 0;
-            font-size: 13px;
-            color: #495057;
-        }
-        
-        .detail-item strong {
-            color: #212529;
-            margin-right: 5px;
-        }
-        
-        .detail-item.penalty {
-            background: #fff5f5;
-            color: #dc3545;
-            padding: 3px 6px;
-            border-radius: 3px;
-            border: 1px solid #f8d7da;
-            display: inline-block;
-            margin: 2px;
-        }
-        
-        .detail-item.penalty strong {
-            color: #dc3545;
-        }
-    </style>
+    <title>法智导航 - 增强版</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
+        <!-- 系统状态栏 -->
+        <div id="systemStatusBar" class="system-status-bar">
+            <div class="status-content">
+                <div class="status-text">
+                    <span id="statusIcon" class="status-icon">🔄</span>
+                    <span id="statusText">系统启动中...</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span id="progressText" class="progress-text">0%</span>
+                </div>
+            </div>
+            <button id="toggleDetails" class="toggle-details">详情</button>
+        </div>
+
+        <!-- 详细加载状态面板 -->
+        <div id="loadingDetails" class="loading-details hidden">
+            <div class="details-header">
+                <h3>系统加载状态</h3>
+                <button id="reloadSystem" class="reload-btn">重新加载</button>
+            </div>
+            <div id="stepsList" class="steps-list"></div>
+            <div class="loading-summary">
+                <div class="summary-item">
+                    <span>总进度:</span>
+                    <span id="overallProgress">0%</span>
+                </div>
+                <div class="summary-item">
+                    <span>当前步骤:</span>
+                    <span id="currentStep">-</span>
+                </div>
+                <div class="summary-item">
+                    <span>已用时间:</span>
+                    <span id="totalDuration">-</span>
+                </div>
+            </div>
+        </div>
+        
         <div class="header">
-            <h1>法智导航 - 简化版</h1>
+            <h1>法智导航 - 增强版</h1>
             <p>基于语义分析的法律文档检索系统</p>
         </div>
         
         <div class="search-box">
             <input type="text" id="searchInput" class="search-input" placeholder="输入法律问题或关键词..." />
-            <button onclick="performSearch()" class="search-button">搜索</button>
+            <button id="searchButton" class="search-button" disabled>搜索</button>
         </div>
         
         <div id="status" class="status"></div>
@@ -174,146 +67,6 @@
         <div id="results" class="results"></div>
     </div>
 
-    <script>
-        // API基础URL配置
-        const API_BASE_URL = window.location.protocol === 'file:' 
-            ? 'http://127.0.0.1:5005'  // 直接打开文件时
-            : '';  // 通过Web服务器访问时
-        
-        function apiUrl(path) {
-            return API_BASE_URL + path;
-        }
-        
-        // 搜索功能
-        async function performSearch() {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) {
-                alert('请输入搜索关键词');
-                return;
-            }
-            
-            // 显示加载状态
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('results').innerHTML = '';
-            document.getElementById('status').style.display = 'none';
-            
-            try {
-                const response = await fetch(apiUrl('/api/search'), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        query: query,
-                        top_k: 10
-                    })
-                });
-                
-                const data = await response.json();
-                document.getElementById('loading').style.display = 'none';
-                
-                if (data.success && data.results) {
-                    displayResults(data.results);
-                    showStatus(`找到 ${data.total} 个相关结果`, 'success');
-                } else {
-                    showStatus('搜索失败', 'error');
-                }
-                
-            } catch (error) {
-                document.getElementById('loading').style.display = 'none';
-                showStatus('连接服务器失败，请检查后端服务是否启动', 'error');
-            }
-        }
-        
-        // 显示搜索结果
-        function displayResults(results) {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '';
-            
-            if (results.length === 0) {
-                resultsDiv.innerHTML = '<p style="text-align: center; color: #666;">未找到相关结果</p>';
-                return;
-            }
-            
-            results.forEach((result, index) => {
-                const resultDiv = document.createElement('div');
-                resultDiv.className = 'result-item';
-                
-                let detailsHtml = '';
-                
-                if (result.type === 'cases') {
-                    // 案例详细信息
-                    detailsHtml = `
-                        <div class="case-details">
-                            ${result.case_id ? `<div class="detail-item"><strong>案例编号:</strong> ${result.case_id}</div>` : ''}
-                            ${result.criminals && result.criminals.length > 0 ? `<div class="detail-item"><strong>被告人:</strong> ${result.criminals.join(', ')}</div>` : ''}
-                            ${result.accusations && result.accusations.length > 0 ? `<div class="detail-item"><strong>罪名:</strong> ${result.accusations.join(', ')}</div>` : ''}
-                            ${result.relevant_articles && result.relevant_articles.length > 0 ? `<div class="detail-item"><strong>相关法条:</strong> 第${result.relevant_articles.join('条, 第')}条</div>` : ''}
-                            ${result.punish_of_money ? `<div class="detail-item"><strong>罚款金额:</strong> ${result.punish_of_money}元</div>` : ''}
-                            ${result.imprisonment_months ? `<div class="detail-item"><strong>有期徒刑:</strong> ${result.imprisonment_months}个月</div>` : ''}
-                            ${result.death_penalty ? `<div class="detail-item penalty"><strong>死刑</strong></div>` : ''}
-                            ${result.life_imprisonment ? `<div class="detail-item penalty"><strong>无期徒刑</strong></div>` : ''}
-                        </div>
-                    `;
-                } else if (result.type === 'articles') {
-                    // 法条详细信息
-                    detailsHtml = `
-                        <div class="article-details">
-                            ${result.article_number ? `<div class="detail-item"><strong>条文编号:</strong> 第${result.article_number}条</div>` : ''}
-                            ${result.chapter ? `<div class="detail-item"><strong>章节:</strong> ${result.chapter}</div>` : ''}
-                        </div>
-                    `;
-                }
-                
-                resultDiv.innerHTML = `
-                    <div class="result-title">${result.title || '无标题'}</div>
-                    <div class="result-content">${result.content || '无内容'}</div>
-                    ${detailsHtml}
-                    <div class="result-meta">
-                        <span>类型: ${result.type === 'articles' ? '法条' : '案例'}</span>
-                        <span>相似度: ${(result.similarity * 100).toFixed(1)}%</span>
-                    </div>
-                `;
-                
-                resultsDiv.appendChild(resultDiv);
-            });
-        }
-        
-        // 显示状态信息
-        function showStatus(message, type) {
-            const statusDiv = document.getElementById('status');
-            statusDiv.textContent = message;
-            statusDiv.className = `status ${type}`;
-            statusDiv.style.display = 'block';
-        }
-        
-        // 系统状态检查
-        async function checkStatus() {
-            try {
-                const response = await fetch(apiUrl('/api/status'));
-                const data = await response.json();
-                
-                if (data.status === 'ok' && data.ready) {
-                    showStatus(`系统就绪 - 已加载 ${data.total_documents} 个法律文档`, 'success');
-                } else {
-                    showStatus('系统正在初始化，请稍候...', 'error');
-                }
-            } catch (error) {
-                showStatus('无法连接到服务器，请检查后端服务是否启动', 'error');
-            }
-        }
-        
-        // 支持回车键搜索
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-        
-        // 页面加载时检查系统状态
-        window.onload = function() {
-            checkStatus();
-        };
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
