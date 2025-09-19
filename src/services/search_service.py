@@ -81,6 +81,199 @@ class SearchService:
             return response
             
         except Exception as e:
+            logger.error(f"Document search error: {str(e)}")
+            return self._create_error_response(f"搜索过程中发生错误: {str(e)}")
+    
+    async def search_documents_mixed(self, query_text: str, articles_count: int = 5, 
+                                   cases_count: int = 5) -> Dict[str, Any]:
+        """
+        混合搜索 - 分别返回法条和案例
+        
+        Args:
+            query_text: 查询文本
+            articles_count: 法条数量
+            cases_count: 案例数量
+            
+        Returns:
+            包含分类结果的字典
+        """
+        start_time = time.time()
+        
+        try:
+            # 1. 创建搜索查询
+            search_query = SearchQuery(
+                query_text=query_text,
+                max_results=articles_count + cases_count,
+                document_types=None
+            )
+            
+            # 2. 验证查询
+            if not search_query.is_valid():
+                return self._create_error_response("无效的查询文本")
+            
+            # 3. 执行混合搜索
+            mixed_results = await self.repository.search_documents_mixed(
+                search_query, articles_count, cases_count
+            )
+            
+            # 4. 转换结果格式
+            api_articles = []
+            for result in mixed_results.get('articles', []):
+                api_result = self._convert_domain_result_to_api(result)
+                api_articles.append(api_result)
+            
+            api_cases = []
+            for result in mixed_results.get('cases', []):
+                api_result = self._convert_domain_result_to_api(result)
+                api_cases.append(api_result)
+            
+            # 5. 构建响应
+            end_time = time.time()
+            return {
+                'success': True,
+                'articles': api_articles,
+                'cases': api_cases,
+                'total_articles': len(api_articles),
+                'total_cases': len(api_cases),
+                'query': query_text,
+                'search_context': {
+                    'duration_ms': round((end_time - start_time) * 1000, 2),
+                    'articles_requested': articles_count,
+                    'cases_requested': cases_count
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Mixed search error: {str(e)}")
+            return self._create_error_response(f"混合搜索过程中发生错误: {str(e)}")
+    
+    async def search_documents_for_crime_consistency(self, query_text: str, cases_count: int = None) -> Dict[str, Any]:
+        """
+        罪名一致性专用搜索 - 3个法条 + 10个案例
+        
+        Args:
+            query_text: 搜索查询文本
+            cases_count: 案例数量，默认固定10个
+            
+        Returns:
+            搜索结果字典
+        """
+        # 罪名一致性评估的固定配置
+        articles_count = 3  # 固定返回3个法条
+        if cases_count is None:
+            cases_count = 10  # 固定返回10个案例
+        
+        logger.info(f"罪名一致性搜索: {query_text} - 请求{articles_count}条法条, {cases_count}个案例")
+        
+        start_time = time.time()
+        
+        try:
+            # 1. 创建搜索查询
+            search_query = SearchQuery(
+                query_text=query_text,
+                max_results=articles_count + cases_count,
+                document_types=None
+            )
+            
+            # 2. 验证查询
+            if not search_query.is_valid():
+                return self._create_error_response("无效的查询文本")
+            
+            # 3. 执行混合搜索
+            mixed_results = await self.repository.search_documents_mixed(
+                search_query, articles_count, cases_count
+            )
+            
+            # 4. 转换结果格式
+            api_articles = []
+            for result in mixed_results.get('articles', []):
+                api_result = self._convert_domain_result_to_api(result)
+                api_articles.append(api_result)
+            
+            api_cases = []
+            for result in mixed_results.get('cases', []):
+                api_result = self._convert_domain_result_to_api(result)
+                api_cases.append(api_result)
+            
+            # 5. 构建响应
+            end_time = time.time()
+            return {
+                'success': True,
+                'articles': api_articles,
+                'cases': api_cases,
+                'total_articles': len(api_articles),
+                'total_cases': len(api_cases),
+                'query': query_text,
+                'search_type': 'crime_consistency',
+                'search_context': {
+                    'duration_ms': round((end_time - start_time) * 1000, 2),
+                    'articles_requested': articles_count,
+                    'cases_requested': cases_count,
+                    'actual_cases_returned': len(api_cases)
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Crime consistency search error: {str(e)}")
+            return self._create_error_response(f"罪名一致性搜索过程中发生错误: {str(e)}")
+    
+    async def load_more_cases(self, query_text: str, offset: int = 0, 
+                            limit: int = 5) -> Dict[str, Any]:
+        """
+        分页加载更多案例
+        
+        Args:
+            query_text: 查询文本
+            offset: 偏移量
+            limit: 返回数量
+            
+        Returns:
+            分页案例结果
+        """
+        start_time = time.time()
+        
+        try:
+            # 1. 创建分页查询
+            search_query = SearchQuery(
+                query_text=query_text,
+                max_results=limit,
+                document_types=['cases']
+            )
+            
+            if not search_query.is_valid():
+                return self._create_error_response("无效的查询文本")
+            
+            # 2. 执行分页搜索
+            paginated_results = await self.repository.load_more_cases(
+                search_query, offset, limit
+            )
+            
+            # 3. 转换结果格式
+            api_cases = []
+            for result in paginated_results.get('cases', []):
+                api_result = self._convert_domain_result_to_api(result)
+                api_cases.append(api_result)
+            
+            # 4. 构建响应
+            end_time = time.time()
+            return {
+                'success': True,
+                'cases': api_cases,
+                'offset': offset,
+                'limit': limit,
+                'returned_count': len(api_cases),
+                'has_more': paginated_results.get('has_more', False),
+                'query': query_text,
+                'search_context': {
+                    'duration_ms': round((end_time - start_time) * 1000, 2)
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Load more cases error: {str(e)}")
+            return self._create_error_response(f"加载更多案例时发生错误: {str(e)}")
+            
+        except Exception as e:
             logger.error(f"搜索服务错误: {str(e)}", exc_info=True)
             return self._create_error_response(f"搜索失败: {str(e)}")
     

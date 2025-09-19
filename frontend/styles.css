@@ -443,3 +443,136 @@ body {
 .detail-item.penalty strong {
     color: #dc3545;
 }
+
+/* 混合搜索结果样式 */
+.mixed-results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.results-section {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.section-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    margin: 0;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-header h3::before {
+    content: "📖";
+    font-size: 16px;
+}
+
+.results-section:last-child .section-header {
+    background: linear-gradient(135deg, #26a69a 0%, #00695c 100%);
+}
+
+.results-section:last-child .section-header h3::before {
+    content: "⚖️";
+}
+
+.section-content {
+    padding: 0;
+}
+
+.section-content .result-item {
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.section-content .result-item:last-child {
+    border-bottom: none;
+}
+
+.section-content .result-item:last-child:not(.load-more-btn) {
+    border-bottom: none;
+}
+
+/* 加载更多按钮样式 */
+.load-more-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #26a69a 0%, #00695c 100%);
+    color: white;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.load-more-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #00897b 0%, #004d40 100%);
+    transform: translateY(-1px);
+}
+
+.load-more-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.load-more-btn .load-more-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.load-more-btn .load-more-loading::after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 响应式设计优化 */
+@media (max-width: 768px) {
+    .mixed-results-container {
+        gap: 20px;
+    }
+    
+    .section-header {
+        padding: 12px 15px;
+    }
+    
+    .section-header h3 {
+        font-size: 16px;
+    }
+    
+    .load-more-btn {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+}

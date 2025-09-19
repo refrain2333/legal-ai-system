@@ -249,11 +249,22 @@ class DataLoader:
         return stats
     
     def load_model(self, force_load: bool = True) -> Dict[str, Any]:
-        """加载语义模型 - 启动时立即加载"""
+        """加载语义模型 - 支持懒加载优化启动时间"""
         if self.model_loaded:
             return {
                 'status': 'already_loaded', 
                 'model_name': getattr(self.config, 'MODEL_NAME', 'shibing624/text2vec-base-chinese')
+            }
+        
+        # 懒加载模式：不立即加载模型，在首次使用时再加载
+        if not force_load:
+            model_name = getattr(self.config, 'MODEL_NAME', 'shibing624/text2vec-base-chinese')
+            logger.info(f"模型懒加载模式：{model_name} (将在首次搜索时加载)")
+            return {
+                'status': 'lazy_load',
+                'model_name': model_name,
+                'loading_time': 0.0,
+                'note': '模型将在首次搜索时加载'
             }
         
         start_time = time.time()
@@ -617,10 +628,14 @@ class DataLoader:
         return self.vectors_data[data_type]['metadata']
     
     def encode_query(self, query: str) -> Optional[np.ndarray]:
-        """编码查询文本"""
+        """编码查询文本 - 支持懒加载自动初始化"""
+        # 懒加载：如果模型未加载，首次使用时自动加载
         if not self.model_loaded:
-            logger.error("Model not loaded! This should not happen in eager loading mode.")
-            return None
+            logger.info("模型未加载，正在进行懒加载...")
+            load_result = self.load_model(force_load=True)
+            if load_result.get('status') not in ['success', 'already_loaded']:
+                logger.error(f"懒加载模型失败: {load_result.get('error', '未知错误')}")
+                return None
         
         try:
             return self.model.encode([query])

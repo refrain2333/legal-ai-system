@@ -72,6 +72,36 @@ class ILegalDocumentRepository(ABC):
             是否可用
         """
         pass
+    
+    @abstractmethod
+    async def search_documents_mixed(self, query: SearchQuery, articles_count: int, cases_count: int) -> Dict[str, Any]:
+        """
+        混合搜索 - 分别返回法条和案例
+        
+        Args:
+            query: 搜索查询对象
+            articles_count: 法条数量
+            cases_count: 案例数量
+            
+        Returns:
+            包含分类结果的字典
+        """
+        pass
+    
+    @abstractmethod
+    async def load_more_cases(self, query: SearchQuery, offset: int, limit: int) -> Dict[str, Any]:
+        """
+        分页加载更多案例
+        
+        Args:
+            query: 搜索查询对象
+            offset: 偏移量
+            limit: 返回数量
+            
+        Returns:
+            分页案例结果
+        """
+        pass
 
 
 class IArticleRepository(ABC):

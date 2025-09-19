@@ -123,6 +123,149 @@ class LegalDocumentRepository(ILegalDocumentRepository):
         except:
             return False
     
+    async def search_documents_mixed(self, query: SearchQuery, articles_count: int, cases_count: int) -> Dict[str, Any]:
+        """混合搜索 - 分别返回法条和案例"""
+        start_time = time.time()
+        
+        try:
+            # 确保数据已加载
+            if not self._initialized:
+                await self._initialize()
+            
+            # 调用搜索引擎的混合搜索
+            search_result = self.search_engine.search(
+                query=query.query_text,
+                top_k=articles_count + cases_count,
+                include_content=True
+            )
+            
+            # 检查是否成功
+            if not search_result.get('success', True):
+                return {
+                    'success': False,
+                    'error': search_result.get('error', '搜索失败'),
+                    'articles': [],
+                    'cases': []
+                }
+            
+            # 转换结果为领域对象
+            domain_articles = []
+            domain_cases = []
+            
+            # 处理法条结果
+            for raw_result in search_result.get('articles', []):
+                if raw_result['similarity'] < query.similarity_threshold:
+                    continue
+                    
+                document = await self._convert_raw_to_domain_document(raw_result)
+                if document:
+                    search_result_obj = SearchResult(
+                        document=document,
+                        similarity_score=raw_result['similarity'],
+                        rank=len(domain_articles) + 1
+                    )
+                    domain_articles.append(search_result_obj)
+            
+            # 处理案例结果
+            for raw_result in search_result.get('cases', []):
+                if raw_result['similarity'] < query.similarity_threshold:
+                    continue
+                    
+                document = await self._convert_raw_to_domain_document(raw_result)
+                if document:
+                    search_result_obj = SearchResult(
+                        document=document,
+                        similarity_score=raw_result['similarity'],
+                        rank=len(domain_cases) + 1
+                    )
+                    domain_cases.append(search_result_obj)
+            
+            end_time = time.time()
+            return {
+                'success': True,
+                'articles': domain_articles,
+                'cases': domain_cases,
+                'total_articles': len(domain_articles),
+                'total_cases': len(domain_cases),
+                'query': query.query_text,
+                'search_context': {
+                    'duration_ms': round((end_time - start_time) * 1000, 2),
+                    'articles_requested': articles_count,
+                    'cases_requested': cases_count
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"混合搜索失败: {str(e)}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'articles': [],
+                'cases': []
+            }
+    
+    async def load_more_cases(self, query: SearchQuery, offset: int, limit: int) -> Dict[str, Any]:
+        """分页加载更多案例"""
+        start_time = time.time()
+        
+        try:
+            # 确保数据已加载
+            if not self._initialized:
+                await self._initialize()
+            
+            # 调用搜索引擎的分页案例搜索
+            search_result = self.search_engine.load_more_cases(
+                query=query.query_text,
+                offset=offset,
+                limit=limit,
+                include_content=True
+            )
+            
+            # 检查是否成功
+            if not search_result.get('success', True):
+                return {
+                    'success': False,
+                    'error': search_result.get('error', '加载失败'),
+                    'cases': []
+                }
+            
+            # 转换结果为领域对象
+            domain_cases = []
+            for raw_result in search_result.get('cases', []):
+                if raw_result['similarity'] < query.similarity_threshold:
+                    continue
+                    
+                document = await self._convert_raw_to_domain_document(raw_result)
+                if document:
+                    search_result_obj = SearchResult(
+                        document=document,
+                        similarity_score=raw_result['similarity'],
+                        rank=offset + len(domain_cases) + 1
+                    )
+                    domain_cases.append(search_result_obj)
+            
+            end_time = time.time()
+            return {
+                'success': True,
+                'cases': domain_cases,
+                'offset': offset,
+                'limit': limit,
+                'returned_count': len(domain_cases),
+                'has_more': search_result.get('has_more', False),
+                'query': query.query_text,
+                'search_context': {
+                    'duration_ms': round((end_time - start_time) * 1000, 2)
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"分页加载案例失败: {str(e)}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e),
+                'cases': []
+            }
+    
     async def _initialize(self):
         """初始化存储库"""
         if self._initialized:
@@ -151,7 +294,8 @@ class LegalDocumentRepository(ILegalDocumentRepository):
             # 获取完整内容
             content = await self._get_full_content(raw_result)
             
-            if doc_type == 'articles':
+            # 支持新旧格式的类型判断
+            if doc_type in ['articles', 'article']:
                 return Article(
                     id=doc_id,
                     title=title,
@@ -161,7 +305,7 @@ class LegalDocumentRepository(ILegalDocumentRepository):
                     chapter=raw_result.get('chapter'),
                     law_name=raw_result.get('law_name', '中华人民共和国刑法')
                 )
-            elif doc_type == 'cases':
+            elif doc_type in ['cases', 'case']:
                 return Case(
                     id=doc_id,
                     title=title,
@@ -194,9 +338,10 @@ class LegalDocumentRepository(ILegalDocumentRepository):
         doc_id = raw_result.get('id', '')
         
         try:
-            if doc_type == 'articles':
+            # 支持新旧格式的类型判断
+            if doc_type in ['articles', 'article']:
                 content = self.data_loader.get_article_content(doc_id)
-            elif doc_type == 'cases':
+            elif doc_type in ['cases', 'case']:
                 case_id = raw_result.get('case_id') or doc_id
                 content = self.data_loader.get_case_content(case_id)
                 

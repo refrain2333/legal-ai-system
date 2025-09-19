@@ -172,8 +172,6 @@ test_output/
 test_results/
 
 # 根目录临时测试文件 - 不应该存在，应该放在tests/目录
-test_*.py
-debug_*.py
 
 # 文档生成
 docs/_build/

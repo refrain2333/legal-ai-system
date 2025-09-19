@@ -21,7 +21,7 @@ def get_search_service() -> SearchService:
 
 @router.post("/search", response_model=SearchResponse)
 async def search(request: SearchRequest, search_service: SearchService = Depends(get_search_service)):
-    """搜索接口 - 轻量化实现"""
+    """搜索接口 - 新格式：5条法条 + 5条案例"""
     try:
         # 检查系统是否准备就绪
         startup_manager = get_startup_manager()
@@ -35,9 +35,10 @@ async def search(request: SearchRequest, search_service: SearchService = Depends
             )
         
         # 调用服务层执行业务逻辑
-        service_result = await search_service.search_documents(
+        service_result = await search_service.search_documents_mixed(
             query_text=request.query,
-            max_results=request.top_k
+            articles_count=5,
+            cases_count=5
         )
         
         # 检查服务层返回的结果
@@ -47,16 +48,34 @@ async def search(request: SearchRequest, search_service: SearchService = Depends
                 detail=service_result.get('error', '搜索失败')
             )
         
-        # 转换为API响应格式
+        # 转换为API响应格式 - 先法条后案例
         api_results = []
-        for item in service_result.get('results', []):
-            # 创建SearchResult对象，确保所有字段都有值
+        
+        # 添加法条结果
+        for item in service_result.get('articles', []):
             result = SearchResult(
                 id=item.get('id', ''),
                 title=item.get('title', ''),
                 content=item.get('content', ''),
                 similarity=item.get('similarity', 0.0),
-                type=item.get('type', ''),
+                type=item.get('type', 'article'),
+                # 法条特有字段
+                article_number=item.get('article_number'),
+                chapter=item.get('chapter'),
+                # 案例字段设为None
+                case_id=None, criminals=None, accusations=None, relevant_articles=None,
+                punish_of_money=None, death_penalty=None, life_imprisonment=None, imprisonment_months=None
+            )
+            api_results.append(result)
+        
+        # 添加案例结果
+        for item in service_result.get('cases', []):
+            result = SearchResult(
+                id=item.get('id', ''),
+                title=item.get('title', ''),
+                content=item.get('content', ''),
+                similarity=item.get('similarity', 0.0),
+                type=item.get('type', 'case'),
                 # 案例特有字段
                 case_id=item.get('case_id'),
                 criminals=item.get('criminals'),
@@ -66,9 +85,8 @@ async def search(request: SearchRequest, search_service: SearchService = Depends
                 death_penalty=item.get('death_penalty'),
                 life_imprisonment=item.get('life_imprisonment'),
                 imprisonment_months=item.get('imprisonment_months'),
-                # 法条特有字段
-                article_number=item.get('article_number'),
-                chapter=item.get('chapter')
+                # 法条字段设为None
+                article_number=None, chapter=None
             )
             api_results.append(result)
         
@@ -83,6 +101,64 @@ async def search(request: SearchRequest, search_service: SearchService = Depends
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"搜索服务错误: {str(e)}")
+
+@router.get("/search/cases/more")
+async def load_more_cases(query: str, offset: int = 0, limit: int = 5, 
+                         search_service: SearchService = Depends(get_search_service)):
+    """分页加载更多案例"""
+    try:
+        # 检查系统是否准备就绪
+        startup_manager = get_startup_manager()
+        if not startup_manager.is_ready():
+            raise HTTPException(
+                status_code=503,
+                detail="系统正在加载中，请稍后再试"
+            )
+        
+        # 调用服务层加载更多案例
+        service_result = await search_service.load_more_cases(query, offset, limit)
+        
+        if not service_result.get('success', False):
+            raise HTTPException(
+                status_code=400,
+                detail=service_result.get('error', '加载失败')
+            )
+        
+        # 转换为API响应格式
+        api_cases = []
+        for item in service_result.get('cases', []):
+            result = SearchResult(
+                id=item.get('id', ''),
+                title=item.get('title', ''),
+                content=item.get('content', ''),
+                similarity=item.get('similarity', 0.0),
+                type=item.get('type', 'case'),
+                case_id=item.get('case_id'),
+                criminals=item.get('criminals'),
+                accusations=item.get('accusations'),
+                relevant_articles=item.get('relevant_articles'),
+                punish_of_money=item.get('punish_of_money'),
+                death_penalty=item.get('death_penalty'),
+                life_imprisonment=item.get('life_imprisonment'),
+                imprisonment_months=item.get('imprisonment_months'),
+                article_number=None, chapter=None
+            )
+            api_cases.append(result)
+        
+        return {
+            "success": True,
+            "cases": api_cases,
+            "offset": service_result.get('offset', offset),
+            "limit": service_result.get('limit', limit),
+            "returned_count": service_result.get('returned_count', len(api_cases)),
+            "has_more": service_result.get('has_more', False),
+            "query": query
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"加载更多案例错误: {str(e)}")
 
 @router.get("/status", response_model=StatusResponse)
 async def get_status(search_service: SearchService = Depends(get_search_service)):

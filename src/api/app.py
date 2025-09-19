@@ -43,20 +43,8 @@ def create_app() -> FastAPI:
         logger.info("Starting background data loading...")
         
         try:
-            # 获取启动管理器并开始后台加载
+            # 获取启动管理器（会自动开始后台加载）
             startup_manager = get_startup_manager()
-            
-            # 添加状态观察者（可选，用于日志记录）
-            def log_status_update(status):
-                if status.current_step:
-                    step = status.steps.get(status.current_step)
-                    if step:
-                        logger.info(f"Loading: {step.name} - {step.progress:.1f}%")
-            
-            startup_manager.add_observer(log_status_update)
-            
-            # 启动后台加载
-            startup_manager.start_background_loading()
             
             logger.info("Background loading started successfully")
             logger.info("System will be ready shortly...")

@@ -1,17 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" test_complete_system.py)",
-      "Bash(del test_complete_system.py)",
-      "Bash(del test_articles_loading.py)",
-      "Bash(del debug_pickle_simple.py)",
-      "Bash(del test_robust_pickle.py)",
-      "Bash(del debug_unpickler.py)",
-      "Bash(del test_direct_pickle.py)",
+      "WebSearch",
+      "Bash(mkdir:*)",
+      "Bash(dir:*)",
+      "Bash(cp:*)",
+      "Bash(python tests/debug/test_evaluation_fix.py)",
+      "Bash(python tests/debug/test_simple_fix.py)",
+      "Bash(conda activate:*)",
       "Bash(python:*)",
-      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" debug_content_loading.py)",
-      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" Z-测试/test-neirong.py)",
-      "Bash(\"C:\\Users\\lenovo\\Miniconda3\\envs\\legal-ai\\python.exe\" debug_article_loading.py)"
+      "Bash(C:UserslenovoMiniconda3envslegal-aipython.exe evaluation/run_evaluation.py --quick)"
     ],
     "deny": [],
     "ask": []

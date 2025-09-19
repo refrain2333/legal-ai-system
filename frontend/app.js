@@ -21,9 +21,17 @@ class LegalNavigator {
         this.overallProgress = document.getElementById('overallProgress');
         this.currentStep = document.getElementById('currentStep');
         this.totalDuration = document.getElementById('totalDuration');
+        this.documentsLoaded = document.getElementById('documentsLoaded');
+        this.documentsStatItem = document.getElementById('documentsStatItem');
         
         this.isSystemReady = false;
         this.statusUpdateInterval = null;
+        
+        // 分页加载状态
+        this.currentQuery = '';
+        this.casesOffset = 0;
+        this.hasMoreCases = false;
+        this.isLoadingMoreCases = false;
         
         // API基础URL配置
         this.API_BASE_URL = window.location.protocol === 'file:' 
@@ -117,7 +125,7 @@ class LegalNavigator {
     }
     
     updateDetailedStatus(data) {
-        const { system_status, steps } = data;
+        const { system_status, steps, summary } = data;
         
         // 更新摘要信息
         this.overallProgress.textContent = `${Math.round(system_status.overall_progress)}%`;
@@ -125,6 +133,14 @@ class LegalNavigator {
             this.getStepDisplayName(system_status.current_step) : '-';
         this.totalDuration.textContent = system_status.total_duration ? 
             `${system_status.total_duration.toFixed(1)}s` : '-';
+        
+        // 显示文档统计（如果有数据）
+        if (summary && summary.documents_loaded && summary.documents_loaded.total > 0) {
+            this.documentsLoaded.textContent = summary.documents_loaded.breakdown;
+            this.documentsStatItem.style.display = 'flex';
+        } else {
+            this.documentsStatItem.style.display = 'none';
+        }
         
         // 更新步骤列表
         this.updateStepsList(steps);
@@ -248,6 +264,11 @@ class LegalNavigator {
             return;
         }
         
+        // 重置分页状态
+        this.currentQuery = query;
+        this.casesOffset = 5; // 从第6条案例开始分页
+        this.hasMoreCases = false;
+        
         this.showLoading(true);
         this.clearResults();
         
@@ -258,8 +279,7 @@ class LegalNavigator {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    query: query,
-                    top_k: 10
+                    query: query
                 })
             });
             
@@ -273,8 +293,8 @@ class LegalNavigator {
             const data = await response.json();
             
             if (data.success) {
-                this.displayResults(data.results, query);
-                this.showStatus(`找到 ${data.total} 条相关结果`, 'success');
+                this.displayMixedResults(data.results, query);
+                this.showStatus(`找到 ${data.total} 条相关结果（5条法条 + 5条案例）`, 'success');
             } else {
                 this.showStatus('搜索失败: ' + (data.detail || '未知错误'), 'error');
             }
@@ -283,6 +303,165 @@ class LegalNavigator {
             this.showStatus('搜索请求失败: ' + error.message, 'error');
         } finally {
             this.showLoading(false);
+        }
+    }
+    
+    displayMixedResults(results, query) {
+        this.resultsDiv.innerHTML = '';
+        
+        if (results.length === 0) {
+            this.resultsDiv.innerHTML = `
+                <div class="no-results">
+                    <p>未找到与 "${query}" 相关的结果</p>
+                    <p>建议：</p>
+                    <ul>
+                        <li>尝试使用不同的关键词</li>
+                        <li>使用更通用的法律术语</li>
+                        <li>检查拼写是否正确</li>
+                    </ul>
+                </div>
+            `;
+            return;
+        }
+        
+        // 分离法条和案例
+        const articles = results.filter(result => result.type === 'article');
+        const cases = results.filter(result => result.type === 'case');
+        
+        // 设置分页状态
+        this.hasMoreCases = cases.length >= 5; // 如果有5条案例，可能有更多
+        
+        // 创建结果容器
+        const resultsContainer = document.createElement('div');
+        resultsContainer.className = 'mixed-results-container';
+        
+        // 添加法条部分
+        if (articles.length > 0) {
+            const articlesSection = document.createElement('div');
+            articlesSection.className = 'results-section';
+            articlesSection.innerHTML = `
+                <div class="section-header">
+                    <h3>相关法律条文 (${articles.length})</h3>
+                </div>
+                <div class="section-content" id="articlesContent"></div>
+            `;
+            
+            const articlesContent = articlesSection.querySelector('#articlesContent');
+            articles.forEach(article => {
+                const articleElement = this.createResultElement(article);
+                articlesContent.appendChild(articleElement);
+            });
+            
+            resultsContainer.appendChild(articlesSection);
+        }
+        
+        // 添加案例部分
+        if (cases.length > 0) {
+            const casesSection = document.createElement('div');
+            casesSection.className = 'results-section';
+            casesSection.innerHTML = `
+                <div class="section-header">
+                    <h3>相关案例 (${cases.length}${this.hasMoreCases ? '+' : ''})</h3>
+                </div>
+                <div class="section-content" id="casesContent"></div>
+            `;
+            
+            const casesContent = casesSection.querySelector('#casesContent');
+            cases.forEach(caseResult => {
+                const caseElement = this.createResultElement(caseResult);
+                casesContent.appendChild(caseElement);
+            });
+            
+            // 添加"加载更多案例"按钮
+            if (this.hasMoreCases) {
+                const loadMoreBtn = document.createElement('button');
+                loadMoreBtn.className = 'load-more-btn';
+                loadMoreBtn.innerHTML = `
+                    <span class="load-more-text">加载更多案例</span>
+                    <span class="load-more-loading hidden">正在加载...</span>
+                `;
+                loadMoreBtn.addEventListener('click', () => this.loadMoreCases());
+                casesContent.appendChild(loadMoreBtn);
+            }
+            
+            resultsContainer.appendChild(casesSection);
+        }
+        
+        this.resultsDiv.appendChild(resultsContainer);
+    }
+    
+    async loadMoreCases() {
+        if (this.isLoadingMoreCases || !this.hasMoreCases) {
+            return;
+        }
+        
+        this.isLoadingMoreCases = true;
+        
+        // 更新按钮状态
+        const loadMoreBtn = document.querySelector('.load-more-btn');
+        const loadMoreText = loadMoreBtn.querySelector('.load-more-text');
+        const loadMoreLoading = loadMoreBtn.querySelector('.load-more-loading');
+        
+        loadMoreBtn.disabled = true;
+        loadMoreText.classList.add('hidden');
+        loadMoreLoading.classList.remove('hidden');
+        
+        try {
+            const response = await fetch(this.apiUrl(`/api/search/cases/more?query=${encodeURIComponent(this.currentQuery)}&offset=${this.casesOffset}&limit=5`));
+            const data = await response.json();
+            
+            if (data.success && data.cases.length > 0) {
+                // 获取案例内容容器
+                const casesContent = document.getElementById('casesContent');
+                
+                // 移除"加载更多"按钮
+                loadMoreBtn.remove();
+                
+                // 添加新的案例
+                data.cases.forEach(caseResult => {
+                    const caseElement = this.createResultElement(caseResult);
+                    casesContent.appendChild(caseElement);
+                });
+                
+                // 更新状态
+                this.casesOffset += data.returned_count;
+                this.hasMoreCases = data.has_more;
+                
+                // 如果还有更多案例，重新添加按钮
+                if (this.hasMoreCases) {
+                    const newLoadMoreBtn = document.createElement('button');
+                    newLoadMoreBtn.className = 'load-more-btn';
+                    newLoadMoreBtn.innerHTML = `
+                        <span class="load-more-text">加载更多案例</span>
+                        <span class="load-more-loading hidden">正在加载...</span>
+                    `;
+                    newLoadMoreBtn.addEventListener('click', () => this.loadMoreCases());
+                    casesContent.appendChild(newLoadMoreBtn);
+                }
+                
+                // 更新案例数量显示
+                const casesHeader = document.querySelector('.results-section:last-child .section-header h3');
+                const currentCasesCount = document.querySelectorAll('#casesContent .result-item').length;
+                casesHeader.textContent = `相关案例 (${currentCasesCount}${this.hasMoreCases ? '+' : ''})`;
+                
+                this.showStatus(`加载了 ${data.returned_count} 条新案例`, 'success');
+            } else {
+                this.hasMoreCases = false;
+                loadMoreBtn.remove();
+                this.showStatus('没有更多案例了', 'info');
+            }
+        } catch (error) {
+            console.error('Load more cases error:', error);
+            this.showStatus('加载更多案例失败: ' + error.message, 'error');
+        } finally {
+            this.isLoadingMoreCases = false;
+            
+            // 恢复按钮状态（如果还存在）
+            if (document.querySelector('.load-more-btn')) {
+                loadMoreBtn.disabled = false;
+                loadMoreText.classList.remove('hidden');
+                loadMoreLoading.classList.add('hidden');
+            }
         }
     }
     
