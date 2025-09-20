@@ -12,6 +12,12 @@ from pathlib import Path
 from typing import List, Dict, Any
 import time
 from sentence_transformers import SentenceTransformer
+# 导入自定义的Lawformer适配器
+try:
+    from src.infrastructure.storage.lawformer_embedder import LawformerEmbedder
+    LAWFORMER_AVAILABLE = True
+except ImportError:
+    LAWFORMER_AVAILABLE = False
 
 # 添加项目根目录
 project_root = Path(__file__).parent.parent.parent
@@ -20,7 +26,7 @@ sys.path.insert(0, str(project_root))
 class CriminalDataVectorizer:
     """刑事数据向量化器"""
     
-    def __init__(self, model_name: str = "shibing624/text2vec-base-chinese"):
+    def __init__(self, model_name: str = "thunlp/Lawformer"):
         """
         初始化向量化器
         
@@ -36,14 +42,29 @@ class CriminalDataVectorizer:
     
     def load_model(self):
         """加载预训练模型"""
-        print("加载text2vec-base-chinese模型...")
+        print(f"加载模型: {self.model_name}...")
         start_time = time.time()
         
-        self.model = SentenceTransformer(self.model_name)
+        # 根据模型名称选择加载方式
+        if 'lawformer' in self.model_name.lower() and LAWFORMER_AVAILABLE:
+            print("使用Lawformer适配器...")
+            self.model = LawformerEmbedder(model_name=self.model_name)
+        else:
+            print("使用SentenceTransformer...")
+            self.model = SentenceTransformer(self.model_name)
         
         load_time = time.time() - start_time
         print(f"模型加载完成，耗时: {load_time:.2f}秒")
-        print(f"模型维度: {self.model.get_sentence_embedding_dimension()}")
+        
+        # 获取向量维度
+        if hasattr(self.model, 'get_sentence_embedding_dimension'):
+            if callable(self.model.get_sentence_embedding_dimension):
+                dim = self.model.get_sentence_embedding_dimension()
+            else:
+                dim = self.model.get_sentence_embedding_dimension
+        else:
+            dim = "Unknown"
+        print(f"模型维度: {dim}")
     
     def load_criminal_data(self):
         """加载刑事数据"""

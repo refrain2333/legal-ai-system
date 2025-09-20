@@ -35,12 +35,12 @@ class Settings(BaseSettings):
     LOG_RETENTION: str = "30 days"
     
     # ==================== AI模型配置 ====================
-    MODEL_NAME: str = "shibing624/text2vec-base-chinese"
-    MODEL_CACHE_DIR: str = "./.cache/sentence_transformers"
+    MODEL_NAME: str = "thunlp/Lawformer"  # 切换到Lawformer
+    MODEL_CACHE_DIR: str = "./.cache/transformers"  # 改为transformers缓存目录
     LOCAL_MODEL_PATH: Optional[str] = None  # 本地模型路径，如果存在则优先使用
     MODEL_OFFLINE_MODE: bool = True  # 优先使用离线模式
-    EMBEDDING_DIM: int = 768
-    MAX_SEQUENCE_LENGTH: int = 512
+    EMBEDDING_DIM: int = 768  # Lawformer也是768维
+    MAX_SEQUENCE_LENGTH: int = 4096  # Lawformer支持4096长度
     
     # ==================== 检索服务配置 ====================
     DEFAULT_TOP_K: int = 10

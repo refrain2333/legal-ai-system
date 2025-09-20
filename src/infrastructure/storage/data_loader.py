@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional, Union, Protocol
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from .lawformer_embedder import LawformerEmbedder
 from threading import Lock
 import logging
 from functools import wraps
@@ -77,7 +78,7 @@ class DataLoader:
         # 数据存储
         self.vectors_data: Dict[str, Any] = {}
         self.original_data: Dict[str, Any] = {}
-        self.model: Optional[SentenceTransformer] = None
+        self.model: Optional[Union[SentenceTransformer, LawformerEmbedder]] = None
         
         # 缓存控制 - 从配置读取
         self.content_cache: Dict[str, str] = {}
@@ -253,12 +254,12 @@ class DataLoader:
         if self.model_loaded:
             return {
                 'status': 'already_loaded', 
-                'model_name': getattr(self.config, 'MODEL_NAME', 'shibing624/text2vec-base-chinese')
+                'model_name': self.config.MODEL_NAME
             }
         
         # 懒加载模式：不立即加载模型，在首次使用时再加载
         if not force_load:
-            model_name = getattr(self.config, 'MODEL_NAME', 'shibing624/text2vec-base-chinese')
+            model_name = self.config.MODEL_NAME
             logger.info(f"模型懒加载模式：{model_name} (将在首次搜索时加载)")
             return {
                 'status': 'lazy_load',
@@ -268,7 +269,7 @@ class DataLoader:
             }
         
         start_time = time.time()
-        model_name = getattr(self.config, 'MODEL_NAME', 'shibing624/text2vec-base-chinese')
+        model_name = self.config.MODEL_NAME
         
         try:
             logger.info(f"Loading semantic model: {model_name}")
@@ -276,6 +277,7 @@ class DataLoader:
             # 设置缓存目录
             cache_folder = self.project_root / getattr(self.config, 'MODEL_CACHE_DIR', './.cache/sentence_transformers')
             cache_folder.mkdir(parents=True, exist_ok=True)
+            
             
             # 检查是否配置了本地模型路径
             local_model_path = getattr(self.config, 'LOCAL_MODEL_PATH', None)
@@ -307,12 +309,19 @@ class DataLoader:
                 os.environ['HF_DATASETS_OFFLINE'] = '1'
                 logger.info("Offline mode enabled")
             
-            # 尝试加载模型
+            # 尝试加载模型 - 根据模型类型选择加载方式
             try:
-                # 使用确定的模型路径加载
-                self.model = SentenceTransformer(model_to_load, cache_folder=str(cache_folder))
-                self.model_loaded = True
-                logger.info(f"Model loaded successfully: {model_to_load}")
+                # 检查是否是Lawformer模型
+                if 'lawformer' in model_name.lower() or 'thunlp/lawformer' in model_name.lower():
+                    logger.info("Loading Lawformer model using custom embedder...")
+                    self.model = LawformerEmbedder(model_name=model_to_load, cache_folder=str(cache_folder))
+                    self.model_loaded = True
+                    logger.info(f"Lawformer model loaded successfully: {model_to_load}")
+                else:
+                    # 使用传统的sentence-transformers加载
+                    self.model = SentenceTransformer(model_to_load, cache_folder=str(cache_folder))
+                    self.model_loaded = True
+                    logger.info(f"SentenceTransformer model loaded successfully: {model_to_load}")
                 
             except Exception as load_error:
                 logger.warning(f"Model loading failed with {model_to_load}: {load_error}")
@@ -324,10 +333,12 @@ class DataLoader:
                         os.environ.pop('HF_DATASETS_OFFLINE', None)
                         logger.info("Attempting online model download...")
                         
-                        self.model = SentenceTransformer(
-                            model_name,
-                            cache_folder=str(cache_folder)
-                        )
+                        # 同样根据模型类型选择加载方式
+                        if 'lawformer' in model_name.lower() or 'thunlp/lawformer' in model_name.lower():
+                            self.model = LawformerEmbedder(model_name=model_name, cache_folder=str(cache_folder))
+                        else:
+                            self.model = SentenceTransformer(model_name, cache_folder=str(cache_folder))
+                            
                         self.model_loaded = True
                         logger.info("Model loaded successfully in online mode")
                         
@@ -341,7 +352,7 @@ class DataLoader:
             
             stats = {
                 'status': 'success',
-                'model_name': getattr(self.config, 'MODEL_NAME', 'shibing624/text2vec-base-chinese'),
+                'model_name': self.config.MODEL_NAME,
                 'embedding_dim': getattr(self.config, 'EMBEDDING_DIM', 768),
                 'loading_time': loading_time
             }
