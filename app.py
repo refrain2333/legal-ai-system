@@ -5,11 +5,36 @@ Simple startup script for Legal AI system
 """
 
 import sys
-import os
+import asyncio
 import uvicorn
 from pathlib import Path
 
+# 解决pickle反序列化问题 - 创建兼容性类
+class SimpleCase:
+    """简化案例类 - 兼容性处理"""
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], dict):
+            for k, v in args[0].items():
+                setattr(self, k, v)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+class SimpleArticle:
+    """简化法条类 - 兼容性处理"""  
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], dict):
+            for k, v in args[0].items():
+                setattr(self, k, v)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+# 注册到当前模块，解决pickle反序列化问题
+import sys
+sys.modules[__name__].SimpleCase = SimpleCase
+sys.modules[__name__].SimpleArticle = SimpleArticle
+
 # 设置控制台编码
+import os
 if sys.platform.startswith('win'):
     os.environ["PYTHONIOENCODING"] = "utf-8"
 
@@ -25,6 +50,7 @@ def main():
     print("="*60)
     
     try:
+        # 导入必要的模块
         from src.api.app import create_app
         from src.config.settings import settings
         

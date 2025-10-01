@@ -14,6 +14,22 @@ import logging
 from ..config.settings import settings
 from .routes import router
 from ..infrastructure.startup import get_startup_manager
+from .error_handlers import (
+    legal_search_exception_handler,
+    system_not_ready_exception_handler,
+    llm_service_exception_handler,
+    knowledge_graph_exception_handler,
+    vector_search_exception_handler,
+    validation_exception_handler
+)
+from ..domains.exceptions import (
+    LegalSearchException,
+    SystemNotReadyException,
+    LLMServiceException,
+    KnowledgeGraphException,
+    VectorSearchException,
+    ValidationException
+)
 
 logger = logging.getLogger(__name__)
 
@@ -26,14 +42,22 @@ def create_app() -> FastAPI:
         description="增强的法律检索系统，支持启动状态监控"
     )
     
-    # CORS中间件
+    # CORS中间件 - 支持WebSocket
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
+        allow_origins=settings.CORS_ORIGINS + ["*"],  # WebSocket需要更宽松的CORS
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # 注册分层异常处理器
+    app.add_exception_handler(LegalSearchException, legal_search_exception_handler)
+    app.add_exception_handler(SystemNotReadyException, system_not_ready_exception_handler)
+    app.add_exception_handler(LLMServiceException, llm_service_exception_handler)
+    app.add_exception_handler(KnowledgeGraphException, knowledge_graph_exception_handler)
+    app.add_exception_handler(VectorSearchException, vector_search_exception_handler)
+    app.add_exception_handler(ValidationException, validation_exception_handler)
     
     # 启动事件处理器
     @app.on_event("startup")
@@ -93,7 +117,7 @@ def create_app() -> FastAPI:
             "startup_summary": startup_manager.get_summary()
         }
     
-    # 添加API路由
+    # 添加API路由（包括WebSocket）
     app.include_router(router, prefix="/api")
     
     # 静态文件服务 - 前端
@@ -102,6 +126,13 @@ def create_app() -> FastAPI:
         if frontend_path.exists():
             app.mount("/ui", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
             logger.info(f"Frontend mounted at /ui from {frontend_path}")
+
+            # 添加根路径重定向到前端首页
+            @app.get("/frontend")
+            async def redirect_to_frontend():
+                from fastapi.responses import RedirectResponse
+                return RedirectResponse(url="/ui/index.html")
+
     except Exception as e:
         logger.error(f"Failed to mount frontend: {e}")
     

@@ -1,0 +1,2274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>法智导航 - 搜索过程可视化调试 (模块化架构)</title>
+    
+    <!-- 核心样式文件 - 合并加载 -->
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/shared/stage-components.css">
+    <link rel="stylesheet" href="../assets/css/shared/animations.css">
+    <link rel="stylesheet" href="../assets/css/shared/enhanced-components.css">
+    <link rel="stylesheet" href="../assets/css/shared/enhanced-ui-fixes.css">
+    <link rel="stylesheet" href="../assets/css/pages/complete-flow.css">
+    <!-- 导航栏样式必须最后加载以确保优先级 -->
+    <link rel="stylesheet" href="../assets/css/shared/navigation.css">
+
+    <!-- 内联模块显示样式 -->
+    <style>
+        /* 主容器样式 */
+        .modules-inline-display {
+            margin: 40px 0;
+            padding: 0;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 头部样式 */
+        .inline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 12px 12px 0 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .inline-header h5 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .inline-header h5 i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            color: #3b82f6;
+        }
+
+        /* 按钮样式 */
+        .inline-controls .btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #3b82f6;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .inline-controls .btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        /* 内容容器 */
+        .modules-content-container {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        /* 内联模块项样式 */
+        .inline-module-item {
+            margin: 0;
+            border-bottom: 1px solid #e5e7eb;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .inline-module-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .inline-module-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .inline-module-header:hover {
+            background: #f8fafc;
+        }
+
+        .inline-module-header.expanded {
+            background: #f1f5f9;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .module-title-section {
+            flex: 1;
+        }
+
+        .module-title-section h6 {
+            margin: 0 0 8px 0;
+            color: #1e293b;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .module-title-section h6 i {
+            margin-right: 10px;
+            color: #3b82f6;
+        }
+
+        .module-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .module-badges .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .module-badges .badge.bg-success {
+            background: #dcfce7 !important;
+            color: #166534 !important;
+        }
+
+        .module-badges .badge.bg-danger {
+            background: #fef2f2 !important;
+            color: #991b1b !important;
+        }
+
+        .module-badges .badge.bg-info {
+            background: #dbeafe !important;
+            color: #1d4ed8 !important;
+        }
+
+        .module-badges .badge.bg-warning {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+        }
+
+        .module-toggle {
+            margin-left: 15px;
+        }
+
+        .module-toggle .toggle-icon {
+            color: #64748b;
+            transition: transform 0.3s ease;
+        }
+
+        .inline-module-header.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .inline-module-content {
+            display: none;
+            padding: 25px;
+            background: white;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+      
+
+        .module-content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        /* 内容区域标题 */
+        .content-section h7 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+            display: block;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .content-section h7 i {
+            margin-right: 8px;
+            color: #3b82f6;
+        }
+
+        /* 容器样式 */
+        .articles-container,
+        .cases-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* 文章和案例项样式 */
+        .article-item,
+        .case-item {
+            padding: 15px;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-item:hover,
+        .case-item:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .article-item::before,
+        .case-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        /* 标题样式 */
+        .article-title,
+        .case-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .article-title {
+            color: #007bff;
+        }
+
+        .case-title {
+            color: #28a745;
+        }
+
+        /* 相似度样式 */
+        .article-similarity,
+        .case-similarity {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 6px;
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        /* 判决样式 */
+        .case-sentence {
+            font-size: 0.8rem;
+            color: #dc3545;
+            margin-bottom: 6px;
+            font-weight: 500;
+            display: inline-block;
+            background: rgba(220, 53, 69, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* 内容样式 */
+        .article-content,
+        .case-content {
+            font-size: 0.9rem;
+            color: #495057;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        /* 更多项目样式 */
+        .more-items {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.85rem;
+            padding: 12px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 8px;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* 无内容样式 */
+        .no-content {
+            text-align: center;
+            color: #6c757d;
+            padding: 30px;
+            grid-column: 1 / -1;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .modules-inline-display {
+                margin: 20px 0;
+            }
+
+            .inline-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .inline-header h5 {
+                font-size: 1.1rem;
+            }
+
+            .module-content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .inline-module-content {
+                padding: 20px;
+            }
+
+            .module-badges {
+                justify-content: center;
+            }
+        }
+
+        /* 动画效果 */
+        .inline-module-content {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 加载动画 */
+        .modules-inline-display.loading .inline-module-item {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* 最终结果显示区域样式 */
+        .final-results-display {
+            margin: 40px 0 30px 0;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .final-results-header {
+            padding: 25px 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            backdrop-filter: blur(10px);
+        }
+
+        .final-results-header h5 {
+            margin: 0 0 10px 0;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .final-results-header h5 i {
+            margin-right: 12px;
+            font-size: 1.3rem;
+            color: #dbeafe;
+        }
+
+        .results-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .final-results-content {
+            padding: 30px;
+            background: white;
+        }
+
+        .results-tabs {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 25px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: #6c757d;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .count-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 5px;
+            min-width: 20px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .tab-btn:not(.active) .count-badge {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+        }
+
+        .loading-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .no-final-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+            font-size: 1.1rem;
+            background: rgba(108, 117, 125, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .results-panels {
+            position: relative;
+        }
+
+        /* 最终结果卡片样式 */
+        .final-results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .final-result-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .final-result-card:hover {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+            border-color: #3b82f6;
+        }
+
+        .final-result-card .card-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .final-result-card .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .final-result-card .card-title-section {
+            flex: 1;
+        }
+
+        .final-result-card .card-title {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .final-result-card .card-subtitle {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .final-result-card .card-score {
+            text-align: center;
+        }
+
+        .final-result-card .score-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 2px;
+        }
+
+        .final-result-card .score-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .final-result-card .card-body {
+            padding: 20px;
+        }
+
+        .final-result-card .article-content,
+        .final-result-card .case-fact {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .final-result-card .article-meta,
+        .final-result-card .case-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .final-result-card .meta-tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .final-result-card .meta-tag i {
+            margin-right: 4px;
+            color: #3b82f6;
+        }
+
+        .results-panel {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .results-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .articles-grid,
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* 最终结果卡片样式 */
+        .final-article-card,
+        .final-case-card {
+            background: white;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-article-card:hover,
+        .final-case-card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .final-article-card::before,
+        .final-case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .final-article-card::after {
+            content: '法条';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1rem;
+            opacity: 0.3;
+            color: #007bff;
+        }
+
+        .final-case-card::after {
+            content: '案例';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1rem;
+            opacity: 0.3;
+            color: #28a745;
+        }
+
+        .final-result-number {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .final-result-title {
+            margin: 15px 0 15px 45px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .final-article-card .final-result-title {
+            color: #007bff;
+        }
+
+        .final-case-card .final-result-title {
+            color: #28a745;
+        }
+
+        .final-result-meta {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .final-result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .final-result-content {
+            color: #495057;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .final-case-sentence {
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        /* 空状态样式 */
+        .final-empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .final-empty-state i {
+            font-size: 3rem;
+            color: #dee2e6;
+            margin-bottom: 15px;
+        }
+
+        .final-empty-state h6 {
+            margin: 0 0 8px 0;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .final-results-display {
+                margin: 20px 0;
+            }
+
+            .final-results-header {
+                padding: 20px;
+            }
+
+            .final-results-header h5 {
+                font-size: 1.3rem;
+            }
+
+            .final-results-content {
+                padding: 20px;
+            }
+
+            .results-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                padding: 10px 15px;
+            }
+
+            .articles-grid,
+            .cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .final-result-title {
+                margin-right: 40px;
+            }
+        }
+
+        /* 详情弹窗样式 */
+        .detail-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .detail-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .detail-modal-content {
+            position: relative;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            max-height: 80vh;
+            width: 90%;
+            overflow: hidden;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .detail-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+        }
+
+        .detail-modal-header h5 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .detail-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .detail-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .detail-modal-body {
+            padding: 25px;
+            max-height: 60vh;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .detail-content {
+            color: #374151;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-section-title i {
+            color: #3b82f6;
+        }
+
+        .detail-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-info-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .detail-info-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detail-info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .detail-content-text {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            white-space: pre-wrap;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .detail-metadata {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .detail-metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .detail-metadata-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .detail-metadata-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .detail-metadata-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        /* 可点击项目样式 */
+        .clickable-result {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        .clickable-result:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+        }
+
+        .clickable-result .result-title {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .clickable-result:hover .result-title {
+            color: #1d4ed8;
+        }
+
+        /* 模块内联详情样式美化 */
+        .inline-module-content {
+            background: linear-gradient(135deg, #fafbff 0%, #f0f4f8 100%);
+            border-radius: 0 0 12px 12px;
+        }
+
+        .module-content-grid {
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .content-section h7 {
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-section h7 i {
+            color: #3b82f6;
+            font-size: 1rem;
+        }
+
+        .articles-container,
+        .cases-container {
+            gap: 15px;
+        }
+
+        .article-item,
+        .case-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .article-item:hover,
+        .case-item:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .article-item::before,
+        .case-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+
+        .article-title,
+        .case-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .article-title {
+            color: #3b82f6;
+        }
+
+        .case-title {
+            color: #059669;
+        }
+
+        .article-similarity,
+        .case-similarity {
+            display: inline-block;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1d4ed8;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .case-similarity {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #047857;
+        }
+
+        .case-sentence {
+            display: inline-block;
+            background: linear-gradient(135deg, #fef2f2, #fecaca);
+            color: #dc2626;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-left: 8px;
+        }
+
+        .article-content,
+        .case-content {
+            font-size: 0.95rem;
+            color: #475569;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .more-items {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            padding: 15px;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border-radius: 8px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .no-content {
+            text-align: center;
+            color: #64748b;
+            padding: 40px;
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 12px;
+            font-size: 1rem;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .no-content i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #94a3b8;
+            display: block;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .detail-modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .detail-modal-header {
+                padding: 15px 20px;
+            }
+
+            .detail-modal-header h5 {
+                font-size: 1.1rem;
+            }
+
+            .detail-modal-body {
+                padding: 20px;
+                max-height: 70vh;
+            }
+
+            .detail-info-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        /* 视图模式控制样式 */
+        .view-mode-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .view-mode-controls label {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin: 0;
+        }
+
+        .view-mode-controls label:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .view-mode-controls input[type="radio"] {
+            margin-right: 6px;
+            accent-color: #3b82f6;
+        }
+
+        .view-mode-controls input[type="radio"]:checked + span {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .view-mode-controls label:has(input[type="radio"]:checked) {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #3b82f6;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.15);
+        }
+
+        /* 简单模式专用样式 */
+        .simple-mode .stage {
+            margin-bottom: 8px;
+        }
+
+        .simple-mode .stage-content {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .simple-mode .stage-name {
+            font-size: 1rem;
+            color: #1e293b;
+        }
+
+        .simple-mode .stage-result {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-top: 4px;
+        }
+
+        /* 模式显示控制类 */
+        .debug-mode-only {
+            display: block;
+        }
+
+        .simple-mode-only {
+            display: none;
+        }
+    </style>
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="../assets/css/index.css" as="style">
+    <link rel="preload" href="../assets/css/shared/stage-components.css" as="style">
+
+    <!-- 外部脚本 - 移到页面底部并使用defer -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏将在这里自动插入 -->
+
+    <!-- 页面加载指示器 -->
+    <div id="pageLoadingIndicator" class="page-loading-indicator">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">法智导航正在加载中...</div>
+            <div class="loading-progress">
+                <div class="progress-bar" id="loadingProgressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 统一头部 -->
+        <div class="header">
+            <h1>法智导航 - 搜索过程可视化调试</h1>
+            <h2>实时监控搜索管道的每个阶段，深度调试AI驱动的法律检索过程</h2>
+        </div>
+
+        <!-- WebSocket状态指示器 -->
+        <div id="websocketStatus" class="websocket-status websocket-disconnected">
+            <i id="websocket-icon" class="fas fa-times me-2"></i>
+            <span id="websocket-text">WebSocket 已断开</span>
+        </div>
+
+        <!-- 控制面板 -->
+        <div class="control-panel">
+            <div class="search-section">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchQuery"
+                           placeholder="请输入查询内容，例如：故意伤害罪判几年？"
+                           value="故意伤害致人轻伤怎么判？">
+                    <button class="btn btn-primary" id="searchBtn">
+                        <i id="search-btn-icon" class="fas fa-search me-2"></i>
+                        <span id="search-btn-text">开始调试搜索</span>
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">
+                        清空结果
+                    </button>
+                </div>
+            </div>
+            <div class="view-mode-controls">
+                <label>
+                    <input type="radio" name="viewMode" value="simple">
+                    <span>简单模式</span>
+                </label>
+                <label>
+                    <input type="radio" name="viewMode" value="debug" checked>
+                    <span>调试模式</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 性能监控面板 -->
+        <div id="performancePanel" class="search-pipeline">
+            <h5>性能监控</h5>
+            <div class="debug-timer-metrics">
+                <div class="timer-card total-time">
+                    <div class="timer-value" id="debugTotalTime">0ms</div>
+                    <div class="timer-label">总耗时</div>
+                    <div class="timer-progress">
+                        <div class="progress-bar" id="debugTotalProgress"></div>
+                    </div>
+                </div>
+                <div class="timer-card api-time">
+                    <div class="timer-value" id="debugApiTime">0</div>
+                    <div class="timer-label">完成阶段</div>
+                    <div class="timer-subtitle" id="debugApiPercent">0%</div>
+                </div>
+                <div class="timer-card server-time">
+                    <div class="timer-value" id="debugServerTime">0</div>
+                    <div class="timer-label">成功模块</div>
+                    <div class="timer-subtitle" id="debugServerPercent">0%</div>
+                </div>
+                <div class="timer-card frontend-time">
+                    <div class="timer-value" id="debugFrontendTime">0%</div>
+                    <div class="timer-label">最高置信度</div>
+                    <div class="timer-subtitle" id="debugFrontendPercent">待评估</div>
+                </div>
+            </div>
+            <div class="debug-timer-status" id="debugTimerStatus">
+                <i id="debug-status-icon" class="fas fa-clock me-2"></i>
+                <span id="debug-status-text">等待搜索开始</span>
+                <span id="debug-status-time" style="display:none;"> - 耗时: 0ms</span>
+            </div>
+        </div>
+
+  
+        <!-- 搜索管道可视化 -->
+        <div id="searchPipeline" class="search-pipeline">
+            <h5>搜索管道 - 5阶段流程</h5>
+
+            <!-- 阶段1: LLM问题分类 -->
+            <div class="stage pending" id="stage1">
+                <div class="stage-content">
+                    <div style="flex: 1;">
+                        <div class="stage-name">阶段1: LLM问题分类</div>
+                        <div class="stage-result" id="stage1-result">等待分析用户查询...</div>
+                        <div class="stage-time" id="stage1-time">耗时: 0ms</div>
+                    </div>
+                </div>
+                <div id="stage1-details" class="stage-details-inline" style="display:none;">
+                    <div class="stage-waiting-message text-muted">等待搜索数据...</div>
+                </div>
+            </div>
+
+            <!-- 阶段2: 结构化信息提取 -->
+            <div class="stage pending" id="stage2">
+                <div class="stage-content">
+                    <div style="flex: 1;">
+                        <div class="stage-name">阶段2: 结构化信息提取</div>
+                        <div class="stage-result" id="stage2-result">等待提取罪名和关键词...</div>
+                        <div class="stage-time" id="stage2-time">耗时: 0ms</div>
+                    </div>
+                </div>
+                <div id="stage2-details" class="stage-details-inline" style="display:none;">
+                    <div class="stage-waiting-message text-muted">等待搜索数据...</div>
+                </div>
+            </div>
+
+            <!-- 阶段3: 路由决策 -->
+            <div class="stage pending" id="stage3">
+                <div class="stage-content">
+                    <div style="flex: 1;">
+                        <div class="stage-name">阶段3: 路由决策</div>
+                        <div class="stage-result" id="stage3-result">等待选择搜索路径...</div>
+                        <div class="stage-time" id="stage3-time">耗时: 0ms</div>
+                    </div>
+                </div>
+                <div id="stage3-details" class="stage-details-inline" style="display:none;">
+                    <div class="stage-waiting-message text-muted">等待搜索数据...</div>
+                </div>
+            </div>
+
+            <!-- 阶段4: 多路搜索执行 -->
+            <div class="stage pending" id="stage4">
+                <div class="stage-content">
+                    <div style="flex: 1;">
+                        <div class="stage-name">阶段4: 多路搜索执行</div>
+                        <div class="stage-result" id="stage4-result">等待执行搜索...</div>
+                        <div class="stage-time" id="stage4-time">耗时: 0ms</div>
+                    </div>
+                </div>
+                <div id="stage4-details-inline" class="stage-details-inline" style="display:none;">
+                    <div class="stage-waiting-message text-muted">等待搜索数据...</div>
+                </div>
+            </div>
+
+            <!-- 阶段5: 结果融合与AI回答 -->
+            <div class="stage pending" id="stage5">
+                <div class="stage-content">
+                    <div style="flex: 1;">
+                        <div class="stage-name">阶段5: 结果融合与回答生成</div>
+                        <div class="stage-result" id="stage5-result">等待生成最终回答...</div>
+                        <div class="stage-time" id="stage5-time">耗时: 0ms</div>
+                    </div>
+                </div>
+                <div id="stage5-details" class="stage-details-inline" style="display:none;">
+                    <div class="stage-waiting-message text-muted">等待搜索数据...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实时搜索结果流容器 -->
+        <div id="realtime-results-container" class="search-pipeline" style="display:none;">
+            <h5><i class="fas fa-lightning-bolt me-2"></i>实时搜索结果流</h5>
+            <div id="realtime-modules-results">
+                <!-- 实时模块结果将在这里显示 -->
+            </div>
+
+            <!-- 实时模块结果卡片模板 -->
+            <template id="realtime-module-card-template">
+                <div class="realtime-module-card">
+                    <div class="realtime-module-header">
+                        <div class="module-info">
+                            <span class="module-status-icon"></span>
+                            <span class="module-name"></span>
+                            <span class="module-time"></span>
+                        </div>
+                        <div class="module-results-count"></div>
+                    </div>
+                    <div class="realtime-module-body">
+                        <div class="module-quick-preview">
+                            <div class="success-indicator" style="display:none;">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span class="success-message"></span>
+                            </div>
+                            <div class="error-indicator" style="display:none;">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <span class="error-message"></span>
+                            </div>
+                        </div>
+                        <div class="module-timestamp">
+                            <i class="fas fa-clock me-1"></i>
+                            完成时间: <span class="completion-time"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- 错误显示面板 -->
+        <div id="errorPanel" class="error-panel" style="display:none;">
+            <h5 id="error-panel-title">系统状态</h5>
+            <div id="errorContent" class="error-content">
+                <!-- 错误消息结构 -->
+                <div id="error-message" class="error-message" style="display:none;">
+                    <div class="error-header">
+                        <i id="error-icon" class="fas fa-exclamation-triangle"></i>
+                        <strong id="error-title">错误</strong>
+                    </div>
+                    <div id="error-description" class="error-description"></div>
+                    <div id="error-details" class="error-details" style="display:none;"></div>
+                </div>
+
+                <!-- 成功消息结构 -->
+                <div id="success-message" class="success-message" style="display:none;">
+                    <div class="success-header">
+                        <i class="fas fa-check-circle"></i>
+                        <strong id="success-title">成功</strong>
+                    </div>
+                    <div id="success-description" class="success-description"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索结果展示 -->
+        <div id="searchResults" class="search-results" style="display:none;">
+            <h5>搜索结果</h5>
+
+            <!-- 预定义的法条结果区域 -->
+            <div id="articles-results-section" class="results-section" style="display:none;">
+                <h6 id="articles-results-title">
+                    <i class="fas fa-gavel me-2"></i>相关法条
+                </h6>
+                <div id="articles-results-container" class="results-container">
+                    <!-- 法条结果将填充在这里 -->
+                </div>
+            </div>
+
+            <!-- 预定义的案例结果区域 -->
+            <div id="cases-results-section" class="results-section" style="display:none;">
+                <h6 id="cases-results-title">
+                    <i class="fas fa-folder me-2"></i>相关案例
+                </h6>
+                <div id="cases-results-container" class="results-container">
+                    <!-- 案例结果将填充在这里 -->
+                </div>
+            </div>
+
+            <!-- 结果项模板 -->
+            <template id="result-item-template">
+                <div class="result-item">
+                    <div class="result-header">
+                        <h7 class="result-title"></h7>
+                        <span class="result-similarity"></span>
+                    </div>
+                    <div class="result-content">
+                        <p class="result-text"></p>
+                    </div>
+                    <div class="result-metadata">
+                        <small class="result-source"></small>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- 模块详情面板 - 内联在阶段4下方 -->
+        <div id="module-detail-panel" class="module-detail-inline-panel" style="display:none;">
+            <div class="panel-header">
+                <h5 id="module-detail-title">搜索模块详情</h5>
+                <button class="close-btn-simple" onclick="window.hideModuleDetails()" type="button" title="关闭详情面板">
+                    <i class="fas fa-times"></i> 关闭
+                </button>
+            </div>
+
+            <!-- 模块详情内容 - 预定义结构 -->
+            <div id="module-detail-content" class="module-detail-card">
+                <!-- 模块头部信息 -->
+                <div class="module-detail-header">
+                    <h5 id="module-name-display">
+                        <i class="fas fa-search me-2"></i>
+                        <span id="module-name-text">模块名称</span>
+                    </h5>
+                    <span id="module-status-badge" class="badge badge-secondary">等待中</span>
+                </div>
+
+                <!-- 搜索输入信息 -->
+                <div class="search-input-section">
+                    <h6><i class="fas fa-input me-2"></i>搜索输入信息</h6>
+                    <div class="input-info-grid">
+                        <div class="input-info-item">
+                            <label>原始查询:</label>
+                            <span id="module-original-query" class="input-value">未知</span>
+                        </div>
+                        <div id="enhanced-query-item" class="input-info-item" style="display:none;">
+                            <label id="enhanced-query-label">增强查询:</label>
+                            <span id="module-enhanced-query" class="input-value enhanced-query"></span>
+                        </div>
+                        <div id="keywords-item" class="input-info-item" style="display:none;">
+                            <label>扩展关键词:</label>
+                            <div id="module-keywords" class="keyword-tags"></div>
+                        </div>
+
+                        <!-- 关键词标签模板 -->
+                        <template id="keyword-tag-template">
+                            <span class="keyword-tag"></span>
+                        </template>
+                        <div class="input-info-item">
+                            <label>策略类型:</label>
+                            <span id="module-search-method" class="input-value search-method">基础搜索</span>
+                        </div>
+                        <div id="enhancement-status-item" class="input-info-item" style="display:none;">
+                            <label>增强状态:</label>
+                            <span id="module-enhancement-status" class="input-value">未知</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 性能指标 -->
+                <div class="module-detail-metrics">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="metric-box">
+                                <div id="module-articles-count" class="metric-value">0</div>
+                                <div class="metric-label">法条结果</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric-box">
+                                <div id="module-cases-count" class="metric-value">0</div>
+                                <div class="metric-label">案例结果</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric-box">
+                                <div id="module-processing-time" class="metric-value">0ms</div>
+                                <div class="metric-label">处理耗时</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="metric-box">
+                                <div id="module-confidence-score" class="metric-value">0%</div>
+                                <div class="metric-label">置信度</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 错误信息 -->
+                <div id="module-error-section" class="alert alert-danger" style="display:none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>错误信息:</strong> <span id="module-error-message"></span>
+                </div>
+
+                <!-- 搜索结果详情 -->
+                <div class="module-detail-results">
+                    <h6>搜索结果详情</h6>
+
+                    <!-- 法条结果区域 -->
+                    <div id="articles-section" class="result-section" style="display:none;">
+                        <h7><i class="fas fa-gavel me-1"></i>法条 (<span id="articles-count-text">0</span>条)</h7>
+                        <div id="articles-container" class="result-preview-enhanced">
+                            <!-- 法条结果将在这里显示 -->
+                        </div>
+                    </div>
+
+                    <!-- 案例结果区域 -->
+                    <div id="cases-section" class="result-section" style="display:none;">
+                        <h7><i class="fas fa-folder me-1"></i>案例 (<span id="cases-count-text">0</span>个)</h7>
+                        <div id="cases-container" class="result-preview-enhanced">
+                            <!-- 案例结果将在这里显示 -->
+                        </div>
+                    </div>
+
+                    <!-- 无结果提示 -->
+                    <div id="no-results-message" class="text-muted text-center py-3" style="display:none;">
+                        <i class="fas fa-search fa-2x mb-2"></i><br>
+                        该模块未找到相关结果
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通用API配置 (最先加载) -->
+    <script src="../assets/js/utils/api-config.js"></script>
+
+    <!-- 核心模块 (同步加载，确保顺序) -->
+    <script src="../assets/js/core/DOMManager.js"></script>
+    <script>
+        // 立即验证DOMManager是否正确加载
+        console.log('🔍 验证DOMManager加载状态:', {
+            exists: !!window.DOMManager,
+            hasGet: typeof window.DOMManager?.get === 'function',
+            hasUpdateTexts: typeof window.DOMManager?.updateTexts === 'function',
+            allMethods: window.DOMManager ? Object.getOwnPropertyNames(window.DOMManager) : []
+        });
+    </script>
+    <script src="../assets/js/core/StateManager.js"></script>
+    <script src="../assets/js/core/EventBus.js"></script>
+
+    <!-- 关键组件 (同步加载，功能模块依赖) -->
+    <script src="../assets/js/components/StageRenderer.js"></script>
+    <script>
+        // 立即验证StageRenderer是否正确加载
+        console.log('🔍 验证StageRenderer加载状态:', {
+            exists: !!window.StageRenderer,
+            hasRenderStage1: typeof window.StageRenderer?.renderStage1 === 'function',
+            hasRenderStage2: typeof window.StageRenderer?.renderStage2 === 'function',
+            hasRenderStage3: typeof window.StageRenderer?.renderStage3 === 'function',
+            hasRenderStage4: typeof window.StageRenderer?.renderStage4 === 'function',
+            hasRenderStage5: typeof window.StageRenderer?.renderStage5 === 'function',
+            allMethods: window.StageRenderer ? Object.getOwnPropertyNames(window.StageRenderer) : []
+        });
+        
+        // 如果StageRenderer不存在，立即重试创建
+        if (!window.StageRenderer) {
+            console.error('❌ StageRenderer未创建，尝试手动创建...');
+            try {
+                window.StageRenderer = new StageRenderer();
+                console.log('✅ 手动创建StageRenderer成功');
+            } catch (error) {
+                console.error('❌ 手动创建StageRenderer也失败:', error);
+            }
+        }
+    </script>
+
+    <!-- 工具类 (依赖核心模块) -->
+    <script src="../assets/js/utils/DataFormatter.js" defer></script>
+    <script src="../assets/js/components/AnimationController.js" defer></script>
+
+    <!-- 功能模块 (依赖核心模块和工具类) -->
+    <script src="../assets/js/modules/WebSocketManager.js" defer></script>
+    <script src="../assets/js/modules/SearchController.js" defer></script>
+    <script src="../assets/js/modules/ResultRenderer.js" defer></script>
+    <script src="../assets/js/modules/PerformanceMonitor.js" defer></script>
+
+    <!-- 主应用脚本 (最后加载) -->
+    <script src="../assets/js/pages/complete-flow-optimized.js" defer></script>
+
+
+    <!-- 导航栏组件 -->
+    <script src="../assets/js/components/NavigationBar.js" defer></script>
+    <!-- 简单按钮处理器 -->
+    <script src="../assets/js/shared/simple-button-handler.js" defer></script>
+
+    <!-- 详情显示功能脚本 -->
+    <script>
+        // 全局详情显示函数
+        window.showItemDetail = function(itemData, type) {
+            console.log('显示详情:', type, itemData);
+
+            const modal = document.getElementById('detail-modal');
+            const title = document.getElementById('detail-modal-title');
+            const body = document.getElementById('detail-modal-body');
+
+            if (!modal || !title || !body) {
+                console.error('详情弹窗元素未找到');
+                return;
+            }
+
+            // 设置标题
+            const titleText = type === 'article' ? '法条详情' : '案例详情';
+            const itemTitle = type === 'article'
+                ? (itemData.title || `第${itemData.article_number || '?'}条`)
+                : (itemData.title || itemData.case_id || `案例${itemData.id || '?'}`);
+            title.innerHTML = `<i class="fas ${type === 'article' ? 'fa-gavel' : 'fa-briefcase'} me-2"></i>${titleText} - ${itemTitle}`;
+
+            // 生成详情内容
+            body.innerHTML = generateDetailContent(itemData, type);
+
+            // 显示弹窗
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeDetailModal = function() {
+            const modal = document.getElementById('detail-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        };
+
+        // 生成详情内容
+        function generateDetailContent(itemData, type) {
+            const similarity = ((itemData.similarity || 0) * 100).toFixed(1);
+
+            if (type === 'article') {
+                return `
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fas fa-info-circle"></i>
+                                基本信息
+                            </div>
+                            <div class="detail-info-grid">
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">条文编号</div>
+                                    <div class="detail-info-value">${itemData.article_number || '未知'}</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">相似度</div>
+                                    <div class="detail-info-value">${similarity}%</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">章节</div>
+                                    <div class="detail-info-value">${itemData.chapter || '未知章节'}</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">来源</div>
+                                    <div class="detail-info-value">${itemData.source || '刑法'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fas fa-file-text"></i>
+                                条文内容
+                            </div>
+                            <div class="detail-content-text">
+                                ${itemData.content || itemData.full_text || '内容暂无'}
+                            </div>
+                        </div>
+
+                        ${itemData.related_cases && itemData.related_cases.length > 0 ? `
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fas fa-link"></i>
+                                相关案例
+                            </div>
+                            <div class="detail-metadata">
+                                <div class="detail-metadata-grid">
+                                    ${itemData.related_cases.slice(0, 3).map(caseId => `
+                                        <div class="detail-metadata-item">
+                                            <div class="detail-metadata-value">${caseId}</div>
+                                            <div class="detail-metadata-label">案例编号</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fas fa-info-circle"></i>
+                                案例信息
+                            </div>
+                            <div class="detail-info-grid">
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">案例编号</div>
+                                    <div class="detail-info-value">${itemData.case_id || itemData.id || '未知'}</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">相似度</div>
+                                    <div class="detail-info-value">${similarity}%</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">涉及罪名</div>
+                                    <div class="detail-info-value">${Array.isArray(itemData.accusations) ? itemData.accusations.join(', ') : (itemData.accusations || '未知')}</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">相关法条</div>
+                                    <div class="detail-info-value">${Array.isArray(itemData.relevant_articles) ? itemData.relevant_articles.join(', ') : (itemData.relevant_articles || '未知')}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fas fa-file-text"></i>
+                                案例事实
+                            </div>
+                            <div class="detail-content-text">
+                                ${itemData.fact || itemData.content || '案例事实暂无'}
+                            </div>
+                        </div>
+
+                        ${itemData.sentence_info ? `
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fas fa-gavel"></i>
+                                判决信息
+                            </div>
+                            <div class="detail-content-text">
+                                ${typeof itemData.sentence_info === 'object' ? JSON.stringify(itemData.sentence_info, null, 2) : itemData.sentence_info}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        ${itemData.criminals && itemData.criminals.length > 0 ? `
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fas fa-users"></i>
+                                涉案人员
+                            </div>
+                            <div class="detail-metadata">
+                                <div class="detail-metadata-grid">
+                                    ${itemData.criminals.map(criminal => `
+                                        <div class="detail-metadata-item">
+                                            <div class="detail-metadata-value">${criminal.name || '姓名未知'}</div>
+                                            <div class="detail-metadata-label">${criminal.role || '角色'}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.closeDetailModal();
+            }
+        });
+
+        // 视图模式切换功能
+        function initViewModeToggle() {
+            console.log('🔄 初始化视图模式切换功能');
+
+            // 监听模式切换
+            const viewModeInputs = document.querySelectorAll('input[name="viewMode"]');
+            console.log('📱 找到模式切换按钮数量:', viewModeInputs.length);
+
+            viewModeInputs.forEach((input, index) => {
+                console.log(`🔘 按钮${index}: value=${input.value}, checked=${input.checked}`);
+                input.addEventListener('change', function() {
+                    console.log('🔄 切换到模式:', this.value);
+                    switchViewMode(this.value);
+                });
+            });
+
+            // 初始化模式
+            const currentMode = document.querySelector('input[name="viewMode"]:checked')?.value || 'debug';
+            console.log('🎯 当前模式:', currentMode);
+            switchViewMode(currentMode);
+        }
+
+        // DOM加载完成后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initViewModeToggle);
+        } else {
+            // DOM已经加载完成，直接初始化
+            initViewModeToggle();
+        }
+
+        function switchViewMode(mode) {
+            console.log('切换视图模式到:', mode);
+
+            const simpleElements = document.querySelectorAll('.simple-mode-only');
+            const debugElements = document.querySelectorAll('.debug-mode-only');
+            const stageDetails = document.querySelectorAll('.stage-details-inline');
+            const performancePanel = document.getElementById('performancePanel');
+            const modulesInlineDisplay = document.getElementById('modules-inline-display');
+
+            if (mode === 'simple') {
+                // 简单模式：隐藏调试信息
+                debugElements.forEach(el => el.style.display = 'none');
+                simpleElements.forEach(el => el.style.display = 'block');
+
+                // 隐藏阶段详细信息
+                stageDetails.forEach(el => el.style.display = 'none');
+
+                // 隐藏性能监控面板
+                if (performancePanel) {
+                    performancePanel.style.display = 'none';
+                }
+
+                // 保持模块详情显示 - 用户希望一直看到阶段4的模块
+                // if (modulesInlineDisplay) {
+                //     modulesInlineDisplay.style.display = 'none';
+                // }
+
+                // 简化阶段显示
+                const stages = document.querySelectorAll('.stage');
+                stages.forEach(stage => {
+                    const stageContent = stage.querySelector('.stage-content');
+                    if (stageContent) {
+                        stageContent.style.padding = '10px 15px';
+                    }
+
+                    // 隐藏时间和置信度等技术信息
+                    const timeInfo = stage.querySelector('.stage-time');
+                    const confidenceInfo = stage.querySelector('.confidence-badge-enhanced');
+                    if (timeInfo) timeInfo.style.display = 'none';
+                    if (confidenceInfo) confidenceInfo.style.display = 'none';
+                });
+
+            } else {
+                // 调试模式：显示所有信息
+                debugElements.forEach(el => el.style.display = 'block');
+                simpleElements.forEach(el => el.style.display = 'none');
+
+                // 显示性能监控面板
+                if (performancePanel) {
+                    performancePanel.style.display = 'block';
+                }
+
+                // 恢复阶段显示
+                const stages = document.querySelectorAll('.stage');
+                stages.forEach(stage => {
+                    const stageContent = stage.querySelector('.stage-content');
+                    if (stageContent) {
+                        stageContent.style.padding = '';
+                    }
+
+                    // 显示时间和置信度等技术信息
+                    const timeInfo = stage.querySelector('.stage-time');
+                    const confidenceInfo = stage.querySelector('.confidence-badge-enhanced');
+                    if (timeInfo) timeInfo.style.display = 'block';
+                    if (confidenceInfo) confidenceInfo.style.display = 'inline-block';
+                });
+            }
+
+            // 保存模式偏好到localStorage
+            localStorage.setItem('法智导航_视图模式', mode);
+
+            // 触发模式切换事件
+            window.dispatchEvent(new CustomEvent('viewModeChanged', { detail: { mode } }));
+        }
+
+        // 加载保存的模式偏好
+        window.addEventListener('load', function() {
+            const savedMode = localStorage.getItem('法智导航_视图模式');
+            if (savedMode && ['simple', 'debug'].includes(savedMode)) {
+                const modeInput = document.querySelector(`input[name="viewMode"][value="${savedMode}"]`);
+                if (modeInput) {
+                    modeInput.checked = true;
+                    switchViewMode(savedMode);
+                }
+            }
+        });
+    </script>
+
+    <!-- ====== 模板定义区域 ====== -->
+
+    <!-- 融合结果详情模板 -->
+    <template id="fusion-detail-template">
+        <div class="fusion-detail-card">
+            <div class="fusion-detail-header">
+                <h5><i class="result-icon me-2"></i><span class="result-type"></span> #<span class="result-rank"></span> - <span class="result-title"></span></h5>
+                <div class="fusion-badges">
+                    <span class="badge bg-success">融合分: <span class="fusion-score"></span>%</span>
+                    <span class="badge bg-info">相似度: <span class="similarity-score"></span>%</span>
+                    <span class="badge bg-warning"><span class="path-count"></span>路径融合</span>
+                    <span class="badge bg-secondary">置信度: <span class="confidence-level"></span></span>
+                </div>
+            </div>
+
+            <div class="fusion-detail-metrics">
+                <div class="row">
+                    <div class="col-md-2">
+                        <strong>基础评分:</strong><br>
+                        <span class="text-success base-score"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <strong>增强系数:</strong><br>
+                        <span class="text-info enhancement-factor"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <strong>路径权重:</strong><br>
+                        <span class="text-warning path-weight"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>计算公式:</strong><br>
+                        <small class="text-muted calculation-formula"></small>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>数据来源:</strong><br>
+                        <span class="badge bg-light text-dark data-source"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fusion-detail-content">
+                <h6><i class="fas fa-file-text me-2"></i>内容预览</h6>
+                <div class="content-preview">
+                    <div class="content-text"></div>
+                    <button class="btn btn-outline-primary btn-sm mt-2 expand-btn">
+                        <i class="fas fa-expand me-1"></i>展开全文
+                    </button>
+                </div>
+            </div>
+
+            <div class="fusion-detail-debug">
+                <h6><i class="fas fa-bug me-2"></i>调试信息</h6>
+                <div class="debug-info">
+                    <div class="debug-item">
+                        <span class="debug-label">检索耗时:</span>
+                        <span class="debug-value retrieval-time"></span>
+                    </div>
+                    <div class="debug-item">
+                        <span class="debug-label">融合计算耗时:</span>
+                        <span class="debug-value fusion-time"></span>
+                    </div>
+                    <div class="debug-item">
+                        <span class="debug-label">相关条目:</span>
+                        <span class="debug-value related-articles"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 模块详情模板 -->
+    <template id="module-detail-template">
+        <div class="module-detail-card">
+            <div class="module-detail-header">
+                <h5><i class="fas fa-search me-2"></i><span class="module-path-name"></span></h5>
+                <span class="badge module-status-badge">
+                    <span class="module-status-text"></span>
+                </span>
+            </div>
+
+            <!-- 搜索输入信息段 -->
+            <div class="search-input-section">
+                <h6><i class="fas fa-input me-2"></i>搜索输入信息</h6>
+                <div class="input-info-grid">
+                    <div class="input-info-item">
+                        <label>原始查询:</label>
+                        <span class="input-value original-query"></span>
+                    </div>
+
+                    <!-- Query2doc增强查询 -->
+                    <div class="input-info-item query2doc-section" style="display:none;">
+                        <label>Query2doc增强查询:</label>
+                        <span class="input-value enhanced-query"></span>
+                    </div>
+
+                    <!-- HyDE假设性文档 -->
+                    <div class="input-info-item hyde-section" style="display:none;">
+                        <label>HyDE假设性文档:</label>
+                        <span class="input-value hyde-document"></span>
+                    </div>
+
+                    <div class="input-info-item">
+                        <label>搜索类型:</label>
+                        <span class="input-value search-type"></span>
+                    </div>
+                    <div class="input-info-item">
+                        <label>最大结果数:</label>
+                        <span class="input-value max-results"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 搜索输出信息段 -->
+            <div class="search-output-section">
+                <h6><i class="fas fa-output me-2"></i>搜索输出信息</h6>
+                <div class="output-info-grid">
+                    <div class="output-info-item">
+                        <label>实际找到:</label>
+                        <span class="output-value results-found"></span>
+                    </div>
+                    <div class="output-info-item">
+                        <label>搜索方法:</label>
+                        <span class="output-value search-method"></span>
+                    </div>
+                    <div class="output-info-item">
+                        <label>处理耗时:</label>
+                        <span class="output-value processing-time"></span>
+                    </div>
+                    <div class="output-info-item">
+                        <label>返回时间:</label>
+                        <span class="output-value return-time"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 性能指标段 -->
+            <div class="performance-metrics-section">
+                <h6><i class="fas fa-tachometer-alt me-2"></i>性能指标</h6>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value total-time"></div>
+                        <div class="metric-label">总耗时</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value vector-time"></div>
+                        <div class="metric-label">向量计算</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value search-time"></div>
+                        <div class="metric-label">搜索时间</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value result-count"></div>
+                        <div class="metric-label">结果数量</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 最终结果显示区域 -->
+    <div id="final-results-display" class="final-results-display" style="display:none;">
+        <div class="final-results-header">
+            <h5><i class="fas fa-star me-2"></i>最终搜索结果</h5>
+            <div class="results-subtitle">基于所有搜索模块的综合分析，为您推荐最相关的法律条文和案例</div>
+        </div>
+        <div class="final-results-content">
+            <div class="results-tabs">
+                <button id="final-articles-btn" class="tab-btn active" onclick="window.switchFinalResultsTab('articles')">
+                    <i class="fas fa-gavel me-1"></i>相关法条 <span id="final-articles-count" class="count-badge">0</span>
+                </button>
+                <button id="final-cases-btn" class="tab-btn" onclick="window.switchFinalResultsTab('cases')">
+                    <i class="fas fa-briefcase me-1"></i>相关案例 <span id="final-cases-count" class="count-badge">0</span>
+                </button>
+            </div>
+            <div id="final-results-container" class="results-container">
+                <!-- 最终结果将通过JavaScript动态渲染 -->
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin me-2"></i>正在加载最终结果...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div id="detail-modal" class="detail-modal" style="display:none;">
+        <div class="detail-modal-overlay" onclick="window.closeDetailModal()"></div>
+        <div class="detail-modal-content">
+            <div class="detail-modal-header">
+                <h5 id="detail-modal-title">详情</h5>
+                <button class="detail-modal-close" onclick="window.closeDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="detail-modal-body" id="detail-modal-body">
+                <!-- 详情内容将在这里显示 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 搜索模块详情内联显示区域 -->
+    <div id="modules-inline-display" class="modules-inline-display" style="display:none;">
+        <div class="inline-header">
+            <h5><i class="fas fa-search me-2"></i>搜索模块详细结果</h5>
+            <div class="inline-controls">
+                <button id="toggle-all-modules" class="btn btn-sm btn-outline-primary" onclick="window.toggleAllModules()">
+                    <i class="fas fa-expand-alt me-1"></i>全部展开
+                </button>
+            </div>
+        </div>
+        <div id="modules-content-container" class="modules-content-container">
+            <!-- 5个搜索模块的详细内容将在这里显示 -->
+        </div>
+    </div>
+
+</body>
+</html>

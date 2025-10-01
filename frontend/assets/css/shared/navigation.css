@@ -1,0 +1,295 @@
+/* 工业风导航栏样式 - 完全重置和高优先级确保一致性 */
+
+/* 强制重置导航栏及其子元素的所有样式，但排除图标 */
+body > .main-navigation,
+.main-navigation,
+.main-navigation *:not(i),
+.main-navigation *:not(i)::before,
+.main-navigation *:not(i)::after {
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
+}
+
+/* 确保图标使用Font Awesome字体 */
+.main-navigation i {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+    font-weight: 900 !important;
+}
+
+body > .main-navigation,
+.main-navigation {
+    background: var(--bg-gradient-nav) !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 4px 20px rgba(30, 41, 59, 0.3) !important;
+    position: fixed !important; /* 改为 fixed，确保导航栏始终固定在顶部 */
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 9999 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    min-height: 70px !important;
+    max-height: 70px !important;
+}
+
+.nav-container {
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 0 24px !important; /* 固定24px内边距 */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 70px !important;
+    min-height: 70px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.nav-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    color: var(--text-white) !important;
+    font-size: 20px !important; /* 固定字体大小 */
+    font-weight: 600 !important;
+    letter-spacing: -0.025em !important;
+    text-decoration: none !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    margin-left: 32px !important; /* 增加左边距，让品牌图标和文字远离边缘 */
+}
+
+.nav-brand i {
+    font-size: 24px !important; /* 固定图标大小 */
+    color: #60a5fa !important;
+    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.5)) !important;
+    line-height: 1 !important;
+}
+
+.nav-brand span {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: var(--text-white) !important;
+    line-height: 1 !important;
+}
+
+.nav-links {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+}
+
+.nav-link {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 18px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none !important;
+    border-radius: 6px !important; /* 固定圆角 */
+    transition: all 0.3s ease !important;
+    font-size: 15.2px !important; /* 固定字体大小 */
+    font-weight: 500 !important;
+    position: relative !important;
+    backdrop-filter: blur(5px) !important;
+    border: none !important;
+    background: transparent !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    min-height: 40px !important;
+    box-sizing: border-box !important;
+}
+
+.nav-link i {
+    font-size: 16px !important; /* 固定图标大小 */
+    opacity: 0.9 !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+}
+
+.nav-link span {
+    font-size: 15.2px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    color: inherit !important;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.nav-link:hover::before {
+    opacity: 1;
+}
+
+.nav-link:hover {
+    color: var(--text-white) !important;
+    transform: translateY(-1px);
+    text-decoration: none !important;
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.2)) !important;
+    color: var(--text-white) !important;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    font-weight: 700 !important; /* 加粗选中的导航项 */
+}
+
+.nav-link.active span {
+    font-weight: 700 !important; /* 确保选中状态下的文字也是加粗的 */
+}
+
+.nav-link i {
+    font-size: 1rem !important;
+    opacity: 0.9;
+}
+
+.nav-tools {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+
+.nav-tool-btn {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: var(--text-white) !important;
+    padding: 10px 14px !important;
+    border-radius: 6px !important; /* 固定圆角 */
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    backdrop-filter: blur(5px) !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+}
+
+.nav-tool-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.nav-tool-btn i {
+    font-size: 16px !important;
+    line-height: 1 !important;
+    color: inherit !important;
+}
+
+/* 状态指示器 */
+.status-indicator {
+    position: relative;
+    display: inline-block;
+}
+
+.status-indicator::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.text-success::after {
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.text-warning::after {
+    background: #f59e0b;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+}
+
+.text-danger::after {
+    background: #ef4444;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+/* 响应式设计 - 确保小屏幕上也保持一致 */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 0 16px !important; /* 小屏幕固定内边距 */
+        height: 60px !important;
+        min-height: 60px !important;
+    }
+
+    body > .main-navigation,
+    .main-navigation {
+        min-height: 60px !important;
+        max-height: 60px !important;
+    }
+
+    .nav-brand span {
+        display: none !important;
+    }
+
+    .nav-brand {
+        font-size: 20px !important;
+    }
+
+    .nav-brand i {
+        font-size: 24px !important;
+    }
+
+    .nav-link span {
+        display: none !important;
+    }
+
+    .nav-link {
+        padding: 8px 12px !important;
+        min-width: 40px !important;
+        justify-content: center !important;
+    }
+
+    .nav-link i {
+        font-size: 18px !important;
+    }
+
+    .nav-links {
+        gap: 4px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .nav-tools {
+        gap: 8px !important;
+    }
+
+    .nav-tool-btn {
+        padding: 8px 10px !important;
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+    }
+
+    .nav-tool-btn i {
+        font-size: 14px !important;
+    }
+}

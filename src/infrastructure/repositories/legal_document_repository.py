@@ -25,6 +25,8 @@ class LegalDocumentRepository(ILegalDocumentRepository):
         """初始化存储库"""
         self.search_engine = EnhancedSemanticSearch()
         self.data_loader = get_data_loader()
+        self.multi_retrieval_engine = None  # 多路召回引擎
+        self.kg_enhanced_engine = None      # 知识图谱增强引擎
         self._initialized = False
     
     async def search_documents(self, query: SearchQuery) -> Tuple[List[SearchResult], SearchContext]:
@@ -270,19 +272,55 @@ class LegalDocumentRepository(ILegalDocumentRepository):
         """初始化存储库"""
         if self._initialized:
             return
-        
+
         try:
             # 加载搜索引擎数据
             load_result = self.search_engine.load_data()
             if load_result.get('status') not in ['success', 'partial', 'already_loaded']:
                 raise RuntimeError(f"搜索引擎初始化失败: {load_result}")
-            
+
+            # 尝试初始化多路召回引擎和知识图谱增强引擎
+            await self._initialize_advanced_engines()
+
             self._initialized = True
             logger.info("法律文档存储库初始化成功")
-            
+
         except Exception as e:
             logger.error(f"存储库初始化失败: {str(e)}")
             raise
+
+    async def _initialize_advanced_engines(self):
+        """初始化高级搜索引擎"""
+        try:
+            from ...config.settings import settings
+
+            # 初始化多路召回引擎
+            if hasattr(self.data_loader, 'multi_retrieval_engine') and self.data_loader.multi_retrieval_engine:
+                self.multi_retrieval_engine = self.data_loader.multi_retrieval_engine
+                logger.info("多路召回引擎已连接")
+            else:
+                logger.info("多路召回引擎不可用，将使用基础搜索")
+
+            # 初始化知识图谱增强引擎
+            knowledge_graph = self.data_loader.get_knowledge_graph()
+            if knowledge_graph:
+                from ..search.knowledge_enhanced_engine import KnowledgeEnhancedSearchEngine
+
+                if self.multi_retrieval_engine:
+                    self.kg_enhanced_engine = KnowledgeEnhancedSearchEngine(
+                        self.multi_retrieval_engine,
+                        knowledge_graph,
+                        settings
+                    )
+                    logger.info("知识图谱增强引擎初始化成功")
+                else:
+                    logger.warning("多路召回引擎不可用，无法初始化知识图谱增强引擎")
+            else:
+                logger.info("知识图谱不可用，将使用标准搜索")
+
+        except Exception as e:
+            logger.warning(f"高级搜索引擎初始化失败: {e}")
+            # 不抛出异常，允许使用基础搜索功能
     
     async def _convert_raw_to_domain_document(self, raw_result: Dict[str, Any]) -> Optional[LegalDocument]:
         """将原始搜索结果转换为领域文档对象"""

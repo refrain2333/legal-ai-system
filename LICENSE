@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2024 Legal Navigation AI Project
+Copyright (c) 2024-2025 Legal Navigation AI Project
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,14 @@ SOFTWARE.
 
 ---
 
+## 数据使用声明
+
+本项目使用了以下开源数据集，请遵循相应的使用条款：
+
+- **CAIL2018数据集**: 仅用于学术研究和技术验证
+- **LawRefBook/Laws**: 遵循原项目的开源协议
+- **thunlp/Lawformer模型**: 遵循Apache 2.0许可证
+
 ## 免责声明
 
 本软件提供的法律信息仅供参考，不构成正式的法律建议。使用者应当：
@@ -34,5 +42,6 @@ SOFTWARE.
 - 软件提供的法律信息的准确性、完整性或时效性
 - 因使用本软件而导致的任何直接或间接损失
 - 软件中可能存在的错误、遗漏或技术缺陷
+- 第三方数据集的准确性或适用性
 
 使用本软件即表示您同意上述条款和条件。

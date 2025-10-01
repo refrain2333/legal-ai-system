@@ -2,7 +2,7 @@
 
 > **目录作用**：集中存放"刑法条文向量 & 刑事案例向量"，供后续相似度检索、语义搜索、知识图谱嵌入与机器学习/LLM微调使用。
 >
-> **数据来源**: 此目录中的向量数据由 `tools/data_processing/criminal_data_vectorizer.py` 处理 `data/processed/criminal/` 目录中的原始数据生成。使用 `shibing624/text2vec-base-chinese` 模型，嵌入维度为 **768**。
+> **数据来源**: 此目录中的向量数据由 `tools/data_processing/criminal_data_vectorizer.py` 处理 `data/processed/criminal/` 目录中的原始数据生成。使用 `thunlp/Lawformer` 模型，嵌入维度为 **768**。
 
 ## 文件概览
 
@@ -25,7 +25,7 @@
 | --- | --- | --- |
 | `vectors` | `np.ndarray` | 向量矩阵，形状 `(total_count, 768)`，数据类型 `float32` |
 | `metadata` | `list[dict]` | 与向量一一对应的元数据列表 |
-| `model_name` | `str` | 生成向量所用模型名称: `shibing624/text2vec-base-chinese` |
+| `model_name` | `str` | 生成向量所用模型名称: `thunlp/Lawformer` |
 | `embedding_dim` | `int` | 嵌入维度，固定为 768 |
 | `total_count` | `int` | 向量条数，与 `vectors.shape[0]` 一致 |
 | `data_type` | `str` | `criminal_articles` 或 `criminal_cases` |
@@ -120,10 +120,10 @@ for idx in top5_indices:
 
 ### 3. 语义检索示例
 ```python
-from sentence_transformers import SentenceTransformer
+from src.infrastructure.storage.lawformer_embedder import LawformerEmbedder
 
 # 加载相同的模型进行查询编码
-model = SentenceTransformer('shibing624/text2vec-base-chinese')
+model = LawformerEmbedder(model_name='thunlp/Lawformer')
 
 # 查询示例
 query = "被告人秘密窃取他人财物，价值较大"
@@ -267,7 +267,7 @@ validate_vector_file("data/processed/vectors/criminal_cases_vectors.pkl")
 
 ## 技术规格
 
-- **向量模型**: shibing624/text2vec-base-chinese
+- **向量模型**: thunlp/Lawformer
 - **向量维度**: 768维
 - **数据精度**: float32
 - **存储格式**: pickle序列化
@@ -287,4 +287,4 @@ validate_vector_file("data/processed/vectors/criminal_cases_vectors.pkl")
 *此文档最后更新: 2025-09-11*  
 *向量数据版本: v1.0*  
 *总向量数: 17,577 (446条法条 + 17,131个案例)*  
-*生成模型: shibing624/text2vec-base-chinese*
+*生成模型: thunlp/Lawformer*

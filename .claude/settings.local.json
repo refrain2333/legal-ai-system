@@ -1,15 +1,26 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch",
-      "Bash(mkdir:*)",
       "Bash(dir:*)",
-      "Bash(cp:*)",
-      "Bash(python tests/debug/test_evaluation_fix.py)",
-      "Bash(python tests/debug/test_simple_fix.py)",
-      "Bash(conda activate:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(godot:*)",
+      "Bash(timeout 10 godot:*)",
+      "Bash(timeout 15s godot --headless res://cs/tests/QuickArcaneIntuitionTest.tscn -q)",
+      "Bash(timeout 10s godot:*)",
+      "Bash(timeout 15s godot --headless \"res://cs/tests/ArcaneIntuitionUIIntegrationTest.tscn\" -q)",
+      "Bash(timeout 15s godot --headless \"res://cs/tests/ArcaneIntuitionUIShowcaseTest.tscn\" -q)",
+      "Bash(timeout:*)",
+      "Read(\\/**)",
       "Bash(python:*)",
-      "Bash(C:UserslenovoMiniconda3envslegal-aipython.exe evaluation/run_evaluation.py --quick)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: 修复知识图谱实体识别精度问题\n\n## 🔧 核心修复\n- **后端优化**: 实现精确匹配优先的实体识别算法\n- **前端优化**: 增强主实体选择逻辑，避免复合罪名干扰\n\n## 📊 解决问题\n- 搜索\"盗窃\"不再匹配到\"盗窃、抢夺][枪支、弹药、爆炸物、危险物质\"\n- 优先精确匹配单一罪名，提升知识图谱查询准确性\n- 过滤包含特殊字符的复合罪名，返回最相关结果\n\n## 🎯 预期效果\n- 盗窃查询正确返回第264条、263条等相关法条\n- 知识图谱可视化以\"盗窃罪\"为中心节点\n- 查询扩展更加精准和有意义\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Bash(rm:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

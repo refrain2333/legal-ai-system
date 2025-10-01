@@ -1,0 +1,55 @@
+/* CSS变量定义 - 设计系统的核心变量 */
+
+:root {
+    /* 主色调 - 青春蓝白 */
+    --primary-blue: #3b82f6;
+    --primary-light: #60a5fa;
+    --primary-dark: #2563eb;
+    --secondary-blue: #1d4ed8;
+    --accent-bright: #93c5fd;
+
+    /* 背景渐变 */
+    --bg-gradient-main: linear-gradient(135deg, #fafbff 0%, #f0f4ff 50%, #e0e7ff 100%);
+    --bg-gradient-card: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+    --bg-gradient-nav: linear-gradient(90deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+    --bg-glass: rgba(255, 255, 255, 0.9);
+    --bg-gradient-header: linear-gradient(135deg, #3b82f6, #60a5fa);
+
+    /* 文字颜色 */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --text-white: #ffffff;
+
+    /* 边框和阴影 */
+    --border-color: #dbeafe;
+    --border-hover: #bfdbfe;
+    --shadow-sm: 0 1px 3px rgba(59, 130, 246, 0.1);
+    --shadow-md: 0 4px 12px rgba(59, 130, 246, 0.15);
+    --shadow-lg: 0 8px 25px rgba(59, 130, 246, 0.2);
+
+    /* 间距 */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+
+    /* 圆角 */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+
+    /* 过渡 */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* 语义颜色 */
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+}

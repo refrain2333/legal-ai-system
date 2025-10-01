@@ -71,11 +71,17 @@ class ResultFormatter:
         # 生成法条预览内容
         content_preview = self._generate_article_preview(meta)
         
+        # 计算显示分数 - 前端使用score字段显示相关度
+        similarity = float(result.get('similarity', 0))
+        # 如果有final_fusion_score（来自RRF融合），优先使用它
+        display_score = result.get('final_fusion_score', similarity)
+        
         formatted_result = {
             'id': meta.get('id', f"article_{article_number}"),
             'title': title,
             'type': 'article',  # 修正：使用单数形式
-            'similarity': float(result.get('similarity', 0)),
+            'similarity': similarity,
+            'score': display_score,  # 🔧 添加score字段，前端使用此字段显示相关度百分比
             'article_number': int(article_number) if str(article_number).isdigit() else None,
             'chapter': meta.get('chapter', ''),
             'content_preview': content_preview,
@@ -113,11 +119,17 @@ class ResultFormatter:
         clean_id = self._clean_case_id(meta.get('id', case_id))
         clean_case_id = self._clean_case_id(case_id)
         
+        # 计算显示分数 - 前端使用score字段显示相关度
+        similarity = float(result.get('similarity', 0))
+        # 如果有final_fusion_score（来自RRF融合），优先使用它
+        display_score = result.get('final_fusion_score', similarity)
+        
         formatted_result = {
             'id': clean_id,
             'title': title,
             'type': 'case',  # 修正：使用单数形式
-            'similarity': float(result.get('similarity', 0)),
+            'similarity': similarity,
+            'score': display_score,  # 🔧 添加score字段，前端使用此字段显示相关度百分比
             'case_id': clean_case_id,
             'accusations': accusations,
             'relevant_articles': meta.get('relevant_articles', []),
@@ -127,7 +139,8 @@ class ResultFormatter:
             'life_imprisonment': meta.get('life_imprisonment'),
             'imprisonment_months': meta.get('imprisonment_months'),
             'content_preview': content_preview,
-            'content': result.get('content', "")  # 确保content字段存在
+            'content': result.get('content', ""),  # 确保content字段存在
+            'fact': meta.get('fact', result.get('fact', result.get('content', meta.get('content', ""))))  # 🔧 添加fact字段，优先级：meta.fact > result.fact > result.content > meta.content
         }
         
         return formatted_result

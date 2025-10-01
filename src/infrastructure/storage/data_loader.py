@@ -11,13 +11,39 @@ import time
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Union, Protocol
 import numpy as np
-from sentence_transformers import SentenceTransformer
 from .lawformer_embedder import LawformerEmbedder
+from .fine_tuned_lawformer_embedder import FineTunedLawformerEmbedder
 from threading import Lock
 import logging
 from functools import wraps
+from rank_bm25 import BM25Okapi
 
 logger = logging.getLogger(__name__)
+
+
+# 创建兼容性类，解决pickle反序列化问题
+class SimpleCase:
+    """简化案例类 - 兼容性处理"""
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], dict):
+            for k, v in args[0].items():
+                setattr(self, k, v)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+class SimpleArticle:
+    """简化法条类 - 兼容性处理"""  
+    def __init__(self, *args, **kwargs):
+        if args and isinstance(args[0], dict):
+            for k, v in args[0].items():
+                setattr(self, k, v)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+# 注册到__main__模块，解决pickle反序列化问题
+import __main__
+setattr(__main__, 'SimpleCase', SimpleCase)
+setattr(__main__, 'SimpleArticle', SimpleArticle)
 
 
 class DataLoaderConfig(Protocol):
@@ -78,7 +104,16 @@ class DataLoader:
         # 数据存储
         self.vectors_data: Dict[str, Any] = {}
         self.original_data: Dict[str, Any] = {}
-        self.model: Optional[Union[SentenceTransformer, LawformerEmbedder]] = None
+        self.model: Optional[LawformerEmbedder] = None
+
+        # BM25索引相关
+        self.bm25_index: Optional[BM25Okapi] = None
+        self.bm25_doc_ids: List[str] = []
+        self.bm25_built = False
+        
+        # 高级搜索引擎
+        self.multi_retrieval_engine = None
+        self.knowledge_graph = None
         
         # 缓存控制 - 从配置读取
         self.content_cache: Dict[str, str] = {}
@@ -109,32 +144,45 @@ class DataLoader:
     
     def load_all(self) -> Dict[str, Any]:
         """
-        加载所有数据（向量+原始数据+模型）
-        
+        加载所有数据（向量+原始数据+模型+BM25索引）
+
         Returns:
             加载状态和统计信息
         """
         start_time = time.time()
-        
+
         # 并行加载（按需优化为真正的并行）
         vector_stats = self.load_vectors()
         original_stats = self.load_original_data()
-        model_stats = self.load_model()
+        # 强制加载模型，确保多路召回引擎能正常初始化
+        model_stats = self.load_model(force_load=True)
+
+        # 构建BM25索引（在向量和原始数据加载完成后）
+        bm25_stats = self._build_bm25_index()
+
+        # 构建知识图谱（在所有数据加载完成后）
+        kg_stats = self._build_knowledge_graph()
         
+        # 初始化多路召回引擎（在所有组件准备完成后）
+        multi_retrieval_stats = self._initialize_multi_retrieval_engine()
+
         total_time = time.time() - start_time
         self._load_times['total'] = total_time
-        
+
         stats = {
             'success': True,
             'total_loading_time': total_time,
             'vectors': vector_stats,
             'original_data': original_stats,
             'model': model_stats,
+            'bm25_index': bm25_stats,
+            'knowledge_graph': kg_stats,
+            'multi_retrieval_engine': multi_retrieval_stats,
             'total_documents': self.get_total_document_count(),
             'memory_usage_mb': self._estimate_memory_usage(),
             'performance_summary': self._get_performance_summary()
         }
-        
+
         logger.info(f"All data loaded successfully in {total_time:.2f}s")
         return stats
     
@@ -275,7 +323,7 @@ class DataLoader:
             logger.info(f"Loading semantic model: {model_name}")
             
             # 设置缓存目录
-            cache_folder = self.project_root / getattr(self.config, 'MODEL_CACHE_DIR', './.cache/sentence_transformers')
+            cache_folder = self.project_root / getattr(self.config, 'MODEL_CACHE_DIR', './.cache/transformers')
             cache_folder.mkdir(parents=True, exist_ok=True)
             
             
@@ -288,8 +336,25 @@ class DataLoader:
             
             # 优先级1: 检查用户指定的本地模型路径
             if local_model_path and Path(local_model_path).exists():
-                model_to_load = local_model_path
-                logger.info(f"Using user-specified local model: {local_model_path}")
+                # 检查是否是Hugging Face缓存目录，需要找到正确的snapshot
+                if 'models--thunlp--Lawformer' in local_model_path:
+                    # 寻找包含config.json的snapshot
+                    snapshots_dir = Path(local_model_path) / 'snapshots'
+                    if snapshots_dir.exists():
+                        for snapshot_dir in snapshots_dir.iterdir():
+                            config_file = snapshot_dir / 'config.json'
+                            if config_file.exists():
+                                model_to_load = str(snapshot_dir)
+                                logger.info(f"Found valid snapshot with config: {model_to_load}")
+                                break
+                        else:
+                            logger.warning(f"No valid snapshot found in {snapshots_dir}")
+                            model_to_load = local_model_path
+                    else:
+                        model_to_load = local_model_path
+                else:
+                    model_to_load = local_model_path
+                logger.info(f"Using user-specified local model: {model_to_load}")
             
             # 优先级2: 检查缓存目录中的模型
             elif not model_to_load:
@@ -309,19 +374,30 @@ class DataLoader:
                 os.environ['HF_DATASETS_OFFLINE'] = '1'
                 logger.info("Offline mode enabled")
             
-            # 尝试加载模型 - 根据模型类型选择加载方式
+            # 尝试加载模型 - 根据配置选择基础模型或微调模型
             try:
-                # 检查是否是Lawformer模型
-                if 'lawformer' in model_name.lower() or 'thunlp/lawformer' in model_name.lower():
+                # 检查是否启用微调模型
+                use_fine_tuned = getattr(self.config, 'USE_FINE_TUNED_MODEL', False)
+                fine_tuned_path = getattr(self.config, 'FINE_TUNED_MODEL_PATH', None)
+
+                if use_fine_tuned and fine_tuned_path and Path(fine_tuned_path).exists():
+                    logger.info("Loading Fine-tuned Lawformer model...")
+                    logger.info(f"Base model: {model_to_load}")
+                    logger.info(f"Fine-tuned weights: {fine_tuned_path}")
+                    self.model = FineTunedLawformerEmbedder(
+                        base_model_path=model_to_load,
+                        fine_tuned_model_path=fine_tuned_path,  # 修正参数名
+                        use_fine_tuned=True
+                    )
+                    self.model_loaded = True
+                    logger.info(f"Fine-tuned Lawformer model loaded successfully")
+                else:
+                    if use_fine_tuned:
+                        logger.warning(f"微调模型已启用但文件不存在: {fine_tuned_path}, 降级使用基础模型")
                     logger.info("Loading Lawformer model using custom embedder...")
                     self.model = LawformerEmbedder(model_name=model_to_load, cache_folder=str(cache_folder))
                     self.model_loaded = True
                     logger.info(f"Lawformer model loaded successfully: {model_to_load}")
-                else:
-                    # 使用传统的sentence-transformers加载
-                    self.model = SentenceTransformer(model_to_load, cache_folder=str(cache_folder))
-                    self.model_loaded = True
-                    logger.info(f"SentenceTransformer model loaded successfully: {model_to_load}")
                 
             except Exception as load_error:
                 logger.warning(f"Model loading failed with {model_to_load}: {load_error}")
@@ -332,16 +408,24 @@ class DataLoader:
                         os.environ.pop('TRANSFORMERS_OFFLINE', None)
                         os.environ.pop('HF_DATASETS_OFFLINE', None)
                         logger.info("Attempting online model download...")
-                        
-                        # 同样根据模型类型选择加载方式
-                        if 'lawformer' in model_name.lower() or 'thunlp/lawformer' in model_name.lower():
-                            self.model = LawformerEmbedder(model_name=model_name, cache_folder=str(cache_folder))
+
+                        # 微调模型在线下载fallback时仍保持微调逻辑
+                        use_fine_tuned = getattr(self.config, 'USE_FINE_TUNED_MODEL', False)
+                        fine_tuned_path = getattr(self.config, 'FINE_TUNED_MODEL_PATH', None)
+
+                        if use_fine_tuned and fine_tuned_path and Path(fine_tuned_path).exists():
+                            self.model = FineTunedLawformerEmbedder(
+                                base_model_path=model_name,
+                                fine_tuned_model_path=fine_tuned_path,  # 修正参数名
+                                use_fine_tuned=True
+                            )
+                            logger.info("Fine-tuned model loaded successfully in online mode")
                         else:
-                            self.model = SentenceTransformer(model_name, cache_folder=str(cache_folder))
-                            
+                            self.model = LawformerEmbedder(model_name=model_name, cache_folder=str(cache_folder))
+                            logger.info("Model loaded successfully in online mode")
+
                         self.model_loaded = True
-                        logger.info("Model loaded successfully in online mode")
-                        
+
                     except Exception as online_error:
                         raise Exception(f"Both local and online model loading failed. Local: {load_error}. Online: {online_error}")
                 else:
@@ -637,6 +721,172 @@ class DataLoader:
         if not self.vectors_loaded or data_type not in self.vectors_data:
             return None
         return self.vectors_data[data_type]['metadata']
+
+    def _build_bm25_index(self) -> Dict[str, Any]:
+        """构建BM25索引，基于向量数据中的元数据"""
+        if self.bm25_built:
+            return {'status': 'already_built'}
+
+        start_time = time.time()
+
+        try:
+            logger.info("开始构建BM25索引...")
+
+            # 检查向量数据是否已加载
+            if not self.vectors_loaded:
+                error_msg = "向量数据未加载，无法构建BM25索引"
+                logger.error(error_msg)
+                return {
+                    'status': 'error',
+                    'error': error_msg,
+                    'building_time': time.time() - start_time
+                }
+
+            tokenized_corpus = []
+            doc_ids = []
+
+            # 处理法条文档
+            if 'articles' in self.vectors_data:
+                articles_metadata = self.vectors_data['articles']['metadata']
+                logger.info(f"处理 {len(articles_metadata)} 条法条...")
+
+                for article_meta in articles_metadata:
+                    # 从元数据构建文本内容
+                    content_parts = []
+
+                    # 添加标题
+                    if 'title' in article_meta and article_meta['title']:
+                        content_parts.append(str(article_meta['title']))
+
+                    # 添加法条编号作为关键词
+                    if 'article_number' in article_meta:
+                        content_parts.append(f"第{article_meta['article_number']}条")
+                        content_parts.append(str(article_meta['article_number']))
+
+                    # 如果有其他可用字段，也添加进去
+                    if 'chapter' in article_meta and article_meta['chapter']:
+                        content_parts.append(str(article_meta['chapter']))
+
+                    # 合并内容并分词
+                    content = " ".join(content_parts)
+                    tokenized_corpus.append(content.split())
+                    doc_ids.append(f"article_{article_meta.get('article_number', article_meta.get('id', len(doc_ids)))}")
+
+            # 处理案例文档
+            if 'cases' in self.vectors_data:
+                cases_metadata = self.vectors_data['cases']['metadata']
+                logger.info(f"处理 {len(cases_metadata)} 个案例...")
+
+                for case_meta in cases_metadata:
+                    content_parts = []
+
+                    # 添加指控罪名
+                    if 'accusations' in case_meta and case_meta['accusations']:
+                        accusations = case_meta['accusations']
+                        if isinstance(accusations, list):
+                            content_parts.extend(accusations)
+                        else:
+                            content_parts.append(str(accusations))
+
+                    # 添加相关法条
+                    if 'relevant_articles' in case_meta and case_meta['relevant_articles']:
+                        articles = case_meta['relevant_articles']
+                        if isinstance(articles, list):
+                            for article in articles:
+                                content_parts.append(f"第{article}条")
+                                content_parts.append(str(article))
+                        else:
+                            content_parts.append(f"第{articles}条")
+                            content_parts.append(str(articles))
+
+                    # 添加案例ID作为可搜索内容
+                    case_id = case_meta.get('case_id', case_meta.get('id', len(doc_ids)))
+                    if case_id:
+                        content_parts.append(str(case_id))
+
+                    # 合并内容并分词
+                    content = " ".join(content_parts) if content_parts else "案例内容"
+                    tokenized_corpus.append(content.split())
+                    doc_ids.append(f"case_{case_id}")
+
+            # 检查是否有足够的文档来构建索引
+            if len(tokenized_corpus) == 0:
+                error_msg = "没有找到可用于构建BM25索引的文档"
+                logger.error(error_msg)
+                return {
+                    'status': 'error',
+                    'error': error_msg,
+                    'building_time': time.time() - start_time
+                }
+
+            # 构建BM25索引
+            logger.info(f"使用 {len(tokenized_corpus)} 个文档构建BM25索引...")
+            self.bm25_index = BM25Okapi(tokenized_corpus)
+            self.bm25_doc_ids = doc_ids
+            self.bm25_built = True
+
+            building_time = time.time() - start_time
+            self._load_times['bm25_index'] = building_time
+
+            logger.info(f"BM25索引构建完成，耗时 {building_time:.2f}s")
+
+            return {
+                'status': 'success',
+                'total_documents': len(tokenized_corpus),
+                'articles_count': len([d for d in doc_ids if d.startswith('article_')]),
+                'cases_count': len([d for d in doc_ids if d.startswith('case_')]),
+                'building_time': building_time
+            }
+
+        except Exception as e:
+            error_msg = f"BM25索引构建失败: {str(e)}"
+            logger.error(error_msg)
+            return {
+                'status': 'error',
+                'error': error_msg,
+                'building_time': time.time() - start_time
+            }
+
+    def bm25_search(self, query: str, top_k: int = 20) -> List[Dict]:
+        """
+        BM25关键词搜索
+
+        Args:
+            query: 查询字符串
+            top_k: 返回结果数量
+
+        Returns:
+            搜索结果列表，每个结果包含id、similarity、source字段
+        """
+        if not self.bm25_built or self.bm25_index is None:
+            logger.warning("BM25索引未构建，无法执行关键词搜索")
+            return []
+
+        try:
+            # 对查询进行分词
+            tokenized_query = query.split()
+
+            # 获取所有文档的BM25分数
+            scores = self.bm25_index.get_scores(tokenized_query)
+
+            # 获取top_k个最高分的索引
+            top_indices = scores.argsort()[-top_k:][::-1]
+
+            results = []
+            for idx in top_indices:
+                if scores[idx] > 0:  # 只返回有正分数的结果
+                    results.append({
+                        'id': self.bm25_doc_ids[idx],
+                        'similarity': float(scores[idx]),
+                        'source': 'bm25'
+                    })
+
+            logger.debug(f"BM25搜索返回 {len(results)} 个结果，查询: '{query}'")
+            return results
+
+        except Exception as e:
+            logger.error(f"BM25搜索失败: {str(e)}")
+            return []
     
     def encode_query(self, query: str) -> Optional[np.ndarray]:
         """编码查询文本 - 支持懒加载自动初始化"""
@@ -649,7 +899,7 @@ class DataLoader:
                 return None
         
         try:
-            return self.model.encode([query])
+            return self.model.encode(query)
         except Exception as e:
             logger.error(f"Error encoding query: {e}")
             return None
@@ -665,20 +915,25 @@ class DataLoader:
     def _estimate_memory_usage(self) -> float:
         """估算内存使用量（MB）"""
         total_mb = 0
-        
+
         # 向量数据
         if self.vectors_loaded:
             for data_type in self.vectors_data:
                 vectors = self.vectors_data[data_type]['vectors']
                 total_mb += vectors.nbytes / (1024 * 1024)
-        
+
         # 模型（估算）
         if self.model_loaded:
-            total_mb += 500  # text2vec-base-chinese大约500MB
-        
+            total_mb += 500  # Lawformer大约500MB
+
+        # BM25索引（估算）
+        if self.bm25_built and self.bm25_index:
+            # BM25索引内存估算：每个文档约0.1KB
+            total_mb += len(self.bm25_doc_ids) * 0.0001
+
         # 缓存内容
         total_mb += len(self.content_cache) * 0.01  # 每个缓存项大约10KB
-        
+
         return total_mb
     
     def _get_performance_summary(self) -> Dict[str, Any]:
@@ -710,7 +965,9 @@ class DataLoader:
             'vectors_loaded': self.vectors_loaded,
             'original_data_checked': self.original_loaded,
             'model_loaded': self.model_loaded,
+            'bm25_index_built': self.bm25_built,
             'total_documents': self.get_total_document_count(),
+            'bm25_documents': len(self.bm25_doc_ids) if self.bm25_built else 0,
             'cached_contents': len(self.content_cache),
             'memory_usage_mb': self._estimate_memory_usage(),
             'data_types': list(self.vectors_data.keys()) if self.vectors_loaded else [],
@@ -722,6 +979,213 @@ class DataLoader:
             },
             'performance': self._get_performance_summary()
         }
+
+    def _build_knowledge_graph(self) -> Dict[str, Any]:
+        """构建知识图谱"""
+        if hasattr(self, 'knowledge_graph') and self.knowledge_graph:
+            return {'status': 'already_built'}
+
+        start_time = time.time()
+
+        try:
+            logger.info("开始构建知识图谱...")
+
+            # 导入知识图谱模块
+            from ..knowledge.graph_storage import GraphStorage
+            from ..knowledge.relation_extractor import RelationExtractor
+            from ..knowledge.legal_knowledge_graph import LegalKnowledgeGraph
+
+            # 初始化存储管理器
+            storage = GraphStorage(self.config)
+
+            # 检查是否已有图谱数据
+            if storage.is_graph_available():
+                logger.info("发现已有知识图谱数据，尝试加载...")
+                relation_data = storage.load_graph_data()
+
+                if relation_data and relation_data.get('success', False):
+                    # 成功加载现有图谱
+                    self.knowledge_graph = LegalKnowledgeGraph(relation_data)
+                    building_time = time.time() - start_time
+
+                    logger.info(f"知识图谱加载成功，耗时{building_time:.2f}s")
+                    return {
+                        'status': 'loaded_from_cache',
+                        'total_crimes': relation_data.get('total_crimes', 0),
+                        'total_articles': relation_data.get('total_articles', 0),
+                        'total_relations': relation_data.get('total_relations', 0),
+                        'building_time': building_time
+                    }
+                else:
+                    logger.warning("加载知识图谱数据失败，将重新构建")
+
+            # 构建新的知识图谱
+            logger.info("开始从案例数据构建知识图谱...")
+
+            # 确保原始数据已加载
+            if not self.original_loaded:
+                logger.info("原始数据未加载，先加载原始数据...")
+                self.load_original_data()
+
+            if not self.original_loaded:
+                error_msg = "无法加载原始数据，知识图谱构建失败"
+                logger.error(error_msg)
+                return {
+                    'status': 'failed',
+                    'error': error_msg,
+                    'building_time': time.time() - start_time
+                }
+
+            # 实际加载案例数据到内存中
+            if 'cases' not in self.original_data or not self.original_data['cases']:
+                logger.info("加载案例数据到内存...")
+                self._load_original_data_type('cases')
+
+            if 'cases' not in self.original_data or not self.original_data['cases']:
+                error_msg = "无法加载案例数据，知识图谱构建失败"
+                logger.error(error_msg)
+                return {
+                    'status': 'failed',
+                    'error': error_msg,
+                    'building_time': time.time() - start_time
+                }
+
+            # 创建关系抽取器
+            extractor = RelationExtractor(self)
+            relation_data = extractor.extract_relations_from_cases()
+
+            if not relation_data.get('success', False):
+                error_msg = "关系抽取失败"
+                logger.error(error_msg)
+                return {
+                    'status': 'failed',
+                    'error': error_msg,
+                    'building_time': time.time() - start_time
+                }
+
+            # 保存图谱数据
+            if storage.save_graph_data(relation_data):
+                logger.info("知识图谱数据保存成功")
+            else:
+                logger.warning("知识图谱数据保存失败，但不影响运行")
+
+            # 创建知识图谱实例
+            self.knowledge_graph = LegalKnowledgeGraph(relation_data)
+
+            building_time = time.time() - start_time
+            logger.info(f"知识图谱构建完成，耗时{building_time:.2f}s")
+
+            return {
+                'status': 'built_successfully',
+                'total_crimes': relation_data['total_crimes'],
+                'total_articles': relation_data['total_articles'],
+                'total_relations': relation_data['total_relations'],
+                'building_time': building_time,
+                'extraction_summary': relation_data.get('extraction_summary', {})
+            }
+
+        except Exception as e:
+            building_time = time.time() - start_time
+            logger.error(f"知识图谱构建失败: {e}")
+            return {
+                'status': 'failed',
+                'error': str(e),
+                'building_time': building_time
+            }
+
+    def get_knowledge_graph(self):
+        """获取知识图谱实例"""
+        return getattr(self, 'knowledge_graph', None)
+
+    def _initialize_multi_retrieval_engine(self) -> Dict[str, Any]:
+        """初始化多路召回引擎"""
+        try:
+            start_time = time.time()
+            
+            # 检查前置条件
+            if not self.model_loaded:
+                logger.warning("模型未加载，无法初始化多路召回引擎")
+                return {"status": "skipped", "reason": "model_not_loaded"}
+            
+            if not self.vectors_loaded:
+                logger.warning("向量数据未加载，无法初始化多路召回引擎")
+                return {"status": "skipped", "reason": "vectors_not_loaded"}
+            
+            logger.info("开始初始化多路召回引擎...")
+            
+            # 创建LLM客户端（如果需要）
+            try:
+                from ...infrastructure.llm.llm_client import LLMClient
+                llm_client = LLMClient(self.config)
+                logger.info("LLM客户端创建成功")
+            except Exception as e:
+                logger.warning(f"LLM客户端创建失败: {e}")
+                llm_client = None
+            
+            # 创建Query2doc和HyDE增强器
+            query2doc_enhancer = None
+            hyde_enhancer = None
+            
+            if llm_client and getattr(self.config, 'ENABLE_QUERY2DOC', True):
+                try:
+                    from ...infrastructure.llm.query2doc_enhancer import Query2docEnhancer
+                    query2doc_enhancer = Query2docEnhancer(llm_client, self.config)
+                    logger.info("Query2doc增强器创建成功")
+                except Exception as e:
+                    logger.warning(f"Query2doc增强器创建失败: {e}")
+            
+            if llm_client and getattr(self.config, 'ENABLE_HYDE', True):
+                try:
+                    from ...infrastructure.llm.hyde_enhancer import HyDEEnhancer
+                    hyde_enhancer = HyDEEnhancer(llm_client, self.config)
+                    logger.info("HyDE增强器创建成功")
+                except Exception as e:
+                    logger.warning(f"HyDE增强器创建失败: {e}")
+            
+            # 创建向量搜索引擎
+            try:
+                from ..search.vector_search_engine import get_enhanced_search_engine
+                vector_engine = get_enhanced_search_engine()
+                logger.info("向量搜索引擎获取成功")
+            except Exception as e:
+                logger.error(f"向量搜索引擎获取失败: {e}")
+                return {"status": "error", "error": str(e)}
+            
+            # 创建多路召回引擎
+            try:
+                from ..search.multi_retrieval_engine import MultiRetrievalEngine
+                self.multi_retrieval_engine = MultiRetrievalEngine(
+                    vector_engine=vector_engine,
+                    query2doc_enhancer=query2doc_enhancer,
+                    hyde_enhancer=hyde_enhancer,
+                    config=self.config
+                )
+                
+                logger.info("多路召回引擎初始化成功")
+                
+                initialization_time = time.time() - start_time
+                return {
+                    "status": "success",
+                    "initialization_time": initialization_time,
+                    "components": {
+                        "vector_engine": vector_engine is not None,
+                        "query2doc_enhancer": query2doc_enhancer is not None,
+                        "hyde_enhancer": hyde_enhancer is not None,
+                        "llm_client": llm_client is not None
+                    }
+                }
+                
+            except Exception as e:
+                logger.error(f"多路召回引擎创建失败: {e}")
+                return {"status": "error", "error": str(e)}
+                
+        except Exception as e:
+            logger.error(f"多路召回引擎初始化失败: {e}")
+            return {"status": "error", "error": str(e)}
+
+    def is_knowledge_graph_available(self) -> bool:
+        """检查知识图谱是否可用"""
+        return hasattr(self, 'knowledge_graph') and self.knowledge_graph is not None
     
     def clear_cache(self):
         """清空内容缓存"""
@@ -741,10 +1205,11 @@ class DataLoader:
             'vectors_available': self.vectors_loaded,
             'model_available': self.model_loaded,
             'original_data_available': self.original_loaded,
+            'bm25_index_available': self.bm25_built,
             'cache_functional': len(self.content_cache) >= 0,
             'config_valid': hasattr(self.config, 'DATA_VECTORS_PATH')
         }
-        
+
         return {
             'healthy': all(checks.values()),
             'checks': checks,

@@ -30,7 +30,8 @@ class ModuleAdapter:
                 'src.data',
                 'src.data.criminal_law_processor',
                 'src.domains',
-                'src.domains.entities'
+                'src.domains.entities',
+                'data_processor'  # 添加缺失的data_processor模块
             ]
             
             for module_name in fake_modules:
@@ -47,6 +48,8 @@ class ModuleAdapter:
                 fake_case_class = type('Case', (), {})
                 fake_criminal_law_article_class = type('CriminalLawArticle', (), {})
                 fake_criminal_case_class = type('CriminalCase', (), {})
+                fake_simple_article_class = type('SimpleArticle', (), {})  # 添加SimpleArticle类
+                fake_simple_case_class = type('SimpleCase', (), {})  # 添加SimpleCase类
                 
                 # 添加到相应的模块
                 if 'src.domains.entities' in sys.modules:
@@ -56,6 +59,25 @@ class ModuleAdapter:
                 if 'src.data.criminal_law_processor' in sys.modules:
                     setattr(sys.modules['src.data.criminal_law_processor'], 'CriminalLawArticle', fake_criminal_law_article_class)
                     setattr(sys.modules['src.data.criminal_law_processor'], 'CriminalCase', fake_criminal_case_class)
+                
+                # 为data_processor模块添加所需的类
+                if 'data_processor' in sys.modules:
+                    setattr(sys.modules['data_processor'], 'Article', fake_article_class)
+                    setattr(sys.modules['data_processor'], 'Case', fake_case_class)
+                    setattr(sys.modules['data_processor'], 'SimpleArticle', fake_simple_article_class)
+                    setattr(sys.modules['data_processor'], 'SimpleCase', fake_simple_case_class)
+                
+                # 添加到__main__模块以解决当前错误
+                import __main__
+                setattr(__main__, 'SimpleArticle', fake_simple_article_class)
+                setattr(__main__, 'SimpleCase', fake_simple_case_class)
+                setattr(__main__, 'Article', fake_article_class)
+                setattr(__main__, 'Case', fake_case_class)
+                
+                # 为data_processor模块添加更多类
+                if 'data_processor' in sys.modules:
+                    setattr(sys.modules['data_processor'], 'CriminalLawArticle', fake_criminal_law_article_class)
+                    setattr(sys.modules['data_processor'], 'CriminalCase', fake_criminal_case_class)
                     
                 logger.info("创建临时假实体类用于pickle加载")
             except Exception as e:
@@ -72,7 +94,8 @@ class ModuleAdapter:
                 'src.domains', 
                 'src.data.criminal_law_processor',
                 'src.data',
-                'src'
+                'src',
+                'data_processor'  # 添加data_processor模块清理
             ]
             
             for module_name in fake_modules:
@@ -156,7 +179,76 @@ class GroundTruthLoader:
             raise RuntimeError(f"必须使用真实数据，禁止模拟数据: {e}")
     
     def _extract_data_from_project_loader(self):
-        """从项目数据加载器提取评估所需的数据"""
+        """从TestDataGenerator获取一致的映射数据，确保评估准确性"""
+        try:
+            logger.info("🔧 使用TestDataGenerator的数据确保一致性")
+            
+            # 直接从evaluation系统导入TestDataGenerator获取映射
+            try:
+                from .test_generator import TestDataGenerator
+                test_generator = TestDataGenerator()
+                test_generator.load_data()
+                
+                # 检查数据是否成功加载
+                if (test_generator.article_case_mapping is None or 
+                    test_generator.articles_data is None or 
+                    test_generator.cases_data is None):
+                    raise ValueError("TestDataGenerator数据加载不完整")
+                
+                # 使用TestDataGenerator的映射数据
+                self.article_case_mapping = test_generator.article_case_mapping.copy()
+                
+                # 构建articles_dict从TestDataGenerator的数据
+                for article in test_generator.articles_data:
+                    article_num = article.get('article_number')
+                    if article_num:
+                        self.articles_dict[article_num] = {
+                            'article_number': article_num,
+                            'title': article.get('title', f'第{article_num}条'),
+                            'content': article.get('content', article.get('full_text', '')),
+                            'chapter': article.get('chapter', ''),
+                            'law_name': '刑法'
+                        }
+                
+                # 构建cases_dict从TestDataGenerator的数据
+                for case in test_generator.cases_data:
+                    case_id = case.get('case_id')
+                    if case_id:
+                        self.cases_dict[case_id] = {
+                            'case_id': case_id,
+                            'fact': case.get('fact', ''),
+                            'accusations': case.get('accusations', []),
+                            'relevant_articles': case.get('relevant_articles', []),
+                            'sentence_months': case.get('sentence_info', {}).get('imprisonment_months', 0)
+                        }
+                
+                # 构建case_article_mapping
+                for case_id, case in self.cases_dict.items():
+                    relevant_articles = case.get('relevant_articles', [])
+                    if relevant_articles:
+                        self.case_article_mapping[case_id] = relevant_articles
+                
+                logger.info("✅ 成功使用TestDataGenerator数据")
+                
+            except Exception as e:
+                logger.error(f"TestDataGenerator加载失败: {e}")
+                # 回退到原来的方法，但先初始化映射
+                self.article_case_mapping = {}
+                self._extract_data_from_pkl_files()
+            
+            # 输出统计信息
+            logger.info(f"📊 数据加载完成:")
+            logger.info(f"  - 法条数量: {len(self.articles_dict)}")
+            logger.info(f"  - 案例数量: {len(self.cases_dict)}")
+            logger.info(f"  - 法条到案例映射: {len(self.article_case_mapping)}")
+            logger.info(f"  - 案例到法条映射: {len(self.case_article_mapping)}")
+            
+        except Exception as e:
+            logger.error(f"数据提取失败: {e}")
+            raise
+    
+    def _extract_data_from_pkl_files(self):
+        """原来的从pkl文件提取数据的方法作为备选方案"""
         try:
             # 🔧 修复：直接从criminal目录加载完整数据，而不是vectors的metadata
             logger.info("🔧 修复：直接从criminal目录加载完整数据")
@@ -293,12 +385,17 @@ class GroundTruthLoader:
                     # 创建一个简单的类来代替缺失的类
                     return type(name, (dict,), {
                         '__module__': module,
-                        '__init__': lambda self, *args, **kwargs: dict.__init__(self, kwargs),
+                        '__init__': lambda self, *args, **kwargs: dict.__init__(self, kwargs) if kwargs else dict.__init__(self),
                         '__getattr__': lambda self, key: self.get(key, None),
                         '__setattr__': lambda self, key, value: self.__setitem__(key, value)
                     })
         
-        return SafeUnpickler(file_obj).load()
+        try:
+            return SafeUnpickler(file_obj).load()
+        except Exception as e:
+            logger.warning(f"SafeUnpickler失败，使用标准pickle: {e}")
+            file_obj.seek(0)  # 重置文件指针
+            return pickle.load(file_obj)
     
     def _load_fallback(self) -> bool:
         """备用加载方案，创建模拟数据"""

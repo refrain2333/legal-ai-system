@@ -1,0 +1,59 @@
+{
+  "evaluation_info": {
+    "sample_size": 100,
+    "total_data_size": 16532,
+    "training_epoch": 1,
+    "training_loss": 1.1625,
+    "model_load_time_seconds": 3.17,
+    "random_seed": 42
+  },
+  "base_model_results": {
+    "accuracy": 0.25,
+    "correct_predictions": 25,
+    "total_predictions": 100,
+    "confidence_interval_95": [0.1651, 0.3349],
+    "avg_positive_similarity": 0.7052,
+    "avg_negative_similarity": 0.7307,
+    "similarity_gap": -0.0255,
+    "evaluation_time_seconds": 177.78
+  },
+  "fine_tuned_model_results": {
+    "accuracy": 0.98,
+    "correct_predictions": 98,
+    "total_predictions": 100,
+    "confidence_interval_95": [0.9526, 1.0],
+    "avg_positive_similarity": 0.7645,
+    "avg_negative_similarity": 0.4552,
+    "similarity_gap": 0.3093,
+    "evaluation_time_seconds": 174.36
+  },
+  "improvement_analysis": {
+    "accuracy_absolute_improvement": 0.73,
+    "accuracy_percentage_improvement": 292.0,
+    "similarity_gap_improvement": 0.3348,
+    "effect_level": "显著提升"
+  },
+  "evaluation_summary": {
+    "model_grade": "优秀",
+    "accuracy_percentage": "98.0%",
+    "recommendation": "强烈建议部署使用，微调效果显著",
+    "key_findings": [
+      "基础模型存在负样本相似度高于正样本的问题",
+      "微调后模型学会了正确的语义区分",
+      "准确率从25%提升到98%，提升幅度巨大",
+      "仅1轮训练就达到优秀效果，训练效率很高"
+    ]
+  },
+  "technical_analysis": {
+    "base_model_issues": "负样本相似度(0.7307)高于正样本(0.7052)",
+    "fine_tuned_model_strengths": "正样本相似度(0.7645)明显高于负样本(0.4552)",
+    "contrastive_learning_effectiveness": "非常有效，特征分离清晰",
+    "training_efficiency": "高效，1轮训练达到98%准确率"
+  },
+  "deployment_readiness": {
+    "ready_for_production": true,
+    "confidence_level": "very_high",
+    "expected_user_satisfaction": "excellent",
+    "system_reliability": "high"
+  }
+}

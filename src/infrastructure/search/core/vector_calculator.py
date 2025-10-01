@@ -3,6 +3,7 @@
 """
 向量计算核心模块
 负责查询编码和相似度计算
+包含向量空间对齐功能
 """
 
 import numpy as np
@@ -15,45 +16,93 @@ logger = logging.getLogger(__name__)
 
 class VectorCalculator:
     """核心向量计算器 - 高内聚的计算逻辑"""
-    
+
     def __init__(self, data_loader):
         """
         初始化向量计算器
-        
+
         Args:
             data_loader: 数据加载器实例
         """
         self.data_loader = data_loader
-    
+        self.enable_vector_alignment = True  # 启用向量对齐
+        self.db_mean_norm = 19.776  # 数据库向量平均范数（从分析得出）
+
     def encode_query(self, query: str) -> Optional[np.ndarray]:
         """
-        编码查询文本为向量
-        
+        编码查询文本为向量，并应用向量对齐
+
         Args:
             query: 查询文本
-            
+
         Returns:
             查询向量，失败返回None
         """
         try:
-            return self.data_loader.encode_query(query)
+            query_vector = self.data_loader.encode_query(query)
+
+            if query_vector is not None and self.enable_vector_alignment:
+                # 检查是否使用微调模型
+                if hasattr(self.data_loader, 'model') and hasattr(self.data_loader.model, 'use_fine_tuned'):
+                    if getattr(self.data_loader.model, 'use_fine_tuned', False):
+                        # 应用向量对齐
+                        query_vector = self._align_query_vector(query_vector)
+                        logger.debug(f"Applied vector alignment for fine-tuned model")
+
+            return query_vector
         except Exception as e:
             logger.error(f"Query encoding failed: {e}")
             return None
+
+    def _align_query_vector(self, query_vector: np.ndarray) -> np.ndarray:
+        """
+        对齐查询向量到数据库向量空间
+
+        Args:
+            query_vector: 原始查询向量
+
+        Returns:
+            对齐后的查询向量
+        """
+        try:
+            # 确保是1D向量
+            if query_vector.ndim == 2:
+                query_vector = query_vector.flatten()
+
+            # 计算当前向量范数
+            current_norm = np.linalg.norm(query_vector)
+
+            if current_norm == 0:
+                return query_vector
+
+            # 缩放到数据库向量的平均范数
+            aligned_vector = query_vector * (self.db_mean_norm / current_norm)
+
+            logger.debug(f"Vector alignment: {current_norm:.3f} -> {np.linalg.norm(aligned_vector):.3f}")
+
+            return aligned_vector
+
+        except Exception as e:
+            logger.error(f"Vector alignment failed: {e}")
+            return query_vector
     
-    def calculate_similarities(self, query_vector: np.ndarray, 
+    def calculate_similarities(self, query_vector: np.ndarray,
                              document_vectors: np.ndarray) -> np.ndarray:
         """
         计算查询向量与文档向量的相似度
-        
+
         Args:
-            query_vector: 查询向量 (1, 768)
+            query_vector: 查询向量 (1, 768) 或 (768,)
             document_vectors: 文档向量矩阵 (N, 768)
-            
+
         Returns:
             相似度数组 (N,)
         """
         try:
+            # 确保查询向量是2D格式 (1, 768)
+            if query_vector.ndim == 1:
+                query_vector = query_vector.reshape(1, -1)
+
             similarities = cosine_similarity(query_vector, document_vectors)[0]
             return similarities
         except Exception as e:

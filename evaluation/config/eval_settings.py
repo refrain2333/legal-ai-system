@@ -29,10 +29,15 @@ EVALUATION_CONFIG = {
     # 检索参数
     "top_k_values": [1, 3, 5, 10, 20],  # 评估不同K值的性能
     "default_top_k": 10,  # 默认返回结果数
-    
-    # 测试集参数 - 翻倍样本数量，减少统计偏差
-    "test_sample_size": 30,   # 法条↔案例搜索测试样本数量（翻倍）  
-    "crime_consistency_sample_size": 32,  # 罪名一致性评估样本数量（翻倍）
+
+    # 测试集参数
+    "test_sample_size": 30,   # 法条↔案例搜索测试样本数量
+    "crime_consistency_sample_size": 32,  # 罪名一致性评估样本数量
+
+    # 快速评估模式参数（--quick选项）
+    "quick_test_sample_size": 20,  # 快速模式测试样本数
+    "quick_crime_consistency_size": 20,  # 快速模式罪名一致性样本数
+
     "random_seed": 42,  # 随机种子
     "test_query_types": [
         "article_to_cases",  # 法条搜索相关案例

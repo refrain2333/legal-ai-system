@@ -157,10 +157,11 @@ class LegalSearchEvaluator:
             # 🔧 修复：使用与实际项目相同的搜索服务路径
             from src.services.search_service import SearchService
             from src.infrastructure.repositories import get_legal_document_repository
-            
+
             logger.info("初始化搜索服务（与实际项目相同路径）...")
             repository = get_legal_document_repository()
-            self.search_service = SearchService(repository)
+            # 评估模式下不需要LLM客户端和WebSocket
+            self.search_service = SearchService(repository, llm_client=None, debug_mode=False)
             logger.info("搜索服务准备就绪")
             
         except Exception as e:
@@ -511,9 +512,9 @@ class LegalSearchEvaluator:
             query_text = query.get('query_text', '')
             query_type = query.get('query_type', '')
             
-            # 🔍 显示每次搜索的关键词（用户要求在控制台查看所有搜索操作）
+            # 显示每次搜索的关键词（用户要求在控制台查看所有搜索操作）
             print("=" * 80)
-            print(f"🔍 搜索操作详情:")
+            print(f"搜索操作详情:")
             print(f"查询ID: {query.get('query_id', 'N/A')}")
             print(f"查询类型: {query_type}")
             if query.get('article_number'):
@@ -644,10 +645,10 @@ class LegalSearchEvaluator:
                 retrieved_ids = []
                 relevant_ids = []
             else:
-                print(f"\n📊 法条到案例检索评估 - 第{query_article_num}条")
+                print(f"\n法条到案例检索评估 - 第{query_article_num}条")
                 print(f"搜索目标：在20个搜索结果中找到relevant_articles包含{query_article_num}的案例")
                 print("-" * 60)
-                
+
                 relevant_count = 0
                 for i, result in enumerate(search_results[:20]):  # 只评估前20个
                     case_relevant_articles = result.get('relevant_articles', [])
@@ -662,22 +663,22 @@ class LegalSearchEvaluator:
                     if case_id:
                         retrieved_ids.append(case_id)
                         relevance_scores[case_id] = similarity
-                        
+
                         # 检查是否相关
                         is_relevant = isinstance(case_relevant_articles, list) and query_article_num in case_relevant_articles
                         if is_relevant:
                             relevant_ids.append(case_id)
                             relevant_count += 1
-                            status = "✅ 相关"
+                            status = "相关"
                         else:
-                            status = "❌ 不相关"
-                        
+                            status = "不相关"
+
                         print(f"案例{i+1:2d}: {case_id} | 相似度:{similarity:.4f} | {status}")
                         print(f"        罪名: {accusations}")
                         print(f"        引用法条: {case_relevant_articles}")
 
                 print("-" * 60)
-                print(f"📈 评估结果:")
+                print(f"评估结果:")
                 print(f"  - 搜索到案例数: {len(retrieved_ids)}")
                 print(f"  - 相关案例数: {relevant_count}")
                 print(f"  - 匹配率: {relevant_count/len(retrieved_ids)*100:.1f}%" if retrieved_ids else "0%")
@@ -688,7 +689,7 @@ class LegalSearchEvaluator:
             case_relevant_articles = query.get('ground_truth_articles', [])
             case_id = query.get('case_id', query.get('query_id', '未知案例'))
             
-            print(f"\n📊 案例到法条检索评估 - {case_id}")
+            print(f"\n案例到法条检索评估 - {case_id}")
             print(f"真实答案：{case_relevant_articles}")
             print(f"评估标准：在前5个法条中包含标准答案，排名越靠前得分越高")
             print("-" * 60)
@@ -722,10 +723,10 @@ class LegalSearchEvaluator:
                             found_articles.append(article_num)
                             if first_found_position is None:
                                 first_found_position = i + 1
-                            status = "✅ 标准答案"
+                            status = "标准答案"
                         else:
-                            status = "❌ 无关法条"
-                        
+                            status = "无关法条"
+
                         title = result.get('title', f'第{article_num}条')
                         print(f"法条{i+1:2d}: 第{article_num}条 | 相似度:{similarity:.4f} | {status}")
                         print(f"        标题: {title[:50]}...")
@@ -751,12 +752,12 @@ class LegalSearchEvaluator:
             quality_score = coverage * ranking_score if ranking_score > 0 else 0
             
             print("-" * 60)
-            print(f"📈 评估结果:")
+            print(f"评估结果:")
             print(f"  - 真实答案: {case_relevant_articles}")
             print(f"  - 找到答案: {found_articles}")
             print(f"  - 覆盖率: {coverage*100:.1f}% ({len(found_articles)}/{len(case_relevant_articles)})")
-            print(f"  - 完整性: {'✅ 满分' if found_all else '❌ 缺失'}")
-            print(f"  - 最佳排名: 第{first_found_position}位" if first_found_position else "❌ 未找到")
+            print(f"  - 完整性: {'满分' if found_all else '缺失'}")
+            print(f"  - 最佳排名: 第{first_found_position}位" if first_found_position else "未找到")
             print(f"  - 排序质量: {ranking_score*100:.1f}%")
             print(f"  - 综合质量: {quality_score*100:.1f}% (完整性×排序质量)")
             
@@ -783,7 +784,7 @@ class LegalSearchEvaluator:
             
         else:
             # 其他查询类型保持原逻辑
-            print(f"\n📊 未知查询类型评估 - {query_type}")
+            print(f"\n未知查询类型评估 - {query_type}")
             for i, result in enumerate(search_results):
                 doc_id = result.get('id')
                 if doc_id is not None:
@@ -806,14 +807,14 @@ class LegalSearchEvaluator:
         )
         
         # 显示中文指标结果
-        print(f"\n📊 详细评估指标:")
-        print(f"  🎯 精确度@5:  {metrics.get('precision@5', 0):.4f} ({metrics.get('precision@5', 0)*100:.1f}%)")
-        print(f"  🎯 精确度@10: {metrics.get('precision@10', 0):.4f} ({metrics.get('precision@10', 0)*100:.1f}%)")
-        print(f"  🎯 精确度@20: {metrics.get('precision@20', 0):.4f} ({metrics.get('precision@20', 0)*100:.1f}%)")
-        print(f"  📈 召回率@5:  {metrics.get('recall@5', 0):.4f} ({metrics.get('recall@5', 0)*100:.1f}%)")
-        print(f"  📈 召回率@10: {metrics.get('recall@10', 0):.4f} ({metrics.get('recall@10', 0)*100:.1f}%)")
-        print(f"  🔗 F1分数@10: {metrics.get('f1@10', 0):.4f}")
-        print(f"  🏆 MAP得分:    {metrics.get('map', 0):.4f}")
+        print(f"\n详细评估指标:")
+        print(f"  精确度@5:  {metrics.get('precision@5', 0):.4f} ({metrics.get('precision@5', 0)*100:.1f}%)")
+        print(f"  精确度@10: {metrics.get('precision@10', 0):.4f} ({metrics.get('precision@10', 0)*100:.1f}%)")
+        print(f"  精确度@20: {metrics.get('precision@20', 0):.4f} ({metrics.get('precision@20', 0)*100:.1f}%)")
+        print(f"  召回率@5:  {metrics.get('recall@5', 0):.4f} ({metrics.get('recall@5', 0)*100:.1f}%)")
+        print(f"  召回率@10: {metrics.get('recall@10', 0):.4f} ({metrics.get('recall@10', 0)*100:.1f}%)")
+        print(f"  F1分数@10: {metrics.get('f1@10', 0):.4f}")
+        print(f"  MAP得分:    {metrics.get('map', 0):.4f}")
         print("=" * 80)
         
         # 添加命中式指标（特别适合案例到法条检索）

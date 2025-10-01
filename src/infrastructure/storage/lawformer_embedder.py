@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Lawformer模型的sentence-transformers兼容包装器
-为了使用thunlp/Lawformer替换原有的sentence-transformers模型
+Lawformer模型编码器
+使用thunlp/Lawformer进行法律文本向量化编码
 """
 
 import torch
 import numpy as np
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer, LongformerModel, LongformerConfig
 from typing import List, Union, Optional
 import logging
 from tqdm import tqdm
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class LawformerEmbedder:
-    """Lawformer模型的sentence-transformers兼容包装器"""
+    """Lawformer模型编码器 - 提供标准的文本向量化接口"""
     
     def __init__(self, model_name: str = "thunlp/Lawformer", cache_folder: Optional[str] = None):
         self.model_name = model_name
@@ -31,13 +31,68 @@ class LawformerEmbedder:
         if self.model is None:
             logger.info(f"Loading Lawformer model: {self.model_name}")
             try:
-                # 加载tokenizer和model
+                # 构建加载参数
                 kwargs = {}
                 if self.cache_folder:
                     kwargs['cache_dir'] = self.cache_folder
+                
+                # 尝试使用本地路径直接加载
+                model_path = None
+                if self.cache_folder:
+                    # 检查本地缓存中的模型
+                    from pathlib import Path
+                    cache_path = Path(self.cache_folder) / "models--thunlp--Lawformer"
+                    if cache_path.exists():
+                        # 找到最新的snapshot
+                        snapshots_dir = cache_path / "snapshots"
+                        if snapshots_dir.exists():
+                            snapshots = [d for d in snapshots_dir.iterdir() if d.is_dir()]
+                            if snapshots:
+                                model_path = str(max(snapshots, key=lambda x: x.stat().st_mtime))
+                                logger.info(f"Using local model path: {model_path}")
+                
+                # 加载tokenizer
+                if model_path:
+                    self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+                else:
+                    self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, **kwargs, trust_remote_code=True)
+                
+                # 加载模型 - 尝试多种方式
+                try:
+                    # 方法1: 使用本地路径和trust_remote_code
+                    if model_path:
+                        self.model = AutoModel.from_pretrained(model_path, trust_remote_code=True)
+                        logger.info("Successfully loaded model from local path with trust_remote_code")
+                    else:
+                        self.model = AutoModel.from_pretrained(self.model_name, trust_remote_code=True, **kwargs)
+                        logger.info("Successfully loaded model with trust_remote_code")
+                        
+                except Exception as e1:
+                    logger.warning(f"Failed with trust_remote_code: {e1}")
+                    try:
+                        # 方法2: 强制使用Longformer类
+                        if model_path:
+                            self.model = LongformerModel.from_pretrained(model_path)
+                            logger.info("Successfully loaded as LongformerModel from local path")
+                        else:
+                            self.model = LongformerModel.from_pretrained(self.model_name, **kwargs)
+                            logger.info("Successfully loaded as LongformerModel")
+                            
+                    except Exception as e2:
+                        logger.warning(f"Failed with LongformerModel: {e2}")
+                        # 方法3: 手动指定配置
+                        from transformers import LongformerConfig
+                        try:
+                            if model_path:
+                                config = LongformerConfig.from_pretrained(model_path)
+                                self.model = LongformerModel.from_pretrained(model_path, config=config)
+                                logger.info("Successfully loaded with manual config")
+                            else:
+                                raise Exception("Need local path for manual config loading")
+                        except Exception as e3:
+                            logger.error(f"All loading methods failed: {e1}, {e2}, {e3}")
+                            raise e1  # 抛出第一个错误
                     
-                self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, **kwargs)
-                self.model = AutoModel.from_pretrained(self.model_name, **kwargs)
                 self.model.to(self.device)
                 self.model.eval()
                 logger.info("Lawformer model loaded successfully")
@@ -45,6 +100,7 @@ class LawformerEmbedder:
                 # 打印模型信息
                 logger.info(f"Model max_position_embeddings: {getattr(self.model.config, 'max_position_embeddings', 'Unknown')}")
                 logger.info(f"Model hidden_size: {getattr(self.model.config, 'hidden_size', 'Unknown')}")
+                logger.info(f"Model type: {getattr(self.model.config, 'model_type', 'Unknown')}")
                 
             except Exception as e:
                 logger.error(f"Failed to load Lawformer model: {e}")
@@ -53,7 +109,7 @@ class LawformerEmbedder:
     def encode(self, texts: Union[str, List[str]], batch_size: int = 8, max_length: int = 4096, 
                show_progress_bar: bool = True) -> np.ndarray:
         """
-        编码文本为向量，兼容sentence-transformers的接口
+        编码文本为向量
         
         Args:
             texts: 输入文本或文本列表
@@ -143,9 +199,8 @@ class LawformerEmbedder:
             
         return embedding.flatten()
     
-    @property
     def get_sentence_embedding_dimension(self) -> int:
-        """获取向量维度，兼容sentence-transformers"""
+        """获取向量维度"""
         self._load_model()
         return self.model.config.hidden_size
         

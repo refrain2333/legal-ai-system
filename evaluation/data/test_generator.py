@@ -27,7 +27,6 @@ class TestDataGenerator:
         if config_path is None:
             try:
                 from ..config.eval_settings import (
-                    ARTICLE_CASE_MAPPINGS_PATH,
                     CRIMINAL_ARTICLES_PATH,
                     CRIMINAL_CASES_PATH,
                     CRIME_TYPES_PATH,
@@ -40,13 +39,12 @@ class TestDataGenerator:
                 eval_dir = Path(__file__).parent.parent
                 sys.path.insert(0, str(eval_dir))
                 from config.eval_settings import (
-                    ARTICLE_CASE_MAPPINGS_PATH,
                     CRIMINAL_ARTICLES_PATH,
                     CRIMINAL_CASES_PATH,
                     CRIME_TYPES_PATH,
                     EVALUATION_CONFIG
                 )
-            self.mappings_path = ARTICLE_CASE_MAPPINGS_PATH
+            # 不再使用预构建的映射文件，直接从原始数据重建
             self.articles_path = CRIMINAL_ARTICLES_PATH
             self.cases_path = CRIMINAL_CASES_PATH
             self.crimes_path = CRIME_TYPES_PATH
@@ -79,11 +77,6 @@ class TestDataGenerator:
             _module_adapter.create_fake_modules_if_needed()
             
             try:
-                # 加载法条-案例映射
-                logger.info("加载法条-案例映射数据...")
-                with open(self.mappings_path, 'rb') as f:
-                    self.article_case_mapping = pickle.load(f)
-                
                 # 加载法条数据
                 logger.info("加载法条数据...")
                 with open(self.articles_path, 'rb') as f:
@@ -103,8 +96,8 @@ class TestDataGenerator:
                 with open(self.crimes_path, 'r', encoding='utf-8') as f:
                     self.crime_keywords = [line.strip() for line in f if line.strip()]
             
-            # 构建反向映射（案例到法条）
-            self._build_case_article_mapping()
+            # 从案例数据重建映射关系（与GroundTruthLoader逻辑一致）
+            self._build_mappings_from_cases()
             
             logger.info(f"数据加载完成: {len(self.articles_data)}条法条, "
                        f"{len(self.cases_data)}个案例, "
@@ -116,16 +109,30 @@ class TestDataGenerator:
             logger.error(f"加载数据失败: {e}")
             return False
     
-    def _build_case_article_mapping(self):
-        """构建案例到法条的反向映射"""
+    def _build_mappings_from_cases(self):
+        """从案例数据重建映射关系 - 与GroundTruthLoader逻辑一致"""
+        self.article_case_mapping = {}
         self.case_article_mapping = {}
         
-        # 从案例数据中提取映射关系
+        logger.info("从案例数据重建法条-案例映射关系...")
+        
+        # 遍历所有案例，提取relevant_articles构建映射
         for case in self.cases_data:
             case_id = case.get('case_id', case.get('id'))
             relevant_articles = case.get('relevant_articles', [])
+            
             if case_id and relevant_articles:
+                # 案例到法条的映射
                 self.case_article_mapping[case_id] = relevant_articles
+                
+                # 法条到案例的映射（反向构建）
+                for article_num in relevant_articles:
+                    if article_num not in self.article_case_mapping:
+                        self.article_case_mapping[article_num] = []
+                    self.article_case_mapping[article_num].append(case_id)
+        
+        logger.info(f"映射重建完成: {len(self.article_case_mapping)}个法条有对应案例, "
+                   f"{len(self.case_article_mapping)}个案例有相关法条")
     
     def generate_article_to_case_queries(self, sample_size: int = None) -> List[Dict[str, Any]]:
         """

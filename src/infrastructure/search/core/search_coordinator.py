@@ -40,31 +40,31 @@ class SearchCoordinator:
     
     def ensure_loaded(self) -> bool:
         """
-        确保所有必需数据已加载
-        
+        确保所有必需数据已加载，包括BM25索引
+
         Returns:
             是否加载成功
         """
         if self.loaded:
             return True
-        
+
         try:
-            # 加载向量数据和模型
-            vector_stats = self.data_loader.load_vectors()
-            model_stats = self.data_loader.load_model()
-            
-            vector_success = vector_stats.get('status') in ['success', 'already_loaded']
-            model_success = model_stats.get('status') in ['success', 'already_loaded']
-            
-            self.loaded = vector_success and model_success
-            
+            # 加载向量数据、模型和BM25索引
+            all_stats = self.data_loader.load_all()
+
+            vector_success = all_stats.get('vectors', {}).get('status') in ['success', 'already_loaded']
+            model_success = all_stats.get('model', {}).get('status') in ['success', 'already_loaded']
+            bm25_success = all_stats.get('bm25_index', {}).get('status') in ['success', 'already_built']
+
+            self.loaded = vector_success and model_success and bm25_success
+
             if self.loaded:
-                logger.info("Search coordinator loaded successfully")
+                logger.info("Search coordinator loaded successfully with BM25 index")
             else:
-                logger.error(f"Search coordinator load failed: vectors={vector_success}, model={model_success}")
-            
+                logger.error(f"Search coordinator load failed: vectors={vector_success}, model={model_success}, bm25={bm25_success}")
+
             return self.loaded
-            
+
         except Exception as e:
             logger.error(f"Error loading search coordinator: {e}")
             return False
@@ -115,16 +115,16 @@ class SearchCoordinator:
             logger.error(f"Mixed search execution error: {e}")
             return {'success': False, 'error': str(e)}
     
-    def _format_and_filter_results(self, raw_results: List[Dict[str, Any]], 
+    def _format_and_filter_results(self, raw_results: List[Dict[str, Any]],
                                  target_count: int, include_content: bool) -> List[Dict[str, Any]]:
         """
         格式化和过滤结果
-        
+
         Args:
             raw_results: 原始搜索结果
             target_count: 目标数量
             include_content: 是否包含内容
-            
+
         Returns:
             格式化并过滤后的结果列表
         """
@@ -134,22 +134,180 @@ class SearchCoordinator:
             formatted_result = self.result_formatter.format_single_document(result, include_content=False)
             if formatted_result:
                 formatted_results.append(formatted_result)
-        
+
         # 内容增强和长度过滤
         if include_content:
             # 获取更多候选以备过滤
             candidates = formatted_results[:target_count * 2]
-            
+
             # 增强内容并过滤
             enriched_candidates = self.content_enricher.enrich_results_with_content(
                 candidates, True, min_content_length=20
             )
-            
+
             # 返回目标数量的结果
             return enriched_candidates[:target_count]
         else:
             # 不包含内容时直接返回目标数量
             return formatted_results[:target_count]
+
+    def _reciprocal_rank_fusion(self, results_lists: List[List[str]], k: int = 60) -> List[tuple]:
+        """
+        倒数排名融合算法(RRF)
+
+        Args:
+            results_lists: 多个排序列表，每个列表包含文档ID
+            k: RRF参数，通常设为60
+
+        Returns:
+            融合后的(doc_id, score)列表，按分数降序排列
+        """
+        fused_scores = {}
+
+        for doc_list in results_lists:
+            for rank, doc_id in enumerate(doc_list):
+                if doc_id not in fused_scores:
+                    fused_scores[doc_id] = 0
+                fused_scores[doc_id] += 1 / (k + rank + 1)
+
+        # 按分数降序排列
+        return sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)
+
+    def hybrid_search(self, query: str, top_k: int = 20) -> List[Dict]:
+        """
+        混合搜索主入口 - 融合语义搜索和BM25关键词搜索
+
+        Args:
+            query: 查询字符串
+            top_k: 返回结果数量
+
+        Returns:
+            融合后的搜索结果列表
+        """
+        if not self.ensure_loaded():
+            logger.error("Search coordinator not ready")
+            return []
+
+        try:
+            logger.info(f"执行混合搜索，查询: '{query}', top_k: {top_k}")
+
+            # 1. Lawformer语义搜索
+            semantic_results = self.execute_search(query, top_k * 2, include_content=True)
+            logger.debug(f"语义搜索返回 {len(semantic_results)} 个结果")
+
+            # 2. BM25关键词搜索
+            bm25_results = []
+            if hasattr(self.data_loader, 'bm25_search') and self.data_loader.bm25_built:
+                bm25_results = self.data_loader.bm25_search(query, top_k * 2)
+                logger.debug(f"BM25搜索返回 {len(bm25_results)} 个结果")
+            else:
+                logger.warning("BM25索引未构建，将仅使用语义搜索")
+                # 降级到纯语义搜索
+                return semantic_results[:top_k]
+
+            # 3. 准备RRF输入列表
+            semantic_ids = [r.get('id', '') for r in semantic_results if r.get('id')]
+            bm25_ids = [r.get('id', '') for r in bm25_results if r.get('id')]
+
+            # 4. 使用RRF融合结果
+            fused_results = self._reciprocal_rank_fusion([semantic_ids, bm25_ids])
+            logger.debug(f"RRF融合后得到 {len(fused_results)} 个唯一结果")
+
+            # 5. 构造最终结果
+            final_results = self._build_final_results(
+                fused_results[:top_k],
+                semantic_results,
+                bm25_results
+            )
+
+            logger.info(f"混合搜索完成，返回 {len(final_results)} 个结果")
+            return final_results
+
+        except Exception as e:
+            logger.error(f"混合搜索失败: {e}")
+            # 降级到纯语义搜索
+            try:
+                logger.info("降级到纯语义搜索")
+                return self.execute_search(query, top_k, include_content=True)
+            except Exception as fallback_error:
+                logger.error(f"降级搜索也失败: {fallback_error}")
+                return []
+
+    def _build_final_results(self, fused_doc_scores: List[tuple],
+                           semantic_results: List[Dict],
+                           bm25_results: List[Dict]) -> List[Dict]:
+        """
+        根据RRF融合结果构建最终结果列表
+
+        Args:
+            fused_doc_scores: RRF融合后的(doc_id, score)列表
+            semantic_results: 语义搜索结果
+            bm25_results: BM25搜索结果
+
+        Returns:
+            最终结果列表
+        """
+        # 创建ID到结果的映射
+        semantic_map = {r.get('id', ''): r for r in semantic_results if r.get('id')}
+        bm25_map = {r.get('id', ''): r for r in bm25_results if r.get('id')}
+
+        final_results = []
+
+        for doc_id, fusion_score in fused_doc_scores:
+            if not doc_id:
+                continue
+
+            # 优先使用语义搜索结果（包含完整内容）
+            if doc_id in semantic_map:
+                result = semantic_map[doc_id].copy()
+                result['fusion_score'] = float(fusion_score)
+                result['search_method'] = 'hybrid'
+                final_results.append(result)
+            elif doc_id in bm25_map:
+                # 如果只有BM25结果，尝试补充内容
+                result = bm25_map[doc_id].copy()
+                result['fusion_score'] = float(fusion_score)
+                result['search_method'] = 'bm25_only'
+
+                # 尝试获取完整内容
+                try:
+                    enriched_result = self._enrich_bm25_result(result)
+                    if enriched_result:
+                        final_results.append(enriched_result)
+                    else:
+                        final_results.append(result)
+                except Exception as e:
+                    logger.warning(f"无法增强BM25结果 {doc_id}: {e}")
+                    final_results.append(result)
+
+        return final_results
+
+    def _enrich_bm25_result(self, bm25_result: Dict) -> Optional[Dict]:
+        """
+        为BM25结果补充完整内容
+
+        Args:
+            bm25_result: BM25搜索结果
+
+        Returns:
+            增强后的结果或None
+        """
+        doc_id = bm25_result.get('id', '')
+        if not doc_id:
+            return None
+
+        try:
+            # 尝试获取完整文档信息
+            full_doc = self.get_document_by_id(doc_id, include_content=True)
+            if full_doc:
+                # 保留BM25的相似度分数，但使用完整文档的其他信息
+                full_doc['similarity'] = bm25_result.get('similarity', 0.0)
+                full_doc['source'] = bm25_result.get('source', 'bm25')
+                return full_doc
+        except Exception as e:
+            logger.debug(f"无法获取文档 {doc_id} 的完整信息: {e}")
+
+        return None
     
     def load_more_cases(self, query: str, offset: int = 0, limit: int = 5, 
                        include_content: bool = False) -> Dict[str, Any]:
@@ -411,13 +569,13 @@ class SearchCoordinator:
     def get_search_stats(self) -> Dict[str, Any]:
         """
         获取搜索系统统计信息
-        
+
         Returns:
             统计信息字典
         """
         try:
             data_loader_stats = self.data_loader.get_stats() if self.data_loader else {}
-            
+
             stats = {
                 'coordinator_ready': self.loaded,
                 'total_documents': data_loader_stats.get('total_documents', 0),
@@ -425,10 +583,12 @@ class SearchCoordinator:
                 'cases_count': len(self.data_loader.get_metadata('cases') or []),
                 'model_loaded': data_loader_stats.get('model_loaded', False),
                 'vectors_loaded': data_loader_stats.get('vectors_loaded', False),
+                'bm25_index_built': data_loader_stats.get('bm25_index_built', False),
+                'bm25_documents': data_loader_stats.get('bm25_documents', 0),
                 'memory_usage_mb': data_loader_stats.get('memory_usage_mb', 0),
                 'cached_contents': data_loader_stats.get('cached_contents', 0)
             }
-            
+
             # 添加组件统计
             stats.update({
                 'vector_calculator_stats': self.vector_calculator.get_calculation_stats(),
@@ -436,9 +596,9 @@ class SearchCoordinator:
                 'available_ranking_strategies': self.similarity_ranker.get_available_strategies(),
                 'supported_result_types': self.result_formatter.get_supported_types()
             })
-            
+
             return stats
-            
+
         except Exception as e:
             logger.error(f"Error getting search stats: {e}")
             return {'error': str(e)}

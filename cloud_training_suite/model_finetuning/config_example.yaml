@@ -1,0 +1,35 @@
+# 示例：模型微调配置文件
+# 展示了控制模型微调过程中的一些关键参数。
+
+# 模型相关配置
+model:
+  # 微调的基础模型名称，通常来自Hugging Face
+  base_model: "thunlp/Lawformer"
+  # 模型输出的向量维度
+  embedding_dim: 768
+  # 保存微调后模型的目录
+  model_output_dir: "models/fine_tuned"
+
+# 训练过程相关配置
+training:
+  # 批大小：一次喂给模型多少数据。需要根据显存大小调整。
+  batch_size: 8
+  # 训练轮数：把整个数据集完整训练多少遍。
+  num_epochs: 3
+  # 学习率：模型参数更新的幅度，是一个非常关键的超参数。
+  learning_rate: 5e-5 # (0.00005)
+
+# 对比学习相关配置
+contrastive:
+  # 损失函数的边界值(margin)。
+  # 在三元组损失中，希望正样本和负样本与锚点的距离差至少大于这个值。
+  margin: 0.5
+  # 损失函数的类型，可以是 'triplet' (三元组损失) 或 'mnrl' (多负样本排序损失)
+  loss_type: "triplet"
+
+# 评估相关配置
+evaluation:
+  # 评估时使用的批大小
+  eval_batch_size: 16
+  # 评估哪些指标，例如 top-k 召回率
+  top_k_list: [1, 3, 5]

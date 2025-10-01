@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 刑事数据向量化处理器
-使用text2vec-base-chinese模型分别对刑法条文和案例进行向量化
+使用Lawformer模型分别对刑法条文和案例进行向量化
 """
 
 import sys
@@ -11,7 +11,6 @@ import numpy as np
 from pathlib import Path
 from typing import List, Dict, Any
 import time
-from sentence_transformers import SentenceTransformer
 # 导入自定义的Lawformer适配器
 try:
     from src.infrastructure.storage.lawformer_embedder import LawformerEmbedder
@@ -46,22 +45,21 @@ class CriminalDataVectorizer:
         start_time = time.time()
         
         # 根据模型名称选择加载方式
-        if 'lawformer' in self.model_name.lower() and LAWFORMER_AVAILABLE:
+        if LAWFORMER_AVAILABLE:
             print("使用Lawformer适配器...")
             self.model = LawformerEmbedder(model_name=self.model_name)
         else:
-            print("使用SentenceTransformer...")
-            self.model = SentenceTransformer(self.model_name)
+            raise ImportError("LawformerEmbedder not available. Please ensure src.infrastructure.storage.lawformer_embedder is accessible.")
         
         load_time = time.time() - start_time
         print(f"模型加载完成，耗时: {load_time:.2f}秒")
         
         # 获取向量维度
         if hasattr(self.model, 'get_sentence_embedding_dimension'):
-            if callable(self.model.get_sentence_embedding_dimension):
+            try:
                 dim = self.model.get_sentence_embedding_dimension()
-            else:
-                dim = self.model.get_sentence_embedding_dimension
+            except Exception:
+                dim = "Unknown"
         else:
             dim = "Unknown"
         print(f"模型维度: {dim}")

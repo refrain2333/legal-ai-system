@@ -83,7 +83,7 @@ celerybeat-schedule
 # Environments
 
 .venv
-env/
+
 venv/
 ENV/
 env.bak/
@@ -149,8 +149,7 @@ tmp/
 # 配置文件中的敏感信息
 config/secrets.yaml
 config/local_config.yaml
-.env.local
-.env.production
+
 
 # IDE文件
 .vscode/
@@ -202,3 +201,6 @@ user_data/
 # API密钥和配置
 api_keys.txt
 secrets.json
+
+# Claude Code配置文件
+.claude/

@@ -81,61 +81,55 @@ class StartupManager:
     def _load_all_components(self):
         """执行所有组件加载 - 支持渐进式进度更新"""
         try:
-            # 1. 加载向量数据
-            self._current_step = "加载向量数据"
-            self._update_progress("加载向量数据", 0)
-            logger.info("开始加载向量数据...")
+            # 使用统一的load_all方法，确保所有组件都被正确初始化
+            self._current_step = "加载所有组件"
+            self._update_progress("加载所有组件", 0)
+            logger.info("开始加载所有系统组件...")
             
-            vector_result = self.data_loader.load_vectors()
-            
-            if vector_result.get('status') not in ['success', 'already_loaded']:
-                raise Exception(f"向量加载失败: {vector_result.get('error', '未知错误')}")
-            
-            # 记录加载的文档数量
-            if 'articles' in self.data_loader.vectors_data:
-                self._documents_loaded["articles"] = self.data_loader.vectors_data['articles'].get('total_count', 0)
-            if 'cases' in self.data_loader.vectors_data:
-                self._documents_loaded["cases"] = self.data_loader.vectors_data['cases'].get('total_count', 0)
-            
-            self._update_progress("加载向量数据", 100)
-            
-            # 2. 加载AI模型 - 支持进度更新
-            self._current_step = "加载AI模型"
-            self._update_progress("加载AI模型", 0)
-            logger.info("开始加载AI模型...")
-            
-            # 模拟进度更新（因为模型加载内部无法获取详细进度）
+            # 模拟进度更新
             import threading
             import time as time_module
             
-            def simulate_model_progress():
-                """模拟模型加载进度"""
-                progress_points = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95]
+            def simulate_loading_progress():
+                """模拟加载进度"""
+                progress_points = [10, 20, 35, 50, 65, 75, 85, 95]
                 for i, progress in enumerate(progress_points):
-                    time_module.sleep(6)  # 每6秒更新一次进度
-                    if self._current_step == "加载AI模型" and self._is_loading:
-                        self._update_progress("加载AI模型", progress)
+                    time_module.sleep(5)  # 每5秒更新一次进度
+                    if self._current_step == "加载所有组件" and self._is_loading:
+                        self._update_progress("加载所有组件", progress)
             
             # 启动进度模拟线程
-            progress_thread = threading.Thread(target=simulate_model_progress, daemon=True)
+            progress_thread = threading.Thread(target=simulate_loading_progress, daemon=True)
             progress_thread.start()
             
-            model_result = self.data_loader.load_model(force_load=True)
+            # 调用统一的load_all方法
+            all_stats = self.data_loader.load_all()
             
-            if model_result.get('status') not in ['success', 'already_loaded']:
-                raise Exception(f"模型加载失败: {model_result.get('error', '未知错误')}")
+            if not all_stats.get('success', False):
+                raise Exception(f"组件加载失败: {all_stats.get('error', '未知错误')}")
             
-            self._update_progress("加载AI模型", 100)
+            # 记录加载的文档数量
+            if 'vectors' in all_stats:
+                vector_stats = all_stats['vectors']
+                if isinstance(vector_stats, dict):
+                    self._documents_loaded["articles"] = vector_stats.get('articles', 0)
+                    self._documents_loaded["cases"] = vector_stats.get('cases', 0)
             
-            # 3. 初始化搜索引擎
+            # 检查多路召回引擎是否成功初始化
+            multi_engine_stats = all_stats.get('multi_retrieval_engine', {})
+            if multi_engine_stats.get('status') == 'success':
+                logger.info("✅ 多路召回引擎初始化成功")
+            else:
+                logger.warning(f"⚠️ 多路召回引擎初始化失败: {multi_engine_stats}")
+            
+            self._update_progress("加载所有组件", 90)
+            
+            # 初始化搜索引擎
             self._current_step = "初始化搜索引擎"
-            self._update_progress("初始化搜索引擎", 0)
             logger.info("初始化搜索引擎...")
             
             from ..search.vector_search_engine import get_enhanced_search_engine
             search_engine = get_enhanced_search_engine()
-            
-            self._update_progress("初始化搜索引擎", 50)
             
             load_result = search_engine.load_data()
             
@@ -147,12 +141,14 @@ class StartupManager:
             self._overall_progress = 100.0
             self._is_loading = False
             self._is_ready = True
-            logger.info("系统启动完成 - 所有组件已加载")
+            logger.info("🎉 系统启动完成 - 所有组件已加载")
+            logger.info(f"📊 加载统计: {all_stats.get('performance_summary', {})}")
             
         except Exception as e:
             self._error = str(e)
             self._is_loading = False
             self._is_ready = False
+            logger.error(f"❌ 系统启动失败: {e}")
             raise
     
     def is_loading(self) -> bool:

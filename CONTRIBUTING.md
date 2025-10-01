@@ -15,8 +15,8 @@
 
 1. **Fork 项目**
    ```bash
-   git clone https://github.com/your-username/legal-navigation-ai.git
-   cd legal-navigation-ai
+   git clone https://github.com/refrain2333/legal-ai-system.git
+   cd legal-ai-system
    ```
 
 2. **创建分支**
@@ -196,23 +196,6 @@ docs(api): 更新API文档和使用示例
 - 公开或私下骚扰
 - 未经明确许可，发布他人的私人信息
 
-## 📞 联系我们
-
-- 📧 常规问题: contact@legal-navigation-ai.com
-- 🔒 安全问题: security@legal-navigation-ai.com
-- 💬 社区讨论: [Discord/Slack链接]
-- 📝 文档问题: docs@legal-navigation-ai.com
-
-## 🙏 致谢
-
-感谢所有为项目做出贡献的人！
-
-### 核心贡献者
-- [贡献者列表]
-
-### 特别感谢
-- [开源项目致谢]
-- [社区支持致谢]
 
 ---
 

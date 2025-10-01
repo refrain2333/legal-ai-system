@@ -1,0 +1,3151 @@
+{
+  "start_time": "2025-09-28T05:27:13.194606",
+  "end_time": "2025-09-28T05:28:16.941279",
+  "duration_seconds": 63.746673,
+  "test_queries_count": 72,
+  "detailed_results": {
+    "article_to_cases": [
+      {
+        "query_id": "article_261",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_004699",
+          "case_004905",
+          "case_009572",
+          "case_002144",
+          "case_012278"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008436.781621,
+        "error": null
+      },
+      {
+        "query_id": "article_280",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_004905",
+          "case_011393",
+          "case_004699",
+          "case_006507",
+          "case_013164"
+        ],
+        "relevant": [
+          "case_011393"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 1.0027171287824856,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "f1@3": 0.5,
+          "hit@3": 1.0,
+          "ndcg@3": 2.1322608833317602,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "f1@5": 0.33333333333333337,
+          "hit@5": 1.0,
+          "ndcg@5": 2.9432763216755773,
+          "precision@10": 0.2,
+          "recall@10": 1.0,
+          "f1@10": 0.33333333333333337,
+          "hit@10": 1.0,
+          "ndcg@10": 2.9432763216755773,
+          "precision@20": 0.2,
+          "recall@20": 1.0,
+          "f1@20": 0.33333333333333337,
+          "hit@20": 1.0,
+          "ndcg@20": 2.9432763216755773,
+          "average_precision": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        "response_time": 1759008437.7384384,
+        "error": null
+      },
+      {
+        "query_id": "article_292",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_009572",
+          "case_004699",
+          "case_016497",
+          "case_004905",
+          "case_009048"
+        ],
+        "relevant": [
+          "case_009572",
+          "case_009048"
+        ],
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 0.5,
+          "f1@1": 0.6666666666666666,
+          "hit@1": 1.0,
+          "ndcg@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 0.5,
+          "f1@3": 0.4,
+          "hit@3": 1.0,
+          "ndcg@3": 1.306958692609426,
+          "precision@5": 0.4,
+          "recall@5": 1.0,
+          "f1@5": 0.5714285714285715,
+          "hit@5": 1.0,
+          "ndcg@5": 1.7923157501176865,
+          "precision@10": 0.4,
+          "recall@10": 1.0,
+          "f1@10": 0.5714285714285715,
+          "hit@10": 1.0,
+          "ndcg@10": 1.7923157501176865,
+          "precision@20": 0.4,
+          "recall@20": 1.0,
+          "f1@20": 0.5714285714285715,
+          "hit@20": 1.0,
+          "ndcg@20": 1.7923157501176865,
+          "average_precision": 0.7,
+          "reciprocal_rank": 1.0
+        },
+        "response_time": 1759008438.4809723,
+        "error": null
+      },
+      {
+        "query_id": "article_171",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_003928",
+          "case_013219",
+          "case_004499",
+          "case_013399",
+          "case_004152"
+        ],
+        "relevant": [
+          "case_013219",
+          "case_013399"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 1.0188313068308066,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 0.5,
+          "f1@3": 0.4,
+          "hit@3": 1.0,
+          "ndcg@3": 1.3204195391805493,
+          "precision@5": 0.4,
+          "recall@5": 1.0,
+          "f1@5": 0.5714285714285715,
+          "hit@5": 1.0,
+          "ndcg@5": 1.8196207665736235,
+          "precision@10": 0.4,
+          "recall@10": 1.0,
+          "f1@10": 0.5714285714285715,
+          "hit@10": 1.0,
+          "ndcg@10": 1.8196207665736235,
+          "precision@20": 0.4,
+          "recall@20": 1.0,
+          "f1@20": 0.5714285714285715,
+          "hit@20": 1.0,
+          "ndcg@20": 1.8196207665736235,
+          "average_precision": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        "response_time": 1759008439.2462363,
+        "error": null
+      },
+      {
+        "query_id": "article_307",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_016939",
+          "case_011090",
+          "case_003370",
+          "case_007387",
+          "case_005059"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008440.1502929,
+        "error": null
+      },
+      {
+        "query_id": "article_357",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_004555",
+          "case_004306",
+          "case_004131",
+          "case_003883",
+          "case_003818"
+        ],
+        "relevant": [
+          "case_004555"
+        ],
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "f1@1": 1.0,
+          "hit@1": 1.0,
+          "ndcg@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "f1@3": 0.5,
+          "hit@3": 1.0,
+          "ndcg@3": 2.1265024033560027,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "f1@5": 0.33333333333333337,
+          "hit@5": 1.0,
+          "ndcg@5": 2.937219052122284,
+          "precision@10": 0.2,
+          "recall@10": 1.0,
+          "f1@10": 0.33333333333333337,
+          "hit@10": 1.0,
+          "ndcg@10": 2.937219052122284,
+          "precision@20": 0.2,
+          "recall@20": 1.0,
+          "f1@20": 0.33333333333333337,
+          "hit@20": 1.0,
+          "ndcg@20": 2.937219052122284,
+          "average_precision": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        "response_time": 1759008440.9163167,
+        "error": null
+      },
+      {
+        "query_id": "article_224",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_002372",
+          "case_004905",
+          "case_001738",
+          "case_001745",
+          "case_001671"
+        ],
+        "relevant": [
+          "case_002372"
+        ],
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "f1@1": 1.0,
+          "hit@1": 1.0,
+          "ndcg@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "f1@3": 0.5,
+          "hit@3": 1.0,
+          "ndcg@3": 2.1002306145966414,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "f1@5": 0.33333333333333337,
+          "hit@5": 1.0,
+          "ndcg@5": 2.8892980597273845,
+          "precision@10": 0.2,
+          "recall@10": 1.0,
+          "f1@10": 0.33333333333333337,
+          "hit@10": 1.0,
+          "ndcg@10": 2.8892980597273845,
+          "precision@20": 0.2,
+          "recall@20": 1.0,
+          "f1@20": 0.33333333333333337,
+          "hit@20": 1.0,
+          "ndcg@20": 2.8892980597273845,
+          "average_precision": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        "response_time": 1759008441.547803,
+        "error": null
+      },
+      {
+        "query_id": "article_153",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_005059",
+          "case_004372",
+          "case_008805",
+          "case_004061",
+          "case_005038"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008442.3073974,
+        "error": null
+      },
+      {
+        "query_id": "article_417",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_015888",
+          "case_007913",
+          "case_007934",
+          "case_011624",
+          "case_016178"
+        ],
+        "relevant": [
+          "case_015888"
+        ],
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "f1@1": 1.0,
+          "hit@1": 1.0,
+          "ndcg@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "f1@3": 0.5,
+          "hit@3": 1.0,
+          "ndcg@3": 2.126473190600332,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "f1@5": 0.33333333333333337,
+          "hit@5": 1.0,
+          "ndcg@5": 2.937509374036164,
+          "precision@10": 0.2,
+          "recall@10": 1.0,
+          "f1@10": 0.33333333333333337,
+          "hit@10": 1.0,
+          "ndcg@10": 2.937509374036164,
+          "precision@20": 0.2,
+          "recall@20": 1.0,
+          "f1@20": 0.33333333333333337,
+          "hit@20": 1.0,
+          "ndcg@20": 2.937509374036164,
+          "average_precision": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        "response_time": 1759008443.1667938,
+        "error": null
+      },
+      {
+        "query_id": "article_211",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_011624",
+          "case_008892",
+          "case_016283",
+          "case_005059",
+          "case_004905"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008443.9147906,
+        "error": null
+      },
+      {
+        "query_id": "article_348",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_004273",
+          "case_003972",
+          "case_003796",
+          "case_004306",
+          "case_003986"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008444.539989,
+        "error": null
+      },
+      {
+        "query_id": "article_152",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_013823",
+          "case_016783",
+          "case_004481",
+          "case_013115",
+          "case_004499"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008445.3580751,
+        "error": null
+      },
+      {
+        "query_id": "article_235",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_004699",
+          "case_009572",
+          "case_001209",
+          "case_001317",
+          "case_004905"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008445.9599655,
+        "error": null
+      },
+      {
+        "query_id": "article_238",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_004699",
+          "case_016783",
+          "case_009572",
+          "case_004905",
+          "case_008252"
+        ],
+        "relevant": [
+          "case_008252"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 1.0334532700844012,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 2.184192340903548,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "f1@5": 0.33333333333333337,
+          "hit@5": 1.0,
+          "ndcg@5": 3.0062865658635256,
+          "precision@10": 0.2,
+          "recall@10": 1.0,
+          "f1@10": 0.33333333333333337,
+          "hit@10": 1.0,
+          "ndcg@10": 3.0062865658635256,
+          "precision@20": 0.2,
+          "recall@20": 1.0,
+          "f1@20": 0.33333333333333337,
+          "hit@20": 1.0,
+          "ndcg@20": 3.0062865658635256,
+          "average_precision": 0.2,
+          "reciprocal_rank": 0.2
+        },
+        "response_time": 1759008446.6659448,
+        "error": null
+      },
+      {
+        "query_id": "article_270",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_004905",
+          "case_000222",
+          "case_001738",
+          "case_008352",
+          "case_006507"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008447.2729118,
+        "error": null
+      },
+      {
+        "query_id": "article_133",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_003240",
+          "case_006057",
+          "case_003347",
+          "case_003256",
+          "case_007340"
+        ],
+        "relevant": [
+          "case_003240",
+          "case_003347",
+          "case_003256"
+        ],
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 0.3333333333333333,
+          "f1@1": 0.5,
+          "hit@1": 1.0,
+          "ndcg@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "recall@3": 0.6666666666666666,
+          "f1@3": 0.6666666666666666,
+          "hit@3": 1.0,
+          "ndcg@3": 1.0041291448699956,
+          "precision@5": 0.6,
+          "recall@5": 1.0,
+          "f1@5": 0.7499999999999999,
+          "hit@5": 1.0,
+          "ndcg@5": 1.3780273395153648,
+          "precision@10": 0.6,
+          "recall@10": 1.0,
+          "f1@10": 0.7499999999999999,
+          "hit@10": 1.0,
+          "ndcg@10": 1.3780273395153648,
+          "precision@20": 0.6,
+          "recall@20": 1.0,
+          "f1@20": 0.7499999999999999,
+          "hit@20": 1.0,
+          "ndcg@20": 1.3780273395153648,
+          "average_precision": 0.8055555555555555,
+          "reciprocal_rank": 1.0
+        },
+        "response_time": 1759008448.0294633,
+        "error": null
+      },
+      {
+        "query_id": "article_144",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_010101",
+          "case_002839",
+          "case_010070",
+          "case_010087",
+          "case_011004"
+        ],
+        "relevant": [
+          "case_002839"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 1.010326838961718,
+          "precision@3": 0.3333333333333333,
+          "recall@3": 1.0,
+          "f1@3": 0.5,
+          "hit@3": 1.0,
+          "ndcg@3": 2.1379604044546934,
+          "precision@5": 0.2,
+          "recall@5": 1.0,
+          "f1@5": 0.33333333333333337,
+          "hit@5": 1.0,
+          "ndcg@5": 2.943909739905077,
+          "precision@10": 0.2,
+          "recall@10": 1.0,
+          "f1@10": 0.33333333333333337,
+          "hit@10": 1.0,
+          "ndcg@10": 2.943909739905077,
+          "precision@20": 0.2,
+          "recall@20": 1.0,
+          "f1@20": 0.33333333333333337,
+          "hit@20": 1.0,
+          "ndcg@20": 2.943909739905077,
+          "average_precision": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        "response_time": 1759008448.874181,
+        "error": null
+      },
+      {
+        "query_id": "article_125",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_010355",
+          "case_009484",
+          "case_009284",
+          "case_009798",
+          "case_010706"
+        ],
+        "relevant": [
+          "case_010355",
+          "case_009484",
+          "case_009284",
+          "case_009798",
+          "case_010706"
+        ],
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 0.2,
+          "f1@1": 0.33333333333333337,
+          "hit@1": 1.0,
+          "ndcg@1": 1.0,
+          "precision@3": 1.0,
+          "recall@3": 0.6,
+          "f1@3": 0.7499999999999999,
+          "hit@3": 1.0,
+          "ndcg@3": 1.0,
+          "precision@5": 1.0,
+          "recall@5": 1.0,
+          "f1@5": 1.0,
+          "hit@5": 1.0,
+          "ndcg@5": 1.0,
+          "precision@10": 1.0,
+          "recall@10": 1.0,
+          "f1@10": 1.0,
+          "hit@10": 1.0,
+          "ndcg@10": 1.0,
+          "precision@20": 1.0,
+          "recall@20": 1.0,
+          "f1@20": 1.0,
+          "hit@20": 1.0,
+          "ndcg@20": 1.0,
+          "average_precision": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        "response_time": 1759008449.9473047,
+        "error": null
+      },
+      {
+        "query_id": "article_116",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_011188",
+          "case_008766",
+          "case_011134",
+          "case_013414",
+          "case_010255"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008451.079253,
+        "error": null
+      },
+      {
+        "query_id": "article_396",
+        "query_type": "article_to_cases",
+        "retrieved": [
+          "case_011624",
+          "case_010011",
+          "case_010589",
+          "case_008813",
+          "case_009409"
+        ],
+        "relevant": [],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        "response_time": 1759008452.0296566,
+        "error": null
+      }
+    ],
+    "case_to_articles": [
+      {
+        "query_id": "case_case_000870",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "234"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008452.9637878,
+        "error": null
+      },
+      {
+        "query_id": "case_case_006516",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "303"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008453.7870827,
+        "error": null
+      },
+      {
+        "query_id": "case_case_013747",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "124"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008454.8541155,
+        "error": null
+      },
+      {
+        "query_id": "case_case_007224",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "345",
+          "397"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008455.6838965,
+        "error": null
+      },
+      {
+        "query_id": "case_case_014720",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "213"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008456.5871704,
+        "error": null
+      },
+      {
+        "query_id": "case_case_009116",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "359"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008457.3860207,
+        "error": null
+      },
+      {
+        "query_id": "case_case_000213",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "264"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008458.1402209,
+        "error": null
+      },
+      {
+        "query_id": "case_case_005232",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "263",
+          "237",
+          "263"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008458.9012246,
+        "error": null
+      },
+      {
+        "query_id": "case_case_013849",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "363"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008459.7458117,
+        "error": null
+      },
+      {
+        "query_id": "case_case_011150",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "276"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008460.5037115,
+        "error": null
+      },
+      {
+        "query_id": "case_case_009106",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "359"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008461.2691836,
+        "error": null
+      },
+      {
+        "query_id": "case_case_005095",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "413"
+        ],
+        "relevant": [
+          "413"
+        ],
+        "metrics": {
+          "precision@1": 1.0,
+          "recall@1": 1.0,
+          "f1@1": 1.0,
+          "hit@1": 1.0,
+          "ndcg@1": 0.0,
+          "precision@3": 1.0,
+          "recall@3": 1.0,
+          "f1@3": 1.0,
+          "hit@3": 1.0,
+          "ndcg@3": 0.0,
+          "precision@5": 1.0,
+          "recall@5": 1.0,
+          "f1@5": 1.0,
+          "hit@5": 1.0,
+          "ndcg@5": 0.0,
+          "precision@10": 1.0,
+          "recall@10": 1.0,
+          "f1@10": 1.0,
+          "hit@10": 1.0,
+          "ndcg@10": 0.0,
+          "precision@20": 1.0,
+          "recall@20": 1.0,
+          "f1@20": 1.0,
+          "hit@20": 1.0,
+          "ndcg@20": 0.0,
+          "average_precision": 1.0,
+          "reciprocal_rank": 1.0,
+          "mrr": 1.0
+        },
+        "response_time": 1759008462.0651693,
+        "error": null
+      },
+      {
+        "query_id": "case_case_007056",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "303"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008462.8117092,
+        "error": null
+      },
+      {
+        "query_id": "case_case_011030",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "272"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008463.516624,
+        "error": null
+      },
+      {
+        "query_id": "case_case_003350",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "133"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008464.1603975,
+        "error": null
+      },
+      {
+        "query_id": "case_case_003040",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "133"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008464.810961,
+        "error": null
+      },
+      {
+        "query_id": "case_case_012450",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "363"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008465.5514057,
+        "error": null
+      },
+      {
+        "query_id": "case_case_003170",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "133"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008466.2872424,
+        "error": null
+      },
+      {
+        "query_id": "case_case_011764",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "235"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008467.0279155,
+        "error": null
+      },
+      {
+        "query_id": "case_case_011271",
+        "query_type": "case_to_articles",
+        "retrieved": [
+          "placeholder"
+        ],
+        "relevant": [
+          "143"
+        ],
+        "metrics": {
+          "precision@1": 0.0,
+          "recall@1": 0.0,
+          "f1@1": 0.0,
+          "hit@1": 0.0,
+          "ndcg@1": 0.0,
+          "precision@3": 0.0,
+          "recall@3": 0.0,
+          "f1@3": 0.0,
+          "hit@3": 0.0,
+          "ndcg@3": 0.0,
+          "precision@5": 0.0,
+          "recall@5": 0.0,
+          "f1@5": 0.0,
+          "hit@5": 0.0,
+          "ndcg@5": 0.0,
+          "precision@10": 0.0,
+          "recall@10": 0.0,
+          "f1@10": 0.0,
+          "hit@10": 0.0,
+          "ndcg@10": 0.0,
+          "precision@20": 0.0,
+          "recall@20": 0.0,
+          "f1@20": 0.0,
+          "hit@20": 0.0,
+          "ndcg@20": 0.0,
+          "average_precision": 0.0,
+          "reciprocal_rank": 0.0,
+          "mrr": 0.0
+        },
+        "response_time": 1759008467.8046882,
+        "error": null
+      }
+    ],
+    "crime_consistency": [
+      {
+        "query_id": "consistency_01",
+        "query_type": "crime_consistency",
+        "query_text": "非法猎捕、杀害珍贵、濒危野生动物",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "jaccard": 0.2,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 1,
+          "intersection_count": 1,
+          "case_coverage_rate": 1.0,
+          "covered_cases_count": 5,
+          "total_cases_count": 5,
+          "returned_articles": [
+            324,
+            337,
+            340,
+            341,
+            344
+          ],
+          "case_cited_articles": [
+            341
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_02",
+        "query_type": "crime_consistency",
+        "query_text": "非法吸收公众存款",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.5,
+          "jaccard": 0.16666666666666666,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 2,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.8,
+          "covered_cases_count": 4,
+          "total_cases_count": 5,
+          "returned_articles": [
+            176,
+            184,
+            187,
+            287,
+            384
+          ],
+          "case_cited_articles": [
+            176,
+            192
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_03",
+        "query_type": "crime_consistency",
+        "query_text": "容留他人吸毒",
+        "consistency_metrics": {
+          "precision": 0.4,
+          "recall": 0.6666666666666666,
+          "jaccard": 0.3333333333333333,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 2,
+          "case_coverage_rate": 1.0,
+          "covered_cases_count": 5,
+          "total_cases_count": 5,
+          "returned_articles": [
+            353,
+            354,
+            355,
+            359,
+            360
+          ],
+          "case_cited_articles": [
+            347,
+            353,
+            354
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_04",
+        "query_type": "crime_consistency",
+        "query_text": "对单位行贿",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.5,
+          "jaccard": 0.16666666666666666,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 2,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.8,
+          "covered_cases_count": 4,
+          "total_cases_count": 5,
+          "returned_articles": [
+            30,
+            31,
+            255,
+            389,
+            393
+          ],
+          "case_cited_articles": [
+            164,
+            393
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_05",
+        "query_type": "crime_consistency",
+        "query_text": "非法占用农用地",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "jaccard": 0.2,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 1,
+          "intersection_count": 1,
+          "case_coverage_rate": 1.0,
+          "covered_cases_count": 5,
+          "total_cases_count": 5,
+          "returned_articles": [
+            228,
+            323,
+            342,
+            381,
+            410
+          ],
+          "case_cited_articles": [
+            342
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_06",
+        "query_type": "crime_consistency",
+        "query_text": "冒充军人招摇撞骗",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "jaccard": 0.14285714285714285,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.6,
+          "covered_cases_count": 3,
+          "total_cases_count": 5,
+          "returned_articles": [
+            183,
+            279,
+            372,
+            373,
+            422
+          ],
+          "case_cited_articles": [
+            266,
+            372,
+            375
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_07",
+        "query_type": "crime_consistency",
+        "query_text": "侵占",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            4,
+            20,
+            60,
+            284,
+            329
+          ],
+          "case_cited_articles": [
+            271,
+            276,
+            342
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_08",
+        "query_type": "crime_consistency",
+        "query_text": "劫持船只、汽车",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 5,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            116,
+            117,
+            121,
+            122,
+            156
+          ],
+          "case_cited_articles": [
+            127,
+            233,
+            263,
+            267,
+            269
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_09",
+        "query_type": "crime_consistency",
+        "query_text": "以危险方法危害公共安全",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "jaccard": 0.14285714285714285,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            13,
+            21,
+            56,
+            114,
+            118
+          ],
+          "case_cited_articles": [
+            114,
+            115,
+            135
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_10",
+        "query_type": "crime_consistency",
+        "query_text": "招摇撞骗",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "jaccard": 0.14285714285714285,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            4,
+            16,
+            27,
+            279,
+            372
+          ],
+          "case_cited_articles": [
+            224,
+            274,
+            279
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_11",
+        "query_type": "crime_consistency",
+        "query_text": "非法经营",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 1,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            165,
+            222,
+            230,
+            276,
+            362
+          ],
+          "case_cited_articles": [
+            225
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_12",
+        "query_type": "crime_consistency",
+        "query_text": "扰乱无线电通讯管理秩序",
+        "consistency_metrics": {
+          "precision": 0.4,
+          "recall": 1.0,
+          "jaccard": 0.4,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 2,
+          "intersection_count": 2,
+          "case_coverage_rate": 1.0,
+          "covered_cases_count": 5,
+          "total_cases_count": 5,
+          "returned_articles": [
+            124,
+            265,
+            288,
+            291,
+            298
+          ],
+          "case_cited_articles": [
+            124,
+            288
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_13",
+        "query_type": "crime_consistency",
+        "query_text": "引诱、教唆、欺骗他人吸毒",
+        "consistency_metrics": {
+          "precision": 0.4,
+          "recall": 0.6666666666666666,
+          "jaccard": 0.3333333333333333,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 2,
+          "case_coverage_rate": 1.0,
+          "covered_cases_count": 5,
+          "total_cases_count": 5,
+          "returned_articles": [
+            29,
+            349,
+            353,
+            354,
+            359
+          ],
+          "case_cited_articles": [
+            347,
+            353,
+            354
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_14",
+        "query_type": "crime_consistency",
+        "query_text": "伪造、变造、买卖国家机关公文、证件、印章",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "jaccard": 0.2,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 1,
+          "intersection_count": 1,
+          "case_coverage_rate": 1.0,
+          "covered_cases_count": 5,
+          "total_cases_count": 5,
+          "returned_articles": [
+            167,
+            169,
+            280,
+            329,
+            375
+          ],
+          "case_cited_articles": [
+            280
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_15",
+        "query_type": "crime_consistency",
+        "query_text": "破坏生产经营",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.5,
+          "jaccard": 0.16666666666666666,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 2,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            13,
+            21,
+            116,
+            134,
+            276
+          ],
+          "case_cited_articles": [
+            135,
+            276
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_16",
+        "query_type": "crime_consistency",
+        "query_text": "挪用特定款物",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 5,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            185,
+            287,
+            382,
+            384,
+            389
+          ],
+          "case_cited_articles": [
+            272,
+            383,
+            385,
+            386,
+            397
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_17",
+        "query_type": "crime_consistency",
+        "query_text": "过失以危险方法危害公共安全",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "jaccard": 0.14285714285714285,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            20,
+            21,
+            56,
+            114,
+            118
+          ],
+          "case_cited_articles": [
+            114,
+            115,
+            135
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_18",
+        "query_type": "crime_consistency",
+        "query_text": "走私武器、弹药",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.5,
+          "jaccard": 0.16666666666666666,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 2,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.8,
+          "covered_cases_count": 4,
+          "total_cases_count": 5,
+          "returned_articles": [
+            112,
+            128,
+            129,
+            439,
+            441
+          ],
+          "case_cited_articles": [
+            125,
+            128
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_19",
+        "query_type": "crime_consistency",
+        "query_text": "过失损坏武器装备、军事设施、军事通信",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "jaccard": 0.14285714285714285,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            116,
+            117,
+            369,
+            441,
+            451
+          ],
+          "case_cited_articles": [
+            115,
+            369,
+            372
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_20",
+        "query_type": "crime_consistency",
+        "query_text": "拐骗儿童",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.5,
+          "jaccard": 0.16666666666666666,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 2,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            237,
+            241,
+            242,
+            262,
+            416
+          ],
+          "case_cited_articles": [
+            240,
+            262
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_21",
+        "query_type": "crime_consistency",
+        "query_text": "滥用职权",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.2,
+          "jaccard": 0.1111111111111111,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 5,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.6,
+          "covered_cases_count": 3,
+          "total_cases_count": 5,
+          "returned_articles": [
+            254,
+            382,
+            388,
+            397,
+            427
+          ],
+          "case_cited_articles": [
+            272,
+            383,
+            385,
+            386,
+            397
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_22",
+        "query_type": "crime_consistency",
+        "query_text": "赌博",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 1,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            4,
+            18,
+            22,
+            27,
+            362
+          ],
+          "case_cited_articles": [
+            303
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_23",
+        "query_type": "crime_consistency",
+        "query_text": "伪证",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 5,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            22,
+            27,
+            156,
+            269,
+            287
+          ],
+          "case_cited_articles": [
+            192,
+            193,
+            264,
+            280,
+            333
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_24",
+        "query_type": "crime_consistency",
+        "query_text": "招收公务员、学生徇私舞弊",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.25,
+          "jaccard": 0.125,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 4,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            254,
+            255,
+            362,
+            414,
+            418
+          ],
+          "case_cited_articles": [
+            163,
+            387,
+            397,
+            418
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_25",
+        "query_type": "crime_consistency",
+        "query_text": "重婚",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.25,
+          "jaccard": 0.125,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 4,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            4,
+            27,
+            74,
+            94,
+            258
+          ],
+          "case_cited_articles": [
+            175,
+            194,
+            258,
+            333
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_26",
+        "query_type": "crime_consistency",
+        "query_text": "诈骗",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 5,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            74,
+            156,
+            183,
+            269,
+            287
+          ],
+          "case_cited_articles": [
+            175,
+            196,
+            224,
+            266,
+            280
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_27",
+        "query_type": "crime_consistency",
+        "query_text": "聚众扰乱社会秩序",
+        "consistency_metrics": {
+          "precision": 0.4,
+          "recall": 0.5,
+          "jaccard": 0.2857142857142857,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 4,
+          "intersection_count": 2,
+          "case_coverage_rate": 0.4,
+          "covered_cases_count": 2,
+          "total_cases_count": 5,
+          "returned_articles": [
+            13,
+            291,
+            293,
+            296,
+            298
+          ],
+          "case_cited_articles": [
+            114,
+            277,
+            291,
+            293
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_28",
+        "query_type": "crime_consistency",
+        "query_text": "非法捕捞水产品",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 1.0,
+          "jaccard": 0.2,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 1,
+          "intersection_count": 1,
+          "case_coverage_rate": 1.0,
+          "covered_cases_count": 5,
+          "total_cases_count": 5,
+          "returned_articles": [
+            230,
+            337,
+            340,
+            341,
+            414
+          ],
+          "case_cited_articles": [
+            340
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_29",
+        "query_type": "crime_consistency",
+        "query_text": "非法生产、销售间谍专用器材",
+        "consistency_metrics": {
+          "precision": 0.2,
+          "recall": 0.3333333333333333,
+          "jaccard": 0.14285714285714285,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 3,
+          "intersection_count": 1,
+          "case_coverage_rate": 0.6,
+          "covered_cases_count": 3,
+          "total_cases_count": 5,
+          "returned_articles": [
+            22,
+            281,
+            283,
+            284,
+            414
+          ],
+          "case_cited_articles": [
+            125,
+            140,
+            283
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_30",
+        "query_type": "crime_consistency",
+        "query_text": "徇私舞弊不征、少征税款",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 4,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            53,
+            64,
+            210,
+            212,
+            412
+          ],
+          "case_cited_articles": [
+            201,
+            205,
+            211,
+            397
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_31",
+        "query_type": "crime_consistency",
+        "query_text": "伪造、变造金融票证",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 4,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            158,
+            183,
+            189,
+            227,
+            287
+          ],
+          "case_cited_articles": [
+            175,
+            177,
+            194,
+            280
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      },
+      {
+        "query_id": "consistency_32",
+        "query_type": "crime_consistency",
+        "query_text": "强迫劳动",
+        "consistency_metrics": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "jaccard": 0.0,
+          "returned_articles_count": 5,
+          "case_cited_articles_count": 2,
+          "intersection_count": 0,
+          "case_coverage_rate": 0.0,
+          "covered_cases_count": 0,
+          "total_cases_count": 5,
+          "returned_articles": [
+            236,
+            237,
+            242,
+            277,
+            368
+          ],
+          "case_cited_articles": [
+            244,
+            276
+          ]
+        },
+        "search_result_summary": {
+          "articles_count": 5,
+          "cases_count": 5
+        }
+      }
+    ]
+  },
+  "metrics": {
+    "by_type": {
+      "article_to_cases": {
+        "precision@1_mean": 0.3,
+        "precision@1_std": 0.45825756949558394,
+        "precision@1_min": 0.0,
+        "precision@1_max": 1.0,
+        "recall@1_mean": 0.20166666666666666,
+        "recall@1_std": 0.3597028094289939,
+        "recall@1_min": 0.0,
+        "recall@1_max": 1.0,
+        "f1@1_mean": 0.22499999999999995,
+        "f1@1_std": 0.3737014554129777,
+        "f1@1_min": 0.0,
+        "f1@1_max": 1.0,
+        "hit@1_mean": 0.3,
+        "hit@1_std": 0.45825756949558394,
+        "hit@1_min": 0.0,
+        "hit@1_max": 1.0,
+        "ndcg@1_mean": 0.5032664272329705,
+        "ndcg@1_std": 0.503324096358902,
+        "ndcg@1_min": 0.0,
+        "ndcg@1_max": 1.0334532700844012,
+        "precision@3_mean": 0.2,
+        "precision@3_std": 0.2666666666666667,
+        "precision@3_min": 0.0,
+        "precision@3_max": 1.0,
+        "recall@3_mean": 0.3633333333333333,
+        "recall@3_std": 0.42803167068700776,
+        "recall@3_min": 0.0,
+        "recall@3_max": 1.0,
+        "f1@3_mean": 0.23583333333333334,
+        "f1@3_std": 0.2706101644637745,
+        "f1@3_min": 0.0,
+        "f1@3_max": 0.7499999999999999,
+        "hit@3_mean": 0.45,
+        "hit@3_std": 0.49749371855331,
+        "hit@3_min": 0.0,
+        "hit@3_max": 1.0,
+        "ndcg@3_mean": 0.8719563606951475,
+        "ndcg@3_std": 0.9379963461563768,
+        "ndcg@3_min": 0.0,
+        "ndcg@3_max": 2.184192340903548,
+        "precision@5_mean": 0.18000000000000002,
+        "precision@5_std": 0.2521904042583698,
+        "precision@5_min": 0.0,
+        "precision@5_max": 1.0,
+        "recall@5_mean": 0.5,
+        "recall@5_std": 0.5,
+        "recall@5_min": 0.0,
+        "recall@5_max": 1.0,
+        "f1@5_mean": 0.24464285714285716,
+        "f1@5_std": 0.2902779133981825,
+        "f1@5_min": 0.0,
+        "f1@5_max": 1.0,
+        "hit@5_mean": 0.5,
+        "hit@5_std": 0.5,
+        "hit@5_min": 0.0,
+        "hit@5_max": 1.0,
+        "ndcg@5_mean": 1.1823731484768345,
+        "ndcg@5_std": 1.292937526045202,
+        "ndcg@5_min": 0.0,
+        "ndcg@5_max": 3.0062865658635256,
+        "precision@10_mean": 0.18000000000000002,
+        "precision@10_std": 0.2521904042583698,
+        "precision@10_min": 0.0,
+        "precision@10_max": 1.0,
+        "recall@10_mean": 0.5,
+        "recall@10_std": 0.5,
+        "recall@10_min": 0.0,
+        "recall@10_max": 1.0,
+        "f1@10_mean": 0.24464285714285716,
+        "f1@10_std": 0.2902779133981825,
+        "f1@10_min": 0.0,
+        "f1@10_max": 1.0,
+        "hit@10_mean": 0.5,
+        "hit@10_std": 0.5,
+        "hit@10_min": 0.0,
+        "hit@10_max": 1.0,
+        "ndcg@10_mean": 1.1823731484768345,
+        "ndcg@10_std": 1.292937526045202,
+        "ndcg@10_min": 0.0,
+        "ndcg@10_max": 3.0062865658635256,
+        "precision@20_mean": 0.18000000000000002,
+        "precision@20_std": 0.2521904042583698,
+        "precision@20_min": 0.0,
+        "precision@20_max": 1.0,
+        "recall@20_mean": 0.5,
+        "recall@20_std": 0.5,
+        "recall@20_min": 0.0,
+        "recall@20_max": 1.0,
+        "f1@20_mean": 0.24464285714285716,
+        "f1@20_std": 0.2902779133981825,
+        "f1@20_min": 0.0,
+        "f1@20_max": 1.0,
+        "hit@20_mean": 0.5,
+        "hit@20_std": 0.5,
+        "hit@20_min": 0.0,
+        "hit@20_max": 1.0,
+        "ndcg@20_mean": 1.1823731484768345,
+        "ndcg@20_std": 1.292937526045202,
+        "ndcg@20_min": 0.0,
+        "ndcg@20_max": 3.0062865658635256,
+        "average_precision_mean": 0.3602777777777778,
+        "average_precision_std": 0.4082228686561143,
+        "average_precision_min": 0.0,
+        "average_precision_max": 1.0,
+        "reciprocal_rank_mean": 0.385,
+        "reciprocal_rank_std": 0.4373499742768942,
+        "reciprocal_rank_min": 0.0,
+        "reciprocal_rank_max": 1.0,
+        "semantic_accuracy": 0.5
+      },
+      "case_to_articles": {
+        "precision@1_mean": 0.05,
+        "precision@1_std": 0.21794494717703364,
+        "precision@1_min": 0.0,
+        "precision@1_max": 1.0,
+        "recall@1_mean": 0.05,
+        "recall@1_std": 0.21794494717703364,
+        "recall@1_min": 0.0,
+        "recall@1_max": 1.0,
+        "f1@1_mean": 0.05,
+        "f1@1_std": 0.21794494717703364,
+        "f1@1_min": 0.0,
+        "f1@1_max": 1.0,
+        "hit@1_mean": 0.05,
+        "hit@1_std": 0.21794494717703364,
+        "hit@1_min": 0.0,
+        "hit@1_max": 1.0,
+        "ndcg@1_mean": 0.0,
+        "ndcg@1_std": 0.0,
+        "ndcg@1_min": 0.0,
+        "ndcg@1_max": 0.0,
+        "precision@3_mean": 0.05,
+        "precision@3_std": 0.21794494717703364,
+        "precision@3_min": 0.0,
+        "precision@3_max": 1.0,
+        "recall@3_mean": 0.05,
+        "recall@3_std": 0.21794494717703364,
+        "recall@3_min": 0.0,
+        "recall@3_max": 1.0,
+        "f1@3_mean": 0.05,
+        "f1@3_std": 0.21794494717703364,
+        "f1@3_min": 0.0,
+        "f1@3_max": 1.0,
+        "hit@3_mean": 0.05,
+        "hit@3_std": 0.21794494717703364,
+        "hit@3_min": 0.0,
+        "hit@3_max": 1.0,
+        "ndcg@3_mean": 0.0,
+        "ndcg@3_std": 0.0,
+        "ndcg@3_min": 0.0,
+        "ndcg@3_max": 0.0,
+        "precision@5_mean": 0.05,
+        "precision@5_std": 0.21794494717703364,
+        "precision@5_min": 0.0,
+        "precision@5_max": 1.0,
+        "recall@5_mean": 0.05,
+        "recall@5_std": 0.21794494717703364,
+        "recall@5_min": 0.0,
+        "recall@5_max": 1.0,
+        "f1@5_mean": 0.05,
+        "f1@5_std": 0.21794494717703364,
+        "f1@5_min": 0.0,
+        "f1@5_max": 1.0,
+        "hit@5_mean": 0.05,
+        "hit@5_std": 0.21794494717703364,
+        "hit@5_min": 0.0,
+        "hit@5_max": 1.0,
+        "ndcg@5_mean": 0.0,
+        "ndcg@5_std": 0.0,
+        "ndcg@5_min": 0.0,
+        "ndcg@5_max": 0.0,
+        "precision@10_mean": 0.05,
+        "precision@10_std": 0.21794494717703364,
+        "precision@10_min": 0.0,
+        "precision@10_max": 1.0,
+        "recall@10_mean": 0.05,
+        "recall@10_std": 0.21794494717703364,
+        "recall@10_min": 0.0,
+        "recall@10_max": 1.0,
+        "f1@10_mean": 0.05,
+        "f1@10_std": 0.21794494717703364,
+        "f1@10_min": 0.0,
+        "f1@10_max": 1.0,
+        "hit@10_mean": 0.05,
+        "hit@10_std": 0.21794494717703364,
+        "hit@10_min": 0.0,
+        "hit@10_max": 1.0,
+        "ndcg@10_mean": 0.0,
+        "ndcg@10_std": 0.0,
+        "ndcg@10_min": 0.0,
+        "ndcg@10_max": 0.0,
+        "precision@20_mean": 0.05,
+        "precision@20_std": 0.21794494717703364,
+        "precision@20_min": 0.0,
+        "precision@20_max": 1.0,
+        "recall@20_mean": 0.05,
+        "recall@20_std": 0.21794494717703364,
+        "recall@20_min": 0.0,
+        "recall@20_max": 1.0,
+        "f1@20_mean": 0.05,
+        "f1@20_std": 0.21794494717703364,
+        "f1@20_min": 0.0,
+        "f1@20_max": 1.0,
+        "hit@20_mean": 0.05,
+        "hit@20_std": 0.21794494717703364,
+        "hit@20_min": 0.0,
+        "hit@20_max": 1.0,
+        "ndcg@20_mean": 0.0,
+        "ndcg@20_std": 0.0,
+        "ndcg@20_min": 0.0,
+        "ndcg@20_max": 0.0,
+        "average_precision_mean": 0.05,
+        "average_precision_std": 0.21794494717703364,
+        "average_precision_min": 0.0,
+        "average_precision_max": 1.0,
+        "reciprocal_rank_mean": 0.05,
+        "reciprocal_rank_std": 0.21794494717703364,
+        "reciprocal_rank_min": 0.0,
+        "reciprocal_rank_max": 1.0,
+        "mrr_mean": 0.05,
+        "mrr_std": 0.21794494717703364,
+        "mrr_min": 0.0,
+        "mrr_max": 1.0,
+        "semantic_accuracy": 0.0
+      },
+      "crime_consistency": {
+        "consistency_precision_mean": 0.16250000000000006,
+        "consistency_recall_mean": 0.37604166666666666,
+        "consistency_jaccard_mean": 0.13137400793650794,
+        "case_coverage_rate_mean": 0.4625000000000001,
+        "total_covered_cases": 74,
+        "total_all_cases": 160,
+        "overall_case_coverage_rate": 0.4625,
+        "total_queries": 32
+      }
+    },
+    "overall": {
+      "reciprocal_rank_std": 0.32764746072696393,
+      "recall@3_mean": 0.20666666666666664,
+      "ndcg@5_std": 0.646468763022601,
+      "recall@1_max": 1.0,
+      "hit@3_mean": 0.25,
+      "precision@1_max": 1.0,
+      "precision@20_mean": 0.115,
+      "recall@20_mean": 0.27499999999999997,
+      "ndcg@10_mean": 0.5911865742384173,
+      "reciprocal_rank_min": 0.0,
+      "recall@20_std": 0.35897247358851686,
+      "precision@3_std": 0.2423058069218502,
+      "precision@3_max": 1.0,
+      "precision@3_min": 0.0,
+      "recall@5_mean": 0.27499999999999997,
+      "precision@10_max": 1.0,
+      "f1@3_mean": 0.14291666666666666,
+      "mrr_mean": 0.05000000000000001,
+      "precision@1_mean": 0.17499999999999996,
+      "f1@10_mean": 0.14732142857142858,
+      "ndcg@20_std": 0.646468763022601,
+      "consistency_precision_mean": 0.16250000000000006,
+      "f1@10_std": 0.254111430287608,
+      "reciprocal_rank_max": 1.0,
+      "recall@3_min": 0.0,
+      "recall@1_mean": 0.12583333333333332,
+      "f1@1_std": 0.2958232012950057,
+      "ndcg@5_max": 1.5031432829317628,
+      "ndcg@5_min": 0.0,
+      "f1@5_min": 0.0,
+      "average_precision_min": 0.0,
+      "hit@1_std": 0.3381012583363088,
+      "precision@5_std": 0.2350676757177017,
+      "hit@1_mean": 0.17499999999999996,
+      "precision@3_mean": 0.12500000000000003,
+      "f1@5_std": 0.254111430287608,
+      "case_coverage_rate_mean": 0.4625000000000001,
+      "ndcg@3_std": 0.4689981730781884,
+      "f1@1_mean": 0.13749999999999998,
+      "hit@10_max": 1.0,
+      "hit@20_min": 0.0,
+      "f1@5_max": 1.0,
+      "mrr_std": 0.21794494717703364,
+      "ndcg@1_mean": 0.2516332136164853,
+      "hit@5_mean": 0.27499999999999997,
+      "ndcg@1_max": 0.5167266350422006,
+      "total_all_cases": 160.0,
+      "precision@1_min": 0.0,
+      "ndcg@5_mean": 0.5911865742384173,
+      "f1@3_min": 0.0,
+      "f1@1_min": 0.0,
+      "f1@3_std": 0.24427755582040409,
+      "ndcg@20_min": 0.0,
+      "ndcg@10_min": 0.0,
+      "precision@10_min": 0.0,
+      "ndcg@3_min": 0.0,
+      "f1@20_std": 0.254111430287608,
+      "f1@20_max": 1.0,
+      "consistency_recall_mean": 0.37604166666666666,
+      "ndcg@10_std": 0.646468763022601,
+      "precision@20_min": 0.0,
+      "hit@10_std": 0.35897247358851686,
+      "ndcg@1_std": 0.251662048179451,
+      "ndcg@3_max": 1.092096170451774,
+      "hit@20_max": 1.0,
+      "precision@20_max": 1.0,
+      "recall@10_std": 0.35897247358851686,
+      "f1@3_max": 0.875,
+      "hit@20_std": 0.35897247358851686,
+      "hit@5_std": 0.35897247358851686,
+      "precision@5_min": 0.0,
+      "ndcg@20_max": 1.5031432829317628,
+      "f1@1_max": 1.0,
+      "precision@5_mean": 0.115,
+      "f1@10_min": 0.0,
+      "total_covered_cases": 74.0,
+      "hit@10_mean": 0.27499999999999997,
+      "average_precision_mean": 0.2051388888888889,
+      "recall@3_max": 1.0,
+      "recall@5_max": 1.0,
+      "ndcg@10_max": 1.5031432829317628,
+      "recall@10_min": 0.0,
+      "recall@5_min": 0.0,
+      "recall@20_min": 0.0,
+      "f1@5_mean": 0.14732142857142858,
+      "precision@10_mean": 0.115,
+      "total_queries": 32.0,
+      "hit@3_max": 1.0,
+      "hit@3_min": 0.0,
+      "consistency_jaccard_mean": 0.13137400793650794,
+      "average_precision_std": 0.313083907916574,
+      "mrr_min": 0.0,
+      "recall@20_max": 1.0,
+      "precision@5_max": 1.0,
+      "hit@1_max": 1.0,
+      "hit@5_max": 1.0,
+      "hit@10_min": 0.0,
+      "recall@1_min": 0.0,
+      "recall@10_max": 1.0,
+      "precision@1_std": 0.3381012583363088,
+      "recall@3_std": 0.3229883089320207,
+      "mrr_max": 1.0,
+      "f1@10_max": 1.0,
+      "average_precision_max": 1.0,
+      "recall@1_std": 0.28882387830301376,
+      "f1@20_mean": 0.14732142857142858,
+      "ndcg@1_min": 0.0,
+      "f1@20_min": 0.0,
+      "precision@20_std": 0.2350676757177017,
+      "semantic_accuracy": 0.25,
+      "recall@5_std": 0.35897247358851686,
+      "overall_case_coverage_rate": 0.4625,
+      "ndcg@3_mean": 0.43597818034757374,
+      "hit@5_min": 0.0,
+      "ndcg@20_mean": 0.5911865742384173,
+      "recall@10_mean": 0.27499999999999997,
+      "hit@1_min": 0.0,
+      "precision@10_std": 0.2350676757177017,
+      "hit@3_std": 0.3577193328651718,
+      "reciprocal_rank_mean": 0.21750000000000003,
+      "hit@20_mean": 0.27499999999999997
+    }
+  },
+  "summary": {
+    "overall_score": 0.28172,
+    "key_metrics": {
+      "semantic_accuracy": 0.25,
+      "case_coverage_rate_mean": 0.4625,
+      "consistency_recall_mean": 0.376,
+      "precision@5_mean": 0.115,
+      "average_precision_mean": 0.2051
+    },
+    "strengths": [],
+    "weaknesses": [
+      "semantic_accuracy: 25.00%",
+      "case_coverage_rate_mean: 46.25%",
+      "consistency_recall_mean: 37.60%",
+      "precision@5_mean: 11.50%",
+      "average_precision_mean: 20.51%"
+    ],
+    "recommendations": [
+      "整体性能需要显著改进",
+      "需要提高精确率，考虑优化排序算法或加强相关性判断",
+      "罪名搜索的法条-案例一致性较低，需要优化语义理解模型"
+    ]
+  }
+}

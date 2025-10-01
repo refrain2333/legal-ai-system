@@ -59,22 +59,36 @@ class EnhancedSemanticSearch:
     def search(self, query: str, top_k: int = 10, include_content: bool = False) -> Dict[str, Any]:
         """
         执行混合搜索 - 新格式：5条法条 + 5条案例
-        
+
         Args:
             query: 查询文本
             top_k: 总结果数量（将被分为法条和案例）
             include_content: 是否包含完整内容
-            
+
         Returns:
             包含分类结果的字典
         """
         coordinator = self._get_search_coordinator()
-        
+
         # 计算法条和案例的数量分配
         articles_count = min(5, top_k // 2 + 1)  # 优先保证法条数量
         cases_count = min(5, top_k - articles_count)
-        
+
         return coordinator.execute_mixed_search(query, articles_count, cases_count, include_content)
+
+    def hybrid_search(self, query: str, top_k: int = 20) -> List[Dict]:
+        """
+        混合搜索方法 - 融合语义和关键词搜索
+
+        Args:
+            query: 查询字符串
+            top_k: 返回结果数量
+
+        Returns:
+            融合后的搜索结果列表
+        """
+        coordinator = self._get_search_coordinator()
+        return coordinator.hybrid_search(query, top_k)
     
     def load_more_cases(self, query: str, offset: int = 0, limit: int = 5, 
                        include_content: bool = False) -> Dict[str, Any]:
@@ -156,7 +170,7 @@ class EnhancedSemanticSearch:
     def health_check(self) -> Dict[str, Any]:
         """
         健康检查
-        
+
         Returns:
             健康检查结果
         """
@@ -170,6 +184,84 @@ class EnhancedSemanticSearch:
                 'error': str(e),
                 'checks': {'engine_available': False}
             }
+
+    # ==================== LLM增强搜索方法 ====================
+
+    async def query2doc_search(self, query: str, top_k: int = 20,
+                              query2doc_enhancer=None) -> List[Dict[str, Any]]:
+        """
+        Query2doc增强搜索
+
+        Args:
+            query: 原始查询
+            top_k: 返回结果数量
+            query2doc_enhancer: Query2doc增强器实例
+
+        Returns:
+            增强搜索结果列表
+        """
+        try:
+            if not query2doc_enhancer:
+                logger.warning("Query2doc增强器未提供，使用原始搜索")
+                return self.search(query, top_k, include_content=True)
+
+            # 生成增强查询
+            enhanced_query = await query2doc_enhancer.enhance_query(query)
+
+            # 执行搜索
+            results = self.search(enhanced_query, top_k, include_content=True)
+
+            # 标记来源和增强信息
+            for result in results:
+                result['source'] = 'query2doc'
+                result['original_query'] = query
+                result['enhanced_query'] = enhanced_query
+
+            logger.debug(f"Query2doc搜索完成: {len(results)}个结果")
+            return results
+
+        except Exception as e:
+            logger.error(f"Query2doc搜索失败: {e}")
+            # 降级到原始搜索
+            return self.search(query, top_k, include_content=True)
+
+    async def hyde_search(self, query: str, top_k: int = 20,
+                         hyde_enhancer=None) -> List[Dict[str, Any]]:
+        """
+        HyDE答案导向搜索
+
+        Args:
+            query: 原始查询
+            top_k: 返回结果数量
+            hyde_enhancer: HyDE增强器实例
+
+        Returns:
+            HyDE搜索结果列表
+        """
+        try:
+            if not hyde_enhancer:
+                logger.warning("HyDE增强器未提供，使用原始搜索")
+                return self.search(query, top_k, include_content=True)
+
+            # 生成假设性答案
+            hypothetical_answer = await hyde_enhancer.generate_hypothetical_answer(query)
+
+            # 用假设答案进行搜索
+            results = self.search(hypothetical_answer, top_k, include_content=True)
+
+            # 标记来源和假设答案
+            for result in results:
+                result['source'] = 'hyde'
+                result['original_query'] = query
+                result['hypothetical_answer'] = hypothetical_answer
+
+            logger.debug(f"HyDE搜索完成: {len(results)}个结果")
+            return results
+
+        except Exception as e:
+            logger.error(f"HyDE搜索失败: {e}")
+            # 降级到原始搜索
+            return self.search(query, top_k, include_content=True)
 
 
 # 全局实例
