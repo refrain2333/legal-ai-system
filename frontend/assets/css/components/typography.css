@@ -1,0 +1,47 @@
+/* 文字排版样式 */
+
+.title {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.title-xl {
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.title-lg {
+    font-size: 2rem;
+}
+
+.title-md {
+    font-size: 1.5rem;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+}
+
+.feature-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* 响应式文字 */
+@media (max-width: 768px) {
+    .title-xl {
+        font-size: 2rem;
+    }
+
+    .title-lg {
+        font-size: 1.5rem;
+    }
+}

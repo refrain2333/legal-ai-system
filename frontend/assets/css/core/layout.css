@@ -1,0 +1,52 @@
+/* 布局相关样式 */
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.container-fluid {
+    background: rgba(255, 255, 255, 0.95);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.main-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+/* 页面布局处理 */
+.page-layout {
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+body.has-navigation {
+    padding-top: 70px !important;
+    margin: 0 !important;
+}
+
+body > .main-container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .container-fluid {
+        padding: 10px;
+    }
+
+    body.has-navigation {
+        padding-top: 60px !important;
+    }
+}

@@ -1,0 +1,405 @@
+/* 完整流程调试页面专用样式 */
+
+/* 页面加载指示器样式 */
+.page-loading-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 50%, var(--accent-bright) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.page-loading-indicator.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.loading-progress {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.progress-bar {
+    height: 100%;
+    background: white;
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
+
+/* 页面主体样式 - 重写body背景为统一的蓝白渐变 */
+body {
+    background: var(--bg-gradient-main) !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: var(--text-primary);
+}
+
+/* 确保container有正确的左右边距 */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    background: white;
+}
+
+/* 页面头部样式 */
+.header {
+    text-align: center;
+    padding: 50px 20px 60px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 50%, var(--accent-bright) 100%);
+    color: white;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.header h1 {
+    margin: 0 0 16px 0;
+    font-size: 3rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 2;
+    letter-spacing: -0.02em;
+}
+
+.header h2 {
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    font-weight: 500;
+    text-align: center;
+    opacity: 0.95;
+    z-index: 2;
+    position: relative;
+}
+
+.header p {
+    margin: 0;
+    font-size: 1.2rem;
+    opacity: 0.95;
+    position: relative;
+    z-index: 2;
+    font-weight: 400;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.header .subtitle {
+    text-align: center;
+}
+
+/* 添加动态背景效果 */
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: backgroundMove 20s linear infinite;
+    z-index: 1;
+}
+
+@keyframes backgroundMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(30px, 30px); }
+}
+
+/* 控制面板样式 */
+.control-panel {
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.search-section {
+    margin-bottom: 16px;
+}
+
+.input-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.form-control {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #d2d6dc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.btn {
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* 视图模式控制 */
+.view-mode-controls {
+    display: flex;
+    gap: 16px;
+    padding-top: 8px;
+    align-items: center;
+}
+
+.view-mode-controls label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #4a5568;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.view-mode-controls label:hover {
+    color: var(--primary-blue);
+}
+
+.view-mode-controls input[type="radio"] {
+    margin: 0;
+    accent-color: var(--primary-blue);
+}
+
+/* WebSocket状态显示 */
+.websocket-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.websocket-status.connected {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.websocket-status.disconnected {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.websocket-status.connecting {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    color: #1e40af;
+    border: 1px solid #3b82f6;
+}
+
+/* 错误面板样式 */
+.error-panel {
+    margin-top: 20px;
+}
+
+.error-content {
+    min-height: 50px;
+}
+
+.error-content .alert {
+    margin: 0;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.error-content .alert h6 {
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.error-content .alert details {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.error-content .alert details pre {
+    margin: 8px 0 0 0;
+    font-size: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.error-content .alert details summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: #495057;
+}
+
+.error-content .alert details summary:hover {
+    color: #007bff;
+}
+
+/* 性能面板样式 */
+.performance-panel {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid var(--primary-blue);
+}
+
+.performance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.perf-item {
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.perf-label {
+    font-size: 11px;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.perf-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--primary-blue);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .header p {
+        font-size: 1rem;
+    }
+
+    .container {
+        padding: 0 16px;
+    }
+
+    .control-panel {
+        padding: 16px;
+    }
+
+    .input-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .view-mode-controls {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .performance-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 30px 15px 40px;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .performance-grid {
+        grid-template-columns: 1fr;
+    }
+}

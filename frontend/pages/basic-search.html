@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基础搜索 - 法智导航</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/pages/basic-search.css">
+    <!-- 导航栏样式必须最后加载以确保优先级 -->
+    <link rel="stylesheet" href="../assets/css/shared/navigation.css">
+</head>
+<body>
+    <!-- 导航栏将在这里自动插入 -->
+
+    <div class="container">
+        <!-- 详细加载状态面板 - 默认隐藏，通过导航栏设置按钮控制 -->
+        <div id="loadingDetails" class="loading-details hidden" style="display: none;">
+            <div class="details-header">
+                <h3>系统加载状态</h3>
+            </div>
+            <div id="stepsList" class="steps-list"></div>
+            <div class="loading-summary">
+                <div class="summary-item">
+                    <span>总进度:</span>
+                    <span id="overallProgress">0%</span>
+                </div>
+                <div class="summary-item">
+                    <span>当前步骤:</span>
+                    <span id="currentStep">-</span>
+                </div>
+                <div class="summary-item">
+                    <span>已用时间:</span>
+                    <span id="totalDuration">-</span>
+                </div>
+                <div class="summary-item" id="documentsStatItem" style="display: none;">
+                    <span>文档统计:</span>
+                    <span id="documentsLoaded">-</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header">
+            <h1>法智导航 - 基础搜索</h1>
+            <p>简洁高效的法律文档检索系统</p>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="输入法律问题或关键词..." />
+            <button id="searchButton" class="search-button" disabled>搜索</button>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div id="loading" class="loading">
+            正在搜索...
+        </div>
+        
+        <div id="results" class="results"></div>
+    </div>
+
+    <script src="../assets/js/utils/api-config.js"></script>
+    <script src="../assets/js/components/NavigationBar.js"></script>
+    <script src="../assets/js/pages/basic-search.js"></script>
+</body>
+</html>

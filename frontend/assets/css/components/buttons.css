@@ -1,0 +1,103 @@
+/* 按钮组件样式 */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-normal);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+    color: var(--text-white);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: var(--text-white);
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: var(--bg-gradient-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: #f1f5f9;
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+}
+
+/* 操作按钮变体 */
+.action-btn {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn-primary {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-light));
+    color: white;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+}
+
+.action-btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.action-btn-secondary {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary-blue);
+    border: 2px solid rgba(37, 99, 235, 0.2);
+}
+
+.action-btn-secondary:hover {
+    background: rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.3);
+    transform: translateY(-2px);
+    color: var(--primary-blue);
+    text-decoration: none;
+}

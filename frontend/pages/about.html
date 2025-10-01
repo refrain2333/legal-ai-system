@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于法智导航 - 刑事法律AI检索系统</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/shared/navigation.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem 0;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.3rem;
+            color: #64748b;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-icon {
+            font-size: 1.8rem;
+            color: #3b82f6;
+        }
+
+        .section-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #475569;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .feature-item-icon {
+            font-size: 1.5rem;
+            color: #3b82f6;
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .feature-item-content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item-content p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 16px;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tech-category {
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tech-category h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tech-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tech-list li {
+            padding: 0.5rem 0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .roadmap {
+            margin-top: 2rem;
+        }
+
+        .roadmap-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 60px;
+            width: 2px;
+            height: calc(100% - 40px);
+            background: #e2e8f0;
+        }
+
+        .roadmap-item:last-child::before {
+            display: none;
+        }
+
+        .roadmap-icon {
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            z-index: 1;
+            position: relative;
+        }
+
+        .roadmap-content {
+            flex: 1;
+        }
+
+        .roadmap-content h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .roadmap-content p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏将在这里自动插入 -->
+
+    <div class="about-container">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <h1 class="page-title">关于法智导航</h1>
+            <p class="page-subtitle">
+                专业的刑事法律AI检索系统，融合现代AI技术与法律专业知识，
+                为法律工作者和学习者提供精准、高效的智能检索服务
+            </p>
+        </div>
+
+        <!-- 项目概述 -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle section-icon"></i>
+                项目概述
+            </h2>
+            <div class="section-content">
+                <p>
+                    法智导航是一个基于thunlp/Lawformer模型构建的专业刑事法律AI检索系统。
+                    项目采用现代化的DDD（领域驱动设计）架构，结合5阶段智能搜索管道、
+                    多路并行检索技术、知识图谱增强和多提供商LLM备选机制，
+                    为446条刑法条文和17,131个刑事案例提供专业、准确的检索服务。
+                </p>
+
+                <p>
+                    系统的核心创新在于将传统的关键词检索与现代AI技术深度融合，
+                    通过智能问题分类、结构化信息提取、智能路由决策、多路并行搜索和结果融合等五个阶段，
+                    实现了从用户自然语言查询到专业法律回答的智能转换。
+                </p>
+            </div>
+        </div>
+
+        <!-- 核心特性 -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-star section-icon"></i>
+                核心特性
+            </h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <i class="fas fa-brain feature-item-icon"></i>
+                    <div class="feature-item-content">
+                        <h4>5阶段智能搜索管道</h4>
+                        <p>LLM分类、信息提取、智能路由、多路搜索、结果融合的完整AI流程</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <i class="fas fa-layer-group feature-item-icon"></i>
+                    <div class="feature-item-content">
+                        <h4>5种并行搜索技术</h4>
+                        <p>知识图谱增强、Query2Doc、HyDE、BM25混合、基础语义搜索同时执行</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <i class="fas fa-robot feature-item-icon"></i>
+                    <div class="feature-item-content">
+                        <h4>多提供商LLM架构</h4>
+                        <p>硅基流动、Cloudflare、智谱GLM、Google Gemini四重备选保障</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <i class="fas fa-project-diagram feature-item-icon"></i>
+                    <div class="feature-item-content">
+                        <h4>知识图谱增强</h4>
+                        <p>500+法条-罪名关联节点，智能查询扩展和关系推理</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <i class="fas fa-tachometer-alt feature-item-icon"></i>
+                    <div class="feature-item-content">
+                        <h4>高性能响应</h4>
+                        <p>基础搜索47ms响应，智能管道7-12秒，实时WebSocket调试</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt feature-item-icon"></i>
+                    <div class="feature-item-content">
+                        <h4>专业数据保障</h4>
+                        <p>446条刑法条文，17,131个真实案例，768维专业向量空间</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 性能数据 -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line section-icon"></i>
+                性能表现
+            </h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">91%</div>
+                    <div class="stat-label">用户满意度</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">75%</div>
+                    <div class="stat-label">检索精确率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">88%</div>
+                    <div class="stat-label">结果召回率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99%+</div>
+                    <div class="stat-label">系统可用性</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术栈 -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-code section-icon"></i>
+                技术栈
+            </h2>
+            <div class="tech-stack">
+                <div class="tech-category">
+                    <h4>
+                        <i class="fas fa-server" style="color: #3b82f6;"></i>
+                        后端技术
+                    </h4>
+                    <ul class="tech-list">
+                        <li><i class="fab fa-python"></i> Python 3.9+</li>
+                        <li><i class="fas fa-bolt"></i> FastAPI</li>
+                        <li><i class="fas fa-cube"></i> DDD架构</li>
+                        <li><i class="fas fa-sync"></i> AsyncIO</li>
+                        <li><i class="fas fa-plug"></i> WebSocket</li>
+                    </ul>
+                </div>
+
+                <div class="tech-category">
+                    <h4>
+                        <i class="fas fa-brain" style="color: #3b82f6;"></i>
+                        AI技术
+                    </h4>
+                    <ul class="tech-list">
+                        <li><i class="fas fa-robot"></i> Lawformer模型</li>
+                        <li><i class="fas fa-vector-square"></i> 768维向量</li>
+                        <li><i class="fas fa-comment"></i> 多提供商LLM</li>
+                        <li><i class="fas fa-search"></i> 向量检索</li>
+                        <li><i class="fas fa-project-diagram"></i> 知识图谱</li>
+                    </ul>
+                </div>
+
+                <div class="tech-category">
+                    <h4>
+                        <i class="fas fa-palette" style="color: #3b82f6;"></i>
+                        前端技术
+                    </h4>
+                    <ul class="tech-list">
+                        <li><i class="fab fa-html5"></i> HTML5</li>
+                        <li><i class="fab fa-css3"></i> CSS3</li>
+                        <li><i class="fab fa-js"></i> JavaScript ES6+</li>
+                        <li><i class="fas fa-mobile-alt"></i> 响应式设计</li>
+                        <li><i class="fas fa-chart-bar"></i> 可视化组件</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 开发历程 -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-road section-icon"></i>
+                开发历程
+            </h2>
+            <div class="roadmap">
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <div class="roadmap-content">
+                        <h4>项目启动与基础架构</h4>
+                        <p>建立DDD分层架构，集成Lawformer模型，构建基础语义搜索功能</p>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="roadmap-content">
+                        <h4>多路搜索引擎开发</h4>
+                        <p>实现Query2Doc、HyDE、BM25混合检索，构建5种并行搜索技术</p>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="roadmap-content">
+                        <h4>智能管道集成</h4>
+                        <p>开发5阶段处理流程，集成多提供商LLM，实现智能问题分析</p>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="roadmap-content">
+                        <h4>知识图谱增强</h4>
+                        <p>构建法条-罪名关联图谱，实现智能查询扩展和关系推理</p>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="roadmap-content">
+                        <h4>性能优化与监控</h4>
+                        <p>实现实时调试界面，WebSocket推送，性能监控和错误诊断</p>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="roadmap-content">
+                        <h4>系统优化与文档完善</h4>
+                        <p>代码重构，文档完善，用户界面优化，持续性能提升</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据来源与引用 -->
+        <div class="content-section">
+            <h2 class="section-title">
+                <i class="fas fa-book section-icon"></i>
+                数据来源与引用
+            </h2>
+            <div class="section-content">
+                <div style="background: #f8fafc; padding: 2rem; border-radius: 12px; border-left: 4px solid #3b82f6;">
+                    <h4 style="color: #1e293b; margin-bottom: 1rem;"><i class="fas fa-database" style="color: #3b82f6;"></i> 数据来源声明</h4>
+                    <div style="margin-bottom: 1.5rem;">
+                        <p style="margin-bottom: 0.5rem;"><strong>法条数据：</strong>来源于 <a href="https://github.com/LawRefBook/Laws" target="_blank" style="color: #3b82f6; text-decoration: none;">LawRefBook/Laws</a> 开源项目 (446条刑法条文)</p>
+                        <p style="margin-bottom: 0.5rem;"><strong>案例数据：</strong>使用了 <a href="https://github.com/thunlp/CAIL" target="_blank" style="color: #3b82f6; text-decoration: none;">CAIL2018数据集</a> 进行研究 (17,131个刑事案例)</p>
+                        <p style="margin-bottom: 0.5rem;"><strong>AI模型：</strong>基于清华大学 <a href="https://huggingface.co/thunlp/Lawformer" target="_blank" style="color: #3b82f6; text-decoration: none;">thunlp/Lawformer</a> 法律预训练模型</p>
+                    </div>
+
+                    <h4 style="color: #1e293b; margin-bottom: 1rem;"><i class="fas fa-quote-left" style="color: #3b82f6;"></i> 学术引用格式</h4>
+                    <div style="font-family: 'Courier New', monospace; font-size: 0.85rem; background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #e2e8f0;">
+                        <p style="margin-bottom: 1rem; font-weight: 600; color: #1e293b;">CAIL2018数据集引用：</p>
+                        <p style="color: #64748b; line-height: 1.5; margin-bottom: 1.5rem;">Chaojun Xiao, Haoxi Zhong, Zhipeng Guo, Cunchao Tu, Zhiyuan Liu, Maosong Sun, Yansong Feng, Xianpei Han, Zhen Hu, Heng Wang, Jianfeng Xu. CAIL2018: A Large-Scale Legal Dataset for Judgment Prediction. arXiv preprint arXiv:1807.02478, 2018.</p>
+
+                        <p style="margin-bottom: 1rem; font-weight: 600; color: #1e293b;">Lawformer模型引用：</p>
+                        <p style="color: #64748b; line-height: 1.5; margin-bottom: 1.5rem;">Haoxi Zhong, Chaojun Xiao, Cunchao Tu, Tianyang Zhang, Zhiyuan Liu, Maosong Sun. How Does NLP Benefit Legal System: A Summary of Legal Artificial Intelligence. In Proceedings of ACL 2020.</p>
+
+                        <p style="margin-bottom: 1rem; font-weight: 600; color: #1e293b;">LawRefBook项目引用：</p>
+                        <p style="color: #64748b; line-height: 1.5; margin: 0;">LawRefBook/Laws: 中国法律法规数据库. GitHub Repository. https://github.com/LawRefBook/Laws</p>
+                    </div>
+
+                    <h4 style="color: #1e293b; margin-bottom: 1rem;"><i class="fas fa-balance-scale" style="color: #3b82f6;"></i> 使用声明</h4>
+                    <ul style="color: #64748b; line-height: 1.6; margin: 0; padding-left: 1.5rem;">
+                        <li>本项目严格遵循学术规范和开源协议</li>
+                        <li>仅用于学术研究和技术验证，不用于商业用途</li>
+                        <li>提供的法律信息仅供参考，不构成正式法律意见</li>
+                        <li>实际法律问题请咨询专业律师</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快速操作 -->
+        <div class="content-section" style="text-align: center;">
+            <h2 class="section-title" style="justify-content: center;">
+                <i class="fas fa-rocket section-icon"></i>
+                开始使用
+            </h2>
+            <div class="section-content">
+                <p style="margin-bottom: 2rem;">
+                    准备好体验智能法律检索的强大功能了吗？选择一个入口开始探索：
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="./basic-search.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; transition: all 0.3s ease;">
+                        <i class="fas fa-search"></i>
+                        基础搜索
+                    </a>
+                    <a href="./complete-flow.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; background: #1d4ed8; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; transition: all 0.3s ease;">
+                        <i class="fas fa-cogs"></i>
+                        智能管道
+                    </a>
+                    <a href="./knowledge-graph.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem; background: #1e40af; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; transition: all 0.3s ease;">
+                        <i class="fas fa-project-diagram"></i>
+                        知识图谱
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 脚本文件 -->
+    <script src="../assets/js/components/NavigationBar.js"></script>
+</body>
+</html>

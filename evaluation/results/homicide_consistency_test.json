@@ -1,0 +1,567 @@
+{
+  "杀人": {
+    "consistency_metrics": {
+      "precision": 0.2,
+      "recall": 1.0,
+      "jaccard": 0.2,
+      "returned_articles_count": 5,
+      "case_cited_articles_count": 1,
+      "intersection_count": 1
+    },
+    "homicide_precision": 1.0,
+    "homicide_cases_count": 5,
+    "total_cases": 5,
+    "returned_articles": [
+      232,
+      239,
+      17,
+      121,
+      127
+    ],
+    "case_cited_articles": [
+      232
+    ],
+    "articles_details": [
+      {
+        "article_number": 232,
+        "title": "第232条 中华人民共和国刑法 第232条",
+        "similarity": 0.5240201950073242,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 17,
+        "title": "第17条 中华人民共和国刑法 第17条",
+        "similarity": 0.520266592502594,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 239,
+        "title": "第239条 中华人民共和国刑法 第239条",
+        "similarity": 0.5144956111907959,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 127,
+        "title": "第127条 中华人民共和国刑法 第127条",
+        "similarity": 0.5020106434822083,
+        "is_homicide_related": false
+      },
+      {
+        "article_number": 121,
+        "title": "第121条 中华人民共和国刑法 第121条",
+        "similarity": 0.48779916763305664,
+        "is_homicide_related": false
+      }
+    ],
+    "cases_details": [
+      {
+        "case_id": "case_004771",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5877394676208496,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004702",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5821795463562012,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004589",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5729987621307373,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004608",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5690692067146301,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004572",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5641646385192871,
+        "is_homicide_case": true
+      }
+    ]
+  },
+  "故意杀人": {
+    "consistency_metrics": {
+      "precision": 0.4,
+      "recall": 1.0,
+      "jaccard": 0.4,
+      "returned_articles_count": 5,
+      "case_cited_articles_count": 2,
+      "intersection_count": 2
+    },
+    "homicide_precision": 0.6,
+    "homicide_cases_count": 3,
+    "total_cases": 5,
+    "returned_articles": [
+      232,
+      234,
+      14,
+      239,
+      17
+    ],
+    "case_cited_articles": [
+      232,
+      234
+    ],
+    "articles_details": [
+      {
+        "article_number": 232,
+        "title": "第232条 中华人民共和国刑法 第232条",
+        "similarity": 0.6188474893569946,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 17,
+        "title": "第17条 中华人民共和国刑法 第17条",
+        "similarity": 0.6119792461395264,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 234,
+        "title": "第234条 中华人民共和国刑法 第234条",
+        "similarity": 0.5942420959472656,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 239,
+        "title": "第239条 中华人民共和国刑法 第239条",
+        "similarity": 0.5850843191146851,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 14,
+        "title": "第14条 中华人民共和国刑法 第14条",
+        "similarity": 0.5797748565673828,
+        "is_homicide_related": false
+      }
+    ],
+    "cases_details": [
+      {
+        "case_id": "case_004673",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.6294848322868347,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004771",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.6250476837158203,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_000697",
+        "accusations": [
+          "故意伤害"
+        ],
+        "relevant_articles": [
+          234
+        ],
+        "similarity": 0.6165684461593628,
+        "is_homicide_case": false
+      },
+      {
+        "case_id": "case_000518",
+        "accusations": [
+          "故意伤害"
+        ],
+        "relevant_articles": [
+          234
+        ],
+        "similarity": 0.6116704344749451,
+        "is_homicide_case": false
+      },
+      {
+        "case_id": "case_004603",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.598507285118103,
+        "is_homicide_case": true
+      }
+    ]
+  },
+  "故意杀人罪": {
+    "consistency_metrics": {
+      "precision": 0.4,
+      "recall": 1.0,
+      "jaccard": 0.4,
+      "returned_articles_count": 5,
+      "case_cited_articles_count": 2,
+      "intersection_count": 2
+    },
+    "homicide_precision": 0.6,
+    "homicide_cases_count": 3,
+    "total_cases": 5,
+    "returned_articles": [
+      232,
+      234,
+      239,
+      17,
+      275
+    ],
+    "case_cited_articles": [
+      232,
+      234
+    ],
+    "articles_details": [
+      {
+        "article_number": 232,
+        "title": "第232条 中华人民共和国刑法 第232条",
+        "similarity": 0.6746869087219238,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 17,
+        "title": "第17条 中华人民共和国刑法 第17条",
+        "similarity": 0.6445120573043823,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 234,
+        "title": "第234条 中华人民共和国刑法 第234条",
+        "similarity": 0.6355960369110107,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 275,
+        "title": "第275条 中华人民共和国刑法 第275条",
+        "similarity": 0.6163398027420044,
+        "is_homicide_related": false
+      },
+      {
+        "article_number": 239,
+        "title": "第239条 中华人民共和国刑法 第239条",
+        "similarity": 0.6151196956634521,
+        "is_homicide_related": true
+      }
+    ],
+    "cases_details": [
+      {
+        "case_id": "case_000697",
+        "accusations": [
+          "故意伤害"
+        ],
+        "relevant_articles": [
+          234
+        ],
+        "similarity": 0.6444056034088135,
+        "is_homicide_case": false
+      },
+      {
+        "case_id": "case_004699",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.6144517660140991,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004673",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.6081112027168274,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004771",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5992818474769592,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_001317",
+        "accusations": [
+          "故意伤害"
+        ],
+        "relevant_articles": [
+          234
+        ],
+        "similarity": 0.593881368637085,
+        "is_homicide_case": false
+      }
+    ]
+  },
+  "杀害他人": {
+    "consistency_metrics": {
+      "precision": 0.2,
+      "recall": 0.3333333333333333,
+      "jaccard": 0.14285714285714285,
+      "returned_articles_count": 5,
+      "case_cited_articles_count": 3,
+      "intersection_count": 1
+    },
+    "homicide_precision": 0.6,
+    "homicide_cases_count": 3,
+    "total_cases": 5,
+    "returned_articles": [
+      232,
+      239,
+      17,
+      275,
+      127
+    ],
+    "case_cited_articles": [
+      232,
+      234,
+      293
+    ],
+    "articles_details": [
+      {
+        "article_number": 17,
+        "title": "第17条 中华人民共和国刑法 第17条",
+        "similarity": 0.5814353227615356,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 275,
+        "title": "第275条 中华人民共和国刑法 第275条",
+        "similarity": 0.572213888168335,
+        "is_homicide_related": false
+      },
+      {
+        "article_number": 232,
+        "title": "第232条 中华人民共和国刑法 第232条",
+        "similarity": 0.5669170618057251,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 239,
+        "title": "第239条 中华人民共和国刑法 第239条",
+        "similarity": 0.5651546120643616,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 127,
+        "title": "第127条 中华人民共和国刑法 第127条",
+        "similarity": 0.5649389028549194,
+        "is_homicide_related": false
+      }
+    ],
+    "cases_details": [
+      {
+        "case_id": "case_004702",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.6064093112945557,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004771",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.6055811643600464,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_000428",
+        "accusations": [
+          "故意伤害"
+        ],
+        "relevant_articles": [
+          234
+        ],
+        "similarity": 0.5998085737228394,
+        "is_homicide_case": false
+      },
+      {
+        "case_id": "case_004603",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5994267463684082,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_003565",
+        "accusations": [
+          "寻衅滋事"
+        ],
+        "relevant_articles": [
+          293
+        ],
+        "similarity": 0.5990989208221436,
+        "is_homicide_case": false
+      }
+    ]
+  },
+  "谋杀": {
+    "consistency_metrics": {
+      "precision": 0.2,
+      "recall": 0.5,
+      "jaccard": 0.16666666666666666,
+      "returned_articles_count": 5,
+      "case_cited_articles_count": 2,
+      "intersection_count": 1
+    },
+    "homicide_precision": 0.8,
+    "homicide_cases_count": 4,
+    "total_cases": 5,
+    "returned_articles": [
+      232,
+      17,
+      120,
+      121,
+      127
+    ],
+    "case_cited_articles": [
+      232,
+      305
+    ],
+    "articles_details": [
+      {
+        "article_number": 120,
+        "title": "第120条 中华人民共和国刑法 第120条",
+        "similarity": 0.4624750018119812,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 232,
+        "title": "第232条 中华人民共和国刑法 第232条",
+        "similarity": 0.4516441226005554,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 121,
+        "title": "第121条 中华人民共和国刑法 第121条",
+        "similarity": 0.44962453842163086,
+        "is_homicide_related": false
+      },
+      {
+        "article_number": 17,
+        "title": "第17条 中华人民共和国刑法 第17条",
+        "similarity": 0.44958099722862244,
+        "is_homicide_related": true
+      },
+      {
+        "article_number": 127,
+        "title": "第127条 中华人民共和国刑法 第127条",
+        "similarity": 0.44821131229400635,
+        "is_homicide_related": false
+      }
+    ],
+    "cases_details": [
+      {
+        "case_id": "case_004771",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5193829536437988,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_013190",
+        "accusations": [
+          "伪证"
+        ],
+        "relevant_articles": [
+          305
+        ],
+        "similarity": 0.5010627508163452,
+        "is_homicide_case": false
+      },
+      {
+        "case_id": "case_004603",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.5003547072410583,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004589",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.4979208707809448,
+        "is_homicide_case": true
+      },
+      {
+        "case_id": "case_004572",
+        "accusations": [
+          "故意杀人"
+        ],
+        "relevant_articles": [
+          232
+        ],
+        "similarity": 0.4978448748588562,
+        "is_homicide_case": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识图谱可视化 - 法智导航</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/shared/modal.css">
+    <link rel="stylesheet" href="../assets/css/pages/knowledge-graph.css">
+    <!-- 导航栏样式必须最后加载以确保优先级 -->
+    <link rel="stylesheet" href="../assets/css/shared/navigation.css">
+
+    <!-- 通用API配置 -->
+    <script src="../assets/js/utils/api-config.js"></script>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        // 检查D3是否加载成功
+        window.addEventListener('load', function() {
+            if (typeof d3 === 'undefined') {
+                console.error('D3.js库未能加载！');
+                alert('D3.js库加载失败，请检查网络连接');
+            } else {
+                console.log('D3.js库加载成功，版本:', d3.version);
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- 导航栏将在这里自动插入 -->
+
+    <div class="container">
+        <div class="header">
+            <h1>法律知识图谱可视化</h1>
+            <p>探索罪名与法条之间的关联关系</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input"
+                       placeholder="搜索罪名或者刑法条数（如：盗窃、故意伤害、第264条等）">
+                <button id="searchBtn" class="search-btn">生成图谱</button>
+            </div>
+            <div class="examples">
+                <button class="example-btn" onclick="loadExample('盗窃')">盗窃</button>
+                <button class="example-btn" onclick="loadExample('故意伤害')">故意伤害</button>
+                <button class="example-btn" onclick="loadExample('诈骗')">诈骗</button>
+                <button class="example-btn" onclick="loadExample('第264条')">第264条</button>
+                <button class="example-btn" onclick="loadExample('受贿')">受贿</button>
+                <button class="example-btn" onclick="loadExample('抢劫')">抢劫</button>
+            </div>
+        </div>
+
+        <div class="visualization" id="visualization">
+            <div class="no-data">
+                <h3>开始探索</h3>
+                <p>请在上方搜索罪名或者刑法条数</p>
+                <p>支持罪名：如"盗窃"、"故意伤害"、"诈骗"等</p>
+                <p>支持法条：如"第264条"、"第234条"等</p>
+            </div>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+            <h3>知识图谱统计</h3>
+            <div class="stats" id="stats">
+                <div class="stat-card clickable" id="crimesCard" onclick="showCrimesList()">
+                    <div class="stat-number" id="totalCrimes">-</div>
+                    <div class="stat-label">罪名总数</div>
+                </div>
+                <div class="stat-card clickable" id="articlesCard" onclick="showArticlesList()">
+                    <div class="stat-number" id="totalArticles">-</div>
+                    <div class="stat-label">法条总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalRelations">-</div>
+                    <div class="stat-label">关系总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="currentEntity">-</div>
+                    <div class="stat-label">当前实体</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新增：搜索结果详细展示面板 -->
+        <div class="search-results-panel" id="searchResultsPanel" style="display: none;">
+            <h3>搜索结果详情</h3>
+            
+            <!-- 查询信息 -->
+            <div class="query-info-section">
+                <div class="section-header">
+                    <h4>查询信息</h4>
+                    <button class="toggle-btn" onclick="toggleSection('queryInfo')">展开</button>
+                </div>
+                <div class="section-content" id="queryInfo">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>原始查询:</strong>
+                            <span id="originalQuery">-</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>扩展查询:</strong>
+                            <span id="expandedQuery">-</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>主要实体:</strong>
+                            <span id="primaryEntity">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 实体检测结果 -->
+            <div class="entities-section">
+                <div class="section-header">
+                    <h4>实体检测</h4>
+                    <button class="toggle-btn" onclick="toggleSection('entitiesDetection')">展开</button>
+                </div>
+                <div class="section-content" id="entitiesDetection">
+                    <div class="entities-grid">
+                        <div class="entity-group">
+                            <strong>检测到的罪名:</strong>
+                            <div class="entity-tags" id="detectedCrimes">暂无</div>
+                        </div>
+                        <div class="entity-group">
+                            <strong>检测到的法条:</strong>
+                            <div class="entity-tags" id="detectedArticles">暂无</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 相关法条 -->
+            <div class="related-articles-section">
+                <div class="section-header">
+                    <h4>相关法条</h4>
+                    <button class="toggle-btn" onclick="toggleSection('relatedArticles')">展开</button>
+                </div>
+                <div class="section-content" id="relatedArticles">
+                    <div class="articles-list" id="articlesList">暂无数据</div>
+                </div>
+            </div>
+
+            <!-- 相关罪名 -->
+            <div class="related-crimes-section">
+                <div class="section-header">
+                    <h4>相关罪名</h4>
+                    <button class="toggle-btn" onclick="toggleSection('relatedCrimes')">展开</button>
+                </div>
+                <div class="section-content" id="relatedCrimes">
+                    <div class="crimes-list" id="crimesList">暂无数据</div>
+                </div>
+            </div>
+
+            <!-- 扩展建议 -->
+            <div class="suggestions-section">
+                <div class="section-header">
+                    <h4>扩展建议</h4>
+                    <button class="toggle-btn" onclick="toggleSection('expansionSuggestions')">展开</button>
+                </div>
+                <div class="section-content" id="expansionSuggestions">
+                    <div class="suggestions-list" id="suggestionsList">暂无建议</div>
+                </div>
+            </div>
+
+            <!-- 原始数据 -->
+            <div class="raw-data-section">
+                <div class="section-header">
+                    <h4>原始数据</h4>
+                    <button class="toggle-btn" onclick="toggleSection('rawData')">展开</button>
+                </div>
+                <div class="section-content collapsed" id="rawData">
+                    <pre class="json-display" id="rawDataDisplay">暂无数据</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态窗口 -->
+    <div id="listModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">列表</h2>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-search">
+                    <input type="text" id="modalSearchInput" placeholder="输入关键词搜索...">
+                </div>
+                <div class="list-container" id="listContainer">
+                    <!-- 列表项将在这里动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+
+    <!-- 知识图谱页面的JavaScript功能 -->
+    <script src="../assets/js/pages/knowledge-graph.js"></script>
+
+    <!-- 导航栏组件 -->
+    <script src="../assets/js/components/NavigationBar.js"></script>
+</body>
+</html>

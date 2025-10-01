@@ -1,0 +1,395 @@
+/* 动画样式 - 渐进式显示和交互动画 */
+
+/* 核心关键帧动画 */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(71, 85, 105, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(71, 85, 105, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(71, 85, 105, 0);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes positivePulse {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 0 0 8px rgba(71, 85, 105, 0.6);
+    }
+    50% {
+        transform: scale(1.05);
+        text-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes progressFill {
+    from {
+        width: 0%;
+    }
+    to {
+        width: var(--target-width);
+    }
+}
+
+@keyframes glowSuccess {
+    0%, 100% {
+        box-shadow:
+            0 6px 20px rgba(71, 85, 105, 0.15),
+            0 2px 8px rgba(148, 163, 184, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    50% {
+        box-shadow:
+            0 8px 24px rgba(71, 85, 105, 0.25),
+            0 4px 12px rgba(148, 163, 184, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.98),
+            inset 0 0 20px rgba(59, 130, 246, 0.1);
+    }
+}
+
+@keyframes glowError {
+    0%, 100% {
+        box-shadow: 0 2px 10px rgba(220, 53, 69, 0.1);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(220, 53, 69, 0.3);
+    }
+}
+
+/* 运行状态动画 */
+.stage.running {
+    animation: pulse 2s infinite;
+}
+
+.stage.running .stage-icon {
+    animation: spin 2s linear infinite;
+}
+
+/* 成功状态动画 */
+.stage.success {
+    animation: glowSuccess 3s ease-in-out infinite;
+}
+
+.stage.success .stage-icon {
+    animation: positivePulse 2s ease-in-out infinite;
+}
+
+/* 错误状态动画 */
+.stage.error {
+    animation: glowError 2s ease-in-out infinite;
+}
+
+/* 渐进式显示动画类 */
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.4s ease-out forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.4s ease-out forwards;
+}
+
+.bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* 进度条动画 */
+.progress-fill-animation {
+    animation: progressFill 1s ease-out forwards;
+}
+
+/* 悬停动画增强 */
+.hover-lift {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.hover-scale {
+    transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.hover-glow {
+    transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+}
+
+/* 关键词动画 */
+.keyword-chip {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.keyword-chip:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* 卡片动画 */
+.stage-analysis-card {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.stage-analysis-card.animate-in {
+    opacity: 1;
+}
+
+/* 模块卡片动画 - 已禁用 */
+.module-overview-card {
+    /* 完全移除transition动画 */
+}
+
+.module-overview-card:hover {
+    /* 完全移除悬停变换效果 */
+}
+
+.module-overview-card.selected {
+    /* 移除选中动画，避免影响交互 */
+}
+
+/* 权重条动画 */
+.weight-fill, .relevance-fill, .priority-fill, .contribution-fill {
+    transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: progressFill 1.2s ease-out forwards;
+}
+
+/* 决策结果动画 */
+.decision-result-box {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.decision-icon.positive {
+    animation: positivePulse 2s ease-in-out infinite;
+}
+
+/* 技术信息项动画 */
+.tech-info-item {
+    transition: all 0.3s ease;
+}
+
+.tech-info-item:hover {
+    transform: translateY(-2px);
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+/* 指标卡片动画 */
+.metric-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+    /* hover效果已在 components/cards.css 中定义 */
+}
+
+/* WebSocket状态动画 */
+.websocket-status {
+    transition: all 0.3s ease;
+}
+
+.websocket-connected {
+    animation: glowSuccess 2s ease-in-out infinite;
+}
+
+.websocket-error, .websocket-disconnected {
+    animation: glowError 1.5s ease-in-out infinite;
+}
+
+.websocket-connecting {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* 搜索结果动画 */
+.result-item {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.result-item.animate-in {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.result-item:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* 延迟动画类 */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* 性能优化 */
+.stage, .stage-analysis-card, .module-overview-card {
+    will-change: transform, box-shadow;
+}
+
+/* 减少动画的用户偏好设置支持 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .stage.running .stage-icon,
+    .decision-icon.positive {
+        animation: none !important;
+    }
+    
+    .stage.running,
+    .stage.success,
+    .stage.error {
+        animation: none !important;
+    }
+}
+
+/* 加载状态动画 */
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* 打字机效果 */
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #007bff; }
+}
+
+.typewriter {
+    overflow: hidden;
+    border-right: 2px solid #007bff;
+    white-space: nowrap;
+    animation: 
+        typing 2s steps(40, end),
+        blink-caret 0.75s step-end infinite;
+}
+
+/* 数字计数动画 */
+@keyframes countUp {
+    from { 
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.count-up {
+    animation: countUp 0.6s ease-out forwards;
+}
+
+/* 渐变背景动画 */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animated-gradient {
+    background: linear-gradient(-45deg, #667eea, #764ba2, #667eea, #764ba2);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+}

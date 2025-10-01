@@ -1,0 +1,104 @@
+# 法智导航项目 Pre-commit Hook配置
+repos:
+  # Python代码格式化
+  - repo: https://github.com/psf/black
+    rev: 22.8.0
+    hooks:
+      - id: black
+        language_version: python3.9
+        args: [--line-length=100]
+
+  # 导入语句排序
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--line-length", "100"]
+
+  # 基本代码检查
+  - repo: https://github.com/pycqa/flake8
+    rev: 5.0.4
+    hooks:
+      - id: flake8
+        args: [
+          --max-line-length=100,
+          --extend-ignore=E203,W503,  # 兼容black
+          --max-complexity=10
+        ]
+
+  # 基础文件检查
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+      # 检查文件末尾空行
+      - id: end-of-file-fixer
+      # 检查行尾空格
+      - id: trailing-whitespace
+      # 检查YAML语法
+      - id: check-yaml
+      # 检查JSON语法
+      - id: check-json
+      # 检查大文件
+      - id: check-added-large-files
+        args: ['--maxkb=50000']  # 50MB限制
+      # 检查合并冲突标记
+      - id: check-merge-conflict
+      # 检查Python AST
+      - id: check-ast
+      # 检查Python字节码文件
+      - id: check-byte-order-marker
+
+  # 安全检查
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.4
+    hooks:
+      - id: bandit
+        args: ["-r", "src/"]
+        exclude: tests/
+
+  # 本地自定义检查
+  - repo: local
+    hooks:
+      # Pylint检查
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        files: ^src/
+        args: [
+          "--rcfile=.pylintrc",
+          "--score=no"
+        ]
+
+      # 检查敏感信息
+      - id: check-secrets
+        name: 检查敏感信息
+        entry: python scripts/check_secrets.py
+        language: python
+        files: \.(py|yaml|yml|json|env)$
+
+      # 检查TODO和FIXME
+      - id: check-todos
+        name: 检查待办事项
+        entry: python scripts/check_todos.py
+        language: python
+        files: \.py$
+
+# 全局配置
+fail_fast: false  # 即使某个hook失败也继续运行其他hook
+default_stages: [commit, push]
+
+# 排除的文件
+exclude: |
+  (?x)^(
+      .*\.min\.js|
+      .*\.min\.css|
+      data/raw/.*|
+      data/processed/.*|
+      models/pretrained/.*|
+      models/finetuned/.*|
+      logs/.*|
+      __pycache__/.*|
+      \.git/.*
+  )$
